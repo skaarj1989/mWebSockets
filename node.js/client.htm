@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<title>WebSocket test</title>
+</head>
+<body>
+
+<script>
+	window.onload = function() {
+		try {
+			console.log('Setting up socket ...');
+			
+			var ws = new WebSocket('ws://192.168.46.10:3000/');
+			
+			ws.onopen = function() {
+				console.log('connected');
+				ws.send('hello from browser');
+			}
+			
+			ws.onmessage = function(evt) {
+				console.log('received', evt);
+			}
+			
+			ws.onclose = function(evt) {
+				console.log('onclose', evt);
+			}
+			
+			ws.onerror = function(evt) {
+				console.log('onerror', evt);
+			}
+			
+		} catch(exception) {
+			console.log('error', exception);
+		}
+	}
+</script>
+</body>
+</html>
