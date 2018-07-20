@@ -32,18 +32,18 @@ This library allows you to connect Arduino to WebSocket server
 
 #### Ethernet shield W5100
 
-| Ethernet shield  | Arduino Uno | Arduino Mega | Arduino Pro Mini
-| :---: | :---: | :---: | :---: |
-| (ICSP) MISO  | (ICSP) MISO  | (ICSP) MISO | PIN 12 |
-| (ICSP) MOSI  | (ICSP) MOSI  | (ICSP) MOSI | PIN 11 |
-| (ICSP) SCK  | (ICSP) SCK  | (ICSP) SCK  | PIN 13 |
-| (SS) PIN 10  | PIN 10  | PIN 53 | PIN 10 |
+| Ethernet shield  | Arduino Uno / Mega2560 |  Arduino Pro Mini
+| :---: | :---: | :---: |
+| (ICSP) MISO  | (ICSP) MISO  | PIN 12 |
+| (ICSP) MOSI  | (ICSP) MOSI  | PIN 11 |
+| (ICSP) SCK  | (ICSP) SCK | PIN 13 |
+| (SS) PIN 10  | PIN 10 | PIN 10 |
 
 ##### ... Or just attach the shield if you can
 
 #### W5500 module
 
-| W5500  | Arduino Uno / Arduino Pro Mini | Arduino Mega |
+| W5500  | Arduino Uno / Pro Mini | Arduino Mega2560 |
 | :---: | :---: | :---: | 
 | MISO  | PIN 12  | PIN 50 |
 | MOSI  | PIN 11  | PIN 51 |
