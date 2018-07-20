@@ -5,7 +5,7 @@ byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 WebSocketClient client;
 
 void onOpen(WebSocketClient &ws) {
-  char message[] = "hello from arduino";
+  char message[] = "Hello from Arduino!";
   ws.send(message, strlen(message));
 }
 
