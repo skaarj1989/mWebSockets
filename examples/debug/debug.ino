@@ -14,7 +14,7 @@ void setup() {
   Serial.print(F("Client IP: "));
   Serial.println(Ethernet.localIP());
 
-	//client.open("echo.websocket.org");
+  //client.open("echo.websocket.org");
   client.open("192.168.46.10", 3000);
 }
 
