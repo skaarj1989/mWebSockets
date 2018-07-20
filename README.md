@@ -18,8 +18,9 @@ This library allows you to connect Arduino to WebSocket server
 ## Requirements
 
 * Development board (Confirmed working. Other boards may or may not work):
-  * Arduino Uno
-  * Arduino Mega
+  * Arduino Uno (ATmega328P)
+  * Arduino Mega2560
+  * Arduino Pro Mini (ATmega328P)
 * Ethernet module or shield (Confirmed working):
   * Arduino Ethernet Shield W5100
   * WizNet W5500 module
@@ -29,16 +30,25 @@ This library allows you to connect Arduino to WebSocket server
 
 ## Physical installation
 
-##### PIN Connections
+#### Ethernet shield W5100
 
-| W5500  | Arduino Uno | Arduino Mega |
+| Ethernet shield  | Arduino Uno | Arduino Mega | Arduino Pro Mini
+| :---: | :---: | :---: | :---: |
+| (ICSP) MISO  | (ICSP) MISO  | (ICSP) MISO | PIN 12 |
+| (ICSP) MOSI  | (ICSP) MOSI  | (ICSP) MOSI | PIN 11 |
+| (ICSP) SCK  | (ICSP) SCK  | (ICSP) SCK  | PIN 13 |
+| (SS) PIN 10  | PIN 10  | PIN 53 | PIN 10 |
+
+##### ... Or just attach the shield if you can
+
+#### W5500 module
+
+| W5500  | Arduino Uno / Arduino Pro Mini | Arduino Mega |
 | :---: | :---: | :---: | 
 | MISO  | PIN 12  | PIN 50 |
 | MOSI  | PIN 11  | PIN 51 |
 | SCS  | PIN 10  | PIN 53  |
 | SCLK  | PIN 13  | PIN 52 |
-
-##### ... Or just attach shield if you have any.
 
 ## Usage example
 
@@ -46,12 +56,12 @@ This library allows you to connect Arduino to WebSocket server
 
 ```js
 const WebSocket = require('ws');
-const wss = new WebSocket.Server({ host: '0.0.0.0', port: 3000 });
+const wss = new WebSocket.Server({ host: 'ip', port: 3000 });
 
 wss.on('connection', function connection(ws, req) {
   // set callbacks here ...
   
-  ws.send('hello from node.js');
+  ws.send('Hello from Node.js!');
 });
 ```
 
@@ -82,7 +92,7 @@ void setup() {
   client.setOnCloseCallback(onClose);
   client.setOnMessageCallback(onMessage);
   
-  client.open("0.0.0.0", 3000)
+  client.open("ip", 3000);
 }
 
 void loop() {
@@ -100,6 +110,7 @@ void loop() {
 | :---: | :---: | :---: | 
 | Arduino Uno  | 20826 bytes (64%)  | 888 bytes (43%) |
 | Arduino Mega2560  | 21018 bytes (8%) | 888 bytes (9%) |
+| Arduino Pro Mini | 20456 bytes (68%) | 890 bytes (43%) |
 
 ### Ethernet2.h (W5500)
 
@@ -107,6 +118,7 @@ void loop() {
 | :---: | :---: | :---: | 
 | Arduino Uno  | 20456 bytes (63%)  | 783 bytes (38%) |
 | Arduino Mega2560  | 20766 bytes (8%) | 783 bytes (9%) |
+| Arduino Pro Mini | 20456 bytes (66%) | 783 bytes (38%) |
 
 ## Ethernet "2" library modification
 
