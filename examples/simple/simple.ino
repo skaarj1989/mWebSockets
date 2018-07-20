@@ -5,7 +5,7 @@ byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 WebSocketClient client;
 
 void onOpen(WebSocketClient &ws) {
-  char message[] = "hello from arduino";
+  char message[] = "Hello from Arduino!";
   ws.send(message, strlen(message)/*, true*/);
 }
 
@@ -35,7 +35,7 @@ void setup() {
   client.setOnCloseCallback(onClose);
   client.setOnMessageCallback(onMessage);
 
-	//client.open("echo.websocket.org");
+  //client.open("echo.websocket.org");
   if (!client.open("192.168.46.10", 3000)) {
     Serial.println(F("Connection failed!"));
     for ( ; ; ) ;
