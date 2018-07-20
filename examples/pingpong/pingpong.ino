@@ -14,19 +14,19 @@ void onClose(WebSocketClient &ws) {
 }
 
 void onMessage(WebSocketClient &ws, const char *message, byte length) {
-	Serial.print(F("Received: ")); Serial.println(message);
+  Serial.print(F("Received: ")); Serial.println(message);
 }
 
 void setup() {
   Serial.begin(57600);
-	Serial.print(F("Initializing ... "));
+  Serial.print(F("Initializing ... "));
 	
   if (Ethernet.begin(mac) == 0) {
     Serial.println(F("can't open ethernet device"));
     for ( ; ; ) ;
   }
 	
-	Serial.println(F("ok"));
+  Serial.println(F("ok"));
 
   Serial.print(F("Client IP: "));
   Serial.println(Ethernet.localIP());
