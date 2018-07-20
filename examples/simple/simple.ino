@@ -26,7 +26,7 @@ void setup() {
     for ( ; ; ) ;
   }
 	
-	Serial.println(F("ok"));
+  Serial.println(F("ok"));
 
   Serial.print(F("Client IP: "));
   Serial.println(Ethernet.localIP());
