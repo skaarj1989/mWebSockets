@@ -19,7 +19,7 @@ void onMessage(WebSocketClient &ws, const char *message, byte length) {
 
 void setup() {
   Serial.begin(57600);
-	Serial.print(F("Initializing ... "));
+  Serial.print(F("Initializing ... "));
 	
   if (Ethernet.begin(mac) == 0) {
     Serial.println(F("can't open ethernet device"));
