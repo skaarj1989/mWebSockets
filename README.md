@@ -35,11 +35,7 @@ This library allows you to connect Arduino to WebSocket server
 
 ## Installation
 
-Install this library and CryptoLegacy in Arduino libraries directory, which is (for Windows):
-
-```
-/Documents/Arduino/libraries
-```
+Install this library and CryptoLegacy in Arduino libraries directory, follow [this](https://www.arduino.cc/en/Guide/Libraries) guide if you don't know how to do it.
 
 ### config.h
 
@@ -193,7 +189,7 @@ Following screenshots shows Rasperry Pi server and clients (browser and Arduino)
 
 ## Known issues
 
-Currently UIPEthernet library causes some problems with ENC28j60 on Arduino Mega2560:
+Currently **UIPEthernet** library causes some problems with **ENC28j60** on Arduino **Mega2560**:
 Client can't connect to server but after reset everything is ok (every second reset, which is weird and I don't know reason of this behavior).
 
 Nonetheless on Arduino Uno everything works fine.
