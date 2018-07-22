@@ -5,9 +5,9 @@ This library allows you to connect Arduino to WebSocket server
 ## Table of contents
 
 - [Requirements](#requirements)
-- [Setup](#setup)
-  * [Physical installation](#physical-installation)
+- [Installation](#installation)
   * [Config](#config)
+  * [Physical connection](#physical-connection)
 - [Usage example](#usage-example)
   * [Server (Node.js)](#server)
   * [Client (Arduino)](#client)
@@ -29,9 +29,28 @@ This library allows you to connect Arduino to WebSocket server
 
 *Additionally if you are using W5500 module you will also need [Ethernet "2"](https://github.com/adafruit/Ethernet2) library*
 
-## Setup
+## Installation
 
-### Physical installation
+Install this library and CryptoLegacy in Arduino libraries directory, which is (for Windows):
+/Documents/Arduino/libraries
+
+### Config
+
+Change below definition if needed
+
+```cpp
+#define ETHERNET_CONTROLLER   W5100
+```
+
+Uncomment these if you want additional informations in serial monitor
+
+```
+//#define _DEBUG
+//#define _DUMP_HANDSHAKE
+//#define _DUMP_FRAME
+```
+
+### Physical connection
 
 #### Ethernet shield W5100
 
@@ -52,22 +71,6 @@ This library allows you to connect Arduino to WebSocket server
 | MOSI  | PIN 11  | PIN 51 |
 | SCS  | PIN 10  | PIN 53  |
 | SCLK  | PIN 13  | PIN 52 |
-
-### Config
-
-Change below definition if needed
-
-```cpp
-#define ETHERNET_CONTROLLER   W5100
-```
-
-Uncomment these if you want additional informations in serial monitor
-
-```
-//#define _DEBUG
-//#define _DUMP_HANDSHAKE
-//#define _DUMP_FRAME
-```
 
 ## Usage example
 
