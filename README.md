@@ -33,7 +33,10 @@ This library allows you to connect Arduino to WebSocket server
 ## Installation
 
 Install this library and CryptoLegacy in Arduino libraries directory, which is (for Windows):
+
+```
 /Documents/Arduino/libraries
+```
 
 ### Config
 
@@ -129,15 +132,21 @@ Following screenshots shows Rasperry Pi server and clients (browser and Arduino)
 
 ##### Node.js server on Raspberry Pi (/node.js/chat.js)
 
-![](images/rpi-nodejs.png)
+<p align="center">
+   <img src=https://github.com/skaarj1989/ArduinoWebSocketClient/blob/master/images/rpi-nodejs.png?raw=true">
+</p>
 
 ##### Browser client (/node.js/chat-client.htm)
 
-![](images/browser-client.PNG)
+<p align="center">
+   <img src=https://github.com/skaarj1989/ArduinoWebSocketClient/blob/master/images/browser-client.PNG?raw=true">
+</p>
 
 ##### Arduino Uno client (/examples/chat/chat.ino)
 
-![](images/arduino-serial-monitor.png)
+<p align="center">
+   <img src=https://github.com/skaarj1989/ArduinoWebSocketClient/blob/master/images/arduino-serial-monitor.png?raw=true">
+</p>
 
 ##### More examples [here](examples)
 
