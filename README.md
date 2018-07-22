@@ -5,13 +5,14 @@ This library allows you to connect Arduino to WebSocket server
 ## Table of contents
 
 - [Requirements](#requirements)
-- [Physical installation](#physical-installation)
+- [Setup](#setup)
+  * [Physical installation](#physical-installation)
+  * [Config](#config)
 - [Usage example](#usage-example)
   * [Server (Node.js)](#server)
   * [Client (Arduino)](#client)
-- [Memory usage](#memory-usage)
+- [Approx memory usage](#approx-memory-usage)
 - [Ethernet "2" library modification](#ethernet-2-library-modification)
-  * [Add getRemoteIP() function](#add-getremoteip-function)
   * [Fix for Arduino Mega](#fix-for-arduino-mega)
 - [License](#license)
 
@@ -28,7 +29,9 @@ This library allows you to connect Arduino to WebSocket server
 
 *Additionally if you are using W5500 module you will also need [Ethernet "2"](https://github.com/adafruit/Ethernet2) library*
 
-## Physical installation
+## Setup
+
+### Physical installation
 
 #### Ethernet shield W5100
 
@@ -49,6 +52,22 @@ This library allows you to connect Arduino to WebSocket server
 | MOSI  | PIN 11  | PIN 51 |
 | SCS  | PIN 10  | PIN 53  |
 | SCLK  | PIN 13  | PIN 52 |
+
+### Config
+
+Change below definition if needed
+
+```cpp
+#define ETHERNET_CONTROLLER   W5100
+```
+
+Uncomment these if you want additional informations in serial monitor
+
+```
+//#define _DEBUG
+//#define _DUMP_HANDSHAKE
+//#define _DUMP_FRAME
+```
 
 ## Usage example
 
@@ -79,9 +98,9 @@ void onOpen(WebSocketClient &ws) {
   ws.send(message, strlen(message));
 }
 
-void onClose(WebSocketClient &ws) { /* ... */ }
+void onClose(WebSocketClient &ws, eWebSocketCloseEvent code, const char *reason, uint16_t length) { /* ... */ }
 
-void onMessage(WebSocketClient &ws, const char *message, byte length) { /* */ }
+void onMessage(WebSocketClient &ws, const char *message, uint16_t length) { /* */ }
 
 void setup() {
   // Ethernet initialization goes here ...
@@ -92,7 +111,7 @@ void setup() {
   client.setOnCloseCallback(onClose);
   client.setOnMessageCallback(onMessage);
   
-  client.open("ip", 3000);
+  client.open("host", 3000);
 }
 
 void loop() {
@@ -102,48 +121,27 @@ void loop() {
 
 ##### More examples [here](examples)
 
-## Memory Usage
+## Approx memory usage
+
+###### *simple.ino example
 
 ### Ethernet.h (W5100)
 
 | Board  | Program space | Dynamic memory |
 | :---: | :---: | :---: | 
-| Arduino Uno  | 20826 bytes (64%)  | 888 bytes (43%) |
-| Arduino Mega2560  | 21018 bytes (8%) | 888 bytes (9%) |
-| Arduino Pro Mini | 20456 bytes (68%) | 890 bytes (43%) |
+| Arduino Uno  | 21500 bytes (64%)  | 886 bytes (43%) |
+| Arduino Mega2560  | 21754 bytes (8%) | 886 bytes (10%) |
+| Arduino Pro Mini | 21500 bytes (69%) | 886 bytes (43%) |
 
 ### Ethernet2.h (W5500)
 
 | Board  | Program space | Dynamic memory |
 | :---: | :---: | :---: | 
-| Arduino Uno  | 20456 bytes (63%)  | 783 bytes (38%) |
-| Arduino Mega2560  | 20766 bytes (8%) | 783 bytes (9%) |
-| Arduino Pro Mini | 20456 bytes (66%) | 783 bytes (38%) |
+| Arduino Uno  | 21104 bytes (65%)  | 779 bytes (38%) |
+| Arduino Mega2560  | 21258 bytes (8%) | 779 bytes (9%) |
+| Arduino Pro Mini | 21104 bytes (68%) | 779 bytes (38%) |
 
 ## Ethernet "2" library modification
-
-### Add getRemoteIP() function
-
-#### EthernetClient.h
-
-```cpp
-IPAddress getRemoteIP();
-```
-
-#### EthernetClient.cpp
-
-```cpp
-IPAddress EthernetClient::getRemoteIP() {
-  if (status() == SnSR::CLOSED) {
-    return INADDR_NONE;  
-  } 
-  else {
-    uint8_t addr[4];
-    w5500.readSnDIPR(_sock, (unsigned char *)&addr);
-    return IPAddress(addr);
-  }
-}
-```
 
 ### Fix for Arduino Mega
 
