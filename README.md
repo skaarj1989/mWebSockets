@@ -15,6 +15,7 @@ This library allows you to connect Arduino to WebSocket server
 - [Approx memory usage](#approx-memory-usage)
 - [Ethernet "2" library modification](#ethernet-2-library-modification)
   * [Fix for Arduino Mega](#fix-for-arduino-mega)
+- [Known issues](#known-issues)
 - [License](#license)
 
 ## Requirements
@@ -26,9 +27,11 @@ This library allows you to connect Arduino to WebSocket server
 * Ethernet module or shield (Confirmed working):
   * Arduino Ethernet Shield W5100
   * WizNet W5500 module
-* Library: CryptoLegacy from [arduinolibs](https://github.com/rweather/arduinolibs), you can grab it [here](CryptoLegacy.zip)
-
-*Additionally if you are using W5500 module you will also need [Ethernet "2"](https://github.com/adafruit/Ethernet2) library*
+  * ENC28j60 module
+* Libraries:
+  * CryptoLegacy from [arduinolibs](https://github.com/rweather/arduinolibs), you can grab it [here](CryptoLegacy.zip)
+  * [Ethernet "2"](https://github.com/adafruit/Ethernet2) for W5500
+  * [UIPEthernet](https://github.com/ntruchsess/arduino_uip) for ENC28j60
 
 ## Installation
 
@@ -56,20 +59,14 @@ Uncomment these if you want additional informations in serial monitor:
 
 ### Physical connection
 
-#### Ethernet shield W5100
-
-| Ethernet shield  | Arduino Uno / Mega2560 |  Arduino Pro Mini
+| W5100 Ethernet shield  | Arduino Uno / Mega2560 |  Arduino Pro Mini
 | :---: | :---: | :---: |
 | (ICSP) MISO  | (ICSP) MISO  | PIN 12 |
 | (ICSP) MOSI  | (ICSP) MOSI  | PIN 11 |
 | (ICSP) SCK  | (ICSP) SCK | PIN 13 |
 | (SS) PIN 10  | PIN 10 | PIN 10 |
 
-##### ... Or just attach the shield if you can
-
-#### W5500 module
-
-| W5500  | Arduino Uno / Pro Mini | Arduino Mega2560 |
+| W5500 / ENC28j60  | Arduino Uno / Pro Mini | Arduino Mega2560 |
 | :---: | :---: | :---: | 
 | MISO  | PIN 12  | PIN 50 |
 | MOSI  | PIN 11  | PIN 51 |
@@ -170,6 +167,14 @@ Following screenshots shows Rasperry Pi server and clients (browser and Arduino)
 | Arduino Mega2560  | 21258 bytes (8%) | 779 bytes (9%) |
 | Arduino Pro Mini | 21104 bytes (68%) | 779 bytes (38%) |
 
+### UIPEthernet.h (ENC28j60)
+
+| Board  | Program space | Dynamic memory |
+| :---: | :---: | :---: | 
+| Arduino Uno  | 29442 bytes (91%)  | 1574 bytes (76%) |
+| Arduino Mega2560  | 29658 bytes (11%) | 1574 bytes (19%) |
+| Arduino Pro Mini | 29442 bytes (95%) | 1574 bytes (76%) |
+
 ## Ethernet "2" library modification
 
 ### Fix for Arduino Mega
@@ -185,6 +190,13 @@ Following screenshots shows Rasperry Pi server and clients (browser and Arduino)
   void init(uint8_t _cspin = 53) { w5500_cspin = _cspin; }
 #endif
 ```
+
+## Known issues
+
+Currently UIPEthernet library causes some problems with ENC28j60 on Arduino Mega2560:
+Client can't connect to server but after reset everything is ok (every second reset, which is weird and I don't know reason of this behavior).
+
+Nonetheless on Arduino Uno everything works fine.
 
 ## License
 
