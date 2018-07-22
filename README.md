@@ -11,6 +11,7 @@ This library allows you to connect Arduino to WebSocket server
 - [Usage example](#usage-example)
   * [Server (Node.js)](#server)
   * [Client (Arduino)](#client)
+  * [Chat](#chat)
 - [Approx memory usage](#approx-memory-usage)
 - [Ethernet "2" library modification](#ethernet-2-library-modification)
   * [Fix for Arduino Mega](#fix-for-arduino-mega)
@@ -121,6 +122,22 @@ void loop() {
   client.listen();
 }
 ```
+
+### Chat
+
+Following screenshots shows Rasperry Pi server and clients (browser and Arduino) in action
+
+##### Node.js server on Raspberry Pi (/node.js/chat.js)
+
+![](images/rpi-nodejs.png)
+
+##### Browser client (/node.js/chat-client.htm)
+
+![](images/browser-client.PNG)
+
+##### Arduino Uno client (/examples/chat/chat.ino)
+
+![](images/arduino-serial-monitor.png)
 
 ##### More examples [here](examples)
 
