@@ -6,7 +6,7 @@ This library allows you to connect Arduino to WebSocket server
 
 - [Requirements](#requirements)
 - [Installation](#installation)
-  * [Config](#config)
+  * [config.h](#configh)
   * [Physical connection](#physical-connection)
 - [Usage example](#usage-example)
   * [Server (Node.js)](#server)
@@ -38,15 +38,15 @@ Install this library and CryptoLegacy in Arduino libraries directory, which is (
 /Documents/Arduino/libraries
 ```
 
-### Config
+### config.h
 
-Change below definition if needed
+Change below definition if needed:
 
 ```cpp
 #define ETHERNET_CONTROLLER   W5100
 ```
 
-Uncomment these if you want additional informations in serial monitor
+Uncomment these if you want additional informations in serial monitor:
 
 ```
 //#define _DEBUG
@@ -128,21 +128,21 @@ void loop() {
 
 ### Chat
 
-Following screenshots shows Rasperry Pi server and clients (browser and Arduino) in action
+Following screenshots shows Rasperry Pi server and clients (browser and Arduino) in action:
 
-##### Node.js server on Raspberry Pi (/node.js/chat.js)
+###### Node.js server on Raspberry Pi (/node.js/chat.js)
 
 <p align="center">
    <img src=https://github.com/skaarj1989/ArduinoWebSocketClient/blob/master/images/rpi-nodejs.png?raw=true">
 </p>
 
-##### Browser client (/node.js/chat-client.htm)
+###### Browser client (/node.js/chat-client.htm)
 
 <p align="center">
    <img src=https://github.com/skaarj1989/ArduinoWebSocketClient/blob/master/images/browser-client.PNG?raw=true">
 </p>
 
-##### Arduino Uno client (/examples/chat/chat.ino)
+###### Arduino Uno client (/examples/chat/chat.ino)
 
 <p align="center">
    <img src=https://github.com/skaarj1989/ArduinoWebSocketClient/blob/master/images/arduino-serial-monitor.png?raw=true">
