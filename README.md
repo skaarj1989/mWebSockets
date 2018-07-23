@@ -1,4 +1,4 @@
-# ArduinoWebSocketClient
+# ArduinoWebSocket
 
 This library allows you to connect Arduino to WebSocket server
 
