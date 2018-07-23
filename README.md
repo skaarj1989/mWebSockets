@@ -179,7 +179,7 @@ Following screenshots shows Rasperry Pi server and clients (browser and Arduino)
 
 ```cpp
 #if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__)
-  EthernetClass() { _dhcp = NULL; w5500_cspin = _10; }
+  EthernetClass() { _dhcp = NULL; w5500_cspin = 10; }
   void init(uint8_t _cspin) { w5500_cspin = _cspin; }
 #elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
   EthernetClass() { _dhcp = NULL; w5500_cspin = 53; }
