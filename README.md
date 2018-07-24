@@ -2,7 +2,7 @@
 
 Simple to use implementation of WebSocket client and server for Arduino
 
-Autobahn test suite results for [server](https://skaarj1989.github.io/ArduinoWebSocket/autobahn-testsuite/servers/index.html) ... some tests will never pass just because of memory lack in ATmega family.
+Autobahn test suite results for [server](https://skaarj1989.github.io/ArduinoWebSockets/autobahn-testsuite/servers/index.html) ... some tests will never pass just because of memory lack in ATmega family.
 
 ###### client tests in progress ...
 
@@ -24,7 +24,7 @@ Autobahn test suite results for [server](https://skaarj1989.github.io/ArduinoWeb
 
 ## Requirements
 
-* Development board (Confirmed working. Other boards may or may not work):
+* Development board (confirmed working, other boards may or may not work):
   * Arduino Uno (ATmega328P)
   * Arduino Mega2560
   * Arduino Pro Mini (ATmega328P)
@@ -43,7 +43,7 @@ Install this library and CryptoLegacy in Arduino libraries directory, follow [th
 
 ### config.h
 
-Change below definition if needed:
+Change below definition if you use a different controller:
 
 ```cpp
 #define ETHERNET_CONTROLLER   W5100
@@ -142,7 +142,7 @@ void loop() {
 
 ### Chat
 
-Following screenshots shows Rasperry Pi server and clients (browser and Arduino) in action:
+Following screenshots shows Rasperry Pi server, browser client and Arduino client in action:
 
 ###### Node.js server on Raspberry Pi (/node.js/chat.js)
 
