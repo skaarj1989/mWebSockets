@@ -97,9 +97,9 @@ void setup() {
   server.setOnMessageCallback(onMessage);
   server.begin();
   
-  client.setOnOpenCallback(onOpen);
-  client.setOnCloseCallback(onClose);
-  client.setOnMessageCallback(onMessage);
+  server.setOnOpenCallback(onOpen);
+  server.setOnCloseCallback(onClose);
+  server.setOnMessageCallback(onMessage);
 }
 
 void loop() {
