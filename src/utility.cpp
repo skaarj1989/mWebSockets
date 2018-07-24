@@ -1,5 +1,8 @@
-#include "config.h"
 #include "utility.h"
+
+#ifdef _DEBUG
+# include <SPI.h>
+#endif
 
 #include <Arduino.h>
 #include <SHA1.h>
@@ -33,6 +36,18 @@ void encodeSecKey(char output[], const char *key) {
 	base64_encode(output, buffer, 20);
 
 	sha1.clear();
+}
+
+
+bool isCloseCodeValid(const uint16_t code) {
+	return (
+    (code >= 1000 &&
+      code <= 1013 &&
+      code != 1004 &&
+      code != 1005 &&
+      code != 1006) ||
+    (code >= 3000 && code <= 4999)
+	);
 }
 
 void printf(const __FlashStringHelper *fmt, ... ){

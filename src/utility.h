@@ -1,10 +1,13 @@
 #ifndef __WEBSOCKETCLIENT_UTILITY_DOT_H_INCLUDED_
 #define __WEBSOCKETCLIENT_UTILITY_DOT_H_INCLUDED_
 
+#include "config.h"
 #include <Arduino.h>
 
 void generateSecKey(char output[]);
 void encodeSecKey(char output[], const char *key);
+
+bool isCloseCodeValid(const uint16_t code);
 
 void printf(const __FlashStringHelper *fmt, ...);
 
