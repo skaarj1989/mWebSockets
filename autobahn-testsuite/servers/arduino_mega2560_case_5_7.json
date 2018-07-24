@@ -1,0 +1,391 @@
+{
+   "agent": "Arduino Mega2560",
+   "behavior": "OK",
+   "behaviorClose": "OK",
+   "case": 51,
+   "closedByMe": true,
+   "createStats": true,
+   "createWirelog": true,
+   "description": "Send text Message fragmented into 2 fragments, one ping with payload in-between. Octets are sent in frame-wise chops.",
+   "droppedByMe": false,
+   "duration": 29,
+   "expectation": "A pong is received, then the message is echo'ed back to us.",
+   "expected": {
+      "OK": [
+         [
+            "pong",
+            "ping payload"
+         ],
+         [
+            "message",
+            "fragment1fragment2",
+            false
+         ]
+      ]
+   },
+   "expectedClose": {
+      "closeCode": [
+         1000
+      ],
+      "closedByMe": true,
+      "requireClean": true
+   },
+   "failedByMe": false,
+   "httpRequest": "GET / HTTP/1.1\r\nUser-Agent: AutobahnTestSuite/0.8.0-0.10.9\r\nHost: 192.168.46.179:3000\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nSec-WebSocket-Key: LnfDfavGQCyV1j3nEXFAbw==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: YnhH5fUGhfI2IXdiqaDXThd4qg8=\r\n\r\n",
+   "id": "5.7",
+   "isServer": false,
+   "localCloseCode": 1000,
+   "localCloseReason": null,
+   "received": [
+      [
+         "pong",
+         "ping payload"
+      ],
+      [
+         "message",
+         "fragment1fragment2",
+         false
+      ]
+   ],
+   "remoteCloseCode": 1000,
+   "remoteCloseReason": null,
+   "reportCompressionRatio": false,
+   "reportTime": false,
+   "result": "Actual events match at least one expected.",
+   "resultClose": "Connection was properly closed",
+   "rxFrameStats": {
+      "1": 1,
+      "8": 1,
+      "10": 1
+   },
+   "rxOctetStats": {
+      "1": 1,
+      "2": 8,
+      "3": 2,
+      "4": 4,
+      "5": 2,
+      "6": 2,
+      "14": 1,
+      "18": 2,
+      "56": 1
+   },
+   "started": "2018-07-24T14:57:42.202Z",
+   "trafficStats": null,
+   "txFrameStats": {
+      "0": 1,
+      "1": 1,
+      "8": 1,
+      "9": 1
+   },
+   "txOctetStats": {
+      "8": 1,
+      "15": 2,
+      "18": 1,
+      "245": 1
+   },
+   "wasClean": true,
+   "wasCloseHandshakeTimeout": false,
+   "wasNotCleanReason": null,
+   "wasOpenHandshakeTimeout": false,
+   "wasServerConnectionDropTimeout": false,
+   "wirelog": [
+      [
+         "TO",
+         [
+            245,
+            "474554202f20485454502f312e310d0a557365722d4167656e743a204175746f6261686e5465737453756974652f302e382e302d302e31302e390d0a486f7374 ..."
+         ],
+         false
+      ],
+      [
+         "RO",
+         [
+            4,
+            "48545450"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "2f31"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "2e31"
+         ]
+      ],
+      [
+         "RO",
+         [
+            6,
+            "203130312053"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "77697463"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "6869"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "6e67205072"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "6f746f63"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "6f6c73"
+         ]
+      ],
+      [
+         "RO",
+         [
+            6,
+            "0d0a55706772"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "6164"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "653a207765"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "6273"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "6f"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "636b6574"
+         ]
+      ],
+      [
+         "RO",
+         [
+            18,
+            "0d0a436f6e6e656374696f6e3a2055706772"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "616465"
+         ]
+      ],
+      [
+         "RO",
+         [
+            56,
+            "0d0a5365632d576562536f636b65742d4163636570743a20596e684835665547686649324958646971614458546864347167383d0d0a0d0a"
+         ]
+      ],
+      [
+         "TF",
+         [
+            9,
+            "fragment1"
+         ],
+         1,
+         false,
+         0,
+         "003c8953",
+         null,
+         null,
+         true
+      ],
+      [
+         "TO",
+         [
+            15,
+            "0189003c8953664ee8346d59e72731"
+         ],
+         true
+      ],
+      [
+         "TF",
+         [
+            12,
+            "ping payload"
+         ],
+         9,
+         true,
+         0,
+         "d556e08b",
+         null,
+         null,
+         true
+      ],
+      [
+         "TF",
+         [
+            9,
+            "fragment2"
+         ],
+         0,
+         true,
+         0,
+         "1686d7db",
+         null,
+         null,
+         true
+      ],
+      [
+         "TI",
+         1
+      ],
+      [
+         "TO",
+         [
+            18,
+            "898cd556e08ba53f8eecf52681f2b93981ef"
+         ],
+         true
+      ],
+      [
+         "TO",
+         [
+            15,
+            "80891686d7db70f4b6bc7be3b9af24"
+         ],
+         true
+      ],
+      [
+         "RO",
+         [
+            14,
+            "8a0c70696e67207061796c6f6164"
+         ]
+      ],
+      [
+         "RF",
+         [
+            12,
+            "ping payload"
+         ],
+         10,
+         true,
+         0,
+         false,
+         null
+      ],
+      [
+         "RO",
+         [
+            2,
+            "8112"
+         ]
+      ],
+      [
+         "RO",
+         [
+            18,
+            "667261676d656e7431667261676d656e7432"
+         ]
+      ],
+      [
+         "RF",
+         [
+            18,
+            "fragment1fragment2"
+         ],
+         1,
+         true,
+         0,
+         false,
+         null
+      ],
+      [
+         "TF",
+         [
+            2,
+            "0x03e8"
+         ],
+         8,
+         true,
+         0,
+         "7e2ed642",
+         null,
+         null,
+         false
+      ],
+      [
+         "TO",
+         [
+            8,
+            "88827e2ed6427dc6"
+         ],
+         false
+      ],
+      [
+         "RO",
+         [
+            2,
+            "8802"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "03e8"
+         ]
+      ],
+      [
+         "RF",
+         [
+            2,
+            "0x03e8"
+         ],
+         8,
+         true,
+         0,
+         false,
+         null
+      ]
+   ]
+}

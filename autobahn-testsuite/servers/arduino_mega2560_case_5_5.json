@@ -1,0 +1,354 @@
+{
+   "agent": "Arduino Mega2560",
+   "behavior": "FAILED",
+   "behaviorClose": "FAILED",
+   "case": 49,
+   "closedByMe": false,
+   "createStats": true,
+   "createWirelog": true,
+   "description": "Send text Message fragmented into 2 fragments, octets are sent in octet-wise chops.",
+   "droppedByMe": false,
+   "duration": 17,
+   "expectation": "Message is processed and echo'ed back to us.",
+   "expected": {
+      "OK": [
+         [
+            "message",
+            "fragment1fragment2",
+            false
+         ]
+      ]
+   },
+   "expectedClose": {
+      "closeCode": [
+         1000
+      ],
+      "closedByMe": true,
+      "requireClean": true
+   },
+   "failedByMe": false,
+   "httpRequest": "GET / HTTP/1.1\r\nUser-Agent: AutobahnTestSuite/0.8.0-0.10.9\r\nHost: 192.168.46.179:3000\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nSec-WebSocket-Key: dC7xf0XVUbz7lIyVLWOSEg==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: j9yqsX8exHupWgZLcrjZ0kQoqhg=\r\n\r\n",
+   "id": "5.5",
+   "isServer": false,
+   "localCloseCode": 1000,
+   "localCloseReason": null,
+   "received": [],
+   "remoteCloseCode": 1002,
+   "remoteCloseReason": null,
+   "reportCompressionRatio": false,
+   "reportTime": false,
+   "result": "Actual events differ from any expected.",
+   "resultClose": "The connection was failed by the wrong endpoint",
+   "rxFrameStats": {
+      "8": 1
+   },
+   "rxOctetStats": {
+      "1": 3,
+      "2": 3,
+      "3": 2,
+      "4": 5,
+      "5": 2,
+      "6": 1,
+      "13": 1,
+      "15": 1,
+      "54": 1
+   },
+   "started": "2018-07-24T14:57:41.939Z",
+   "trafficStats": null,
+   "txFrameStats": {
+      "0": 1,
+      "1": 1,
+      "8": 1
+   },
+   "txOctetStats": {
+      "1": 10,
+      "245": 1
+   },
+   "wasClean": true,
+   "wasCloseHandshakeTimeout": false,
+   "wasNotCleanReason": null,
+   "wasOpenHandshakeTimeout": false,
+   "wasServerConnectionDropTimeout": false,
+   "wirelog": [
+      [
+         "TO",
+         [
+            245,
+            "474554202f20485454502f312e310d0a557365722d4167656e743a204175746f6261686e5465737453756974652f302e382e302d302e31302e390d0a486f7374 ..."
+         ],
+         false
+      ],
+      [
+         "RO",
+         [
+            2,
+            "4854"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "54502f31"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "2e312031"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "30312053"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "7769"
+         ]
+      ],
+      [
+         "RO",
+         [
+            6,
+            "746368696e67"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "20"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "50"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "72"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "6f746f63"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "6f6c73"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "0d0a557067"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "726164"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "653a207765"
+         ]
+      ],
+      [
+         "RO",
+         [
+            15,
+            "62736f636b65740d0a436f6e6e6563"
+         ]
+      ],
+      [
+         "RO",
+         [
+            13,
+            "74696f6e3a2055706772616465"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "0d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            54,
+            "5365632d576562536f636b65742d4163636570743a206a397971735838657848757057675a4c63726a5a306b516f7168673d0d0a0d0a"
+         ]
+      ],
+      [
+         "TF",
+         [
+            9,
+            "fragment1"
+         ],
+         1,
+         false,
+         0,
+         "7b7bec69",
+         null,
+         1,
+         false
+      ],
+      [
+         "TO",
+         [
+            1,
+            "01"
+         ],
+         true
+      ],
+      [
+         "TF",
+         [
+            9,
+            "fragment2"
+         ],
+         0,
+         true,
+         0,
+         "1650ff0c",
+         null,
+         1,
+         false
+      ],
+      [
+         "TI",
+         1
+      ],
+      [
+         "TO",
+         [
+            1,
+            "89"
+         ],
+         true
+      ],
+      [
+         "TO",
+         [
+            1,
+            "7b"
+         ],
+         true
+      ],
+      [
+         "TO",
+         [
+            1,
+            "7b"
+         ],
+         true
+      ],
+      [
+         "TO",
+         [
+            1,
+            "ec"
+         ],
+         true
+      ],
+      [
+         "TO",
+         [
+            1,
+            "69"
+         ],
+         true
+      ],
+      [
+         "TO",
+         [
+            1,
+            "1d"
+         ],
+         true
+      ],
+      [
+         "TO",
+         [
+            1,
+            "09"
+         ],
+         true
+      ],
+      [
+         "TO",
+         [
+            1,
+            "8d"
+         ],
+         true
+      ],
+      [
+         "RO",
+         [
+            4,
+            "880203ea"
+         ]
+      ],
+      [
+         "RF",
+         [
+            2,
+            "0x03ea"
+         ],
+         8,
+         true,
+         0,
+         false,
+         null
+      ],
+      [
+         "TF",
+         [
+            2,
+            "0x03e8"
+         ],
+         8,
+         true,
+         0,
+         "81927874",
+         null,
+         null,
+         false
+      ],
+      [
+         "TO",
+         [
+            1,
+            "0e"
+         ],
+         true
+      ]
+   ]
+}
