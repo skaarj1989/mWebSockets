@@ -12,9 +12,9 @@ Autobahn test suite results for [server](https://skaarj1989.github.io/ArduinoWeb
 - [Installation](#installation)
   * [config.h](#configh)
   * [Physical connection](#physical-connection)
-- [Usage example](#usage-example)
-  * [Server (Node.js)](#server)
-  * [Client (Arduino)](#client)
+- [Usage examples](#usage-examples)
+  * [Server](#server)
+  * [Client](#client)
   * [Chat](#chat)
 - [Approx memory usage](#approx-memory-usage)
 - [Ethernet "2" library modification](#ethernet-2-library-modification)
@@ -73,7 +73,7 @@ Uncomment these if you want additional informations in serial monitor:
 | SCS  | PIN 10  | PIN 53  |
 | SCLK  | PIN 13  | PIN 52 |
 
-## Usage example
+## Usage examples
 
 ### Server
 
