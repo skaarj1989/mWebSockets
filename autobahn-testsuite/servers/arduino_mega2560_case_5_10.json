@@ -1,0 +1,285 @@
+{
+   "agent": "Arduino Mega2560",
+   "behavior": "OK",
+   "behaviorClose": "OK",
+   "case": 54,
+   "closedByMe": false,
+   "createStats": true,
+   "createWirelog": true,
+   "description": "Send unfragmented Text Message after Continuation Frame with FIN = true, where there is nothing to continue, sent in per-frame chops.",
+   "droppedByMe": false,
+   "duration": 45,
+   "expectation": "The connection is failed immediately, since there is no message to continue.",
+   "expected": {
+      "OK": []
+   },
+   "expectedClose": {
+      "closeCode": [
+         1002
+      ],
+      "closedByMe": false,
+      "requireClean": false
+   },
+   "failedByMe": false,
+   "httpRequest": "GET / HTTP/1.1\r\nUser-Agent: AutobahnTestSuite/0.8.0-0.10.9\r\nHost: 192.168.46.179:3000\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nSec-WebSocket-Key: uPknXJvLBX9C7J+Kdy4ncQ==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: DlriRlXUd2SgL5m9+0wSfA4HYkE=\r\n\r\n",
+   "id": "5.10",
+   "isServer": false,
+   "localCloseCode": 1000,
+   "localCloseReason": null,
+   "received": [],
+   "remoteCloseCode": 1002,
+   "remoteCloseReason": null,
+   "reportCompressionRatio": false,
+   "reportTime": false,
+   "result": "Actual events match at least one expected.",
+   "resultClose": "Connection was properly closed",
+   "rxFrameStats": {
+      "8": 1
+   },
+   "rxOctetStats": {
+      "1": 3,
+      "2": 4,
+      "3": 4,
+      "4": 3,
+      "5": 2,
+      "20": 1,
+      "68": 1
+   },
+   "started": "2018-07-24T14:57:42.597Z",
+   "trafficStats": null,
+   "txFrameStats": {
+      "0": 1,
+      "1": 1,
+      "8": 1
+   },
+   "txOctetStats": {
+      "8": 1,
+      "19": 1,
+      "30": 1,
+      "245": 1
+   },
+   "wasClean": true,
+   "wasCloseHandshakeTimeout": false,
+   "wasNotCleanReason": null,
+   "wasOpenHandshakeTimeout": false,
+   "wasServerConnectionDropTimeout": false,
+   "wirelog": [
+      [
+         "TO",
+         [
+            245,
+            "474554202f20485454502f312e310d0a557365722d4167656e743a204175746f6261686e5465737453756974652f302e382e302d302e31302e390d0a486f7374 ..."
+         ],
+         false
+      ],
+      [
+         "RO",
+         [
+            4,
+            "48545450"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "2f31"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "2e312031"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "303120"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "537769"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "746368696e"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "6720"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "50"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "726f746f63"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "6f6c73"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "0d0a5570"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "677261"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "64"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "65"
+         ]
+      ],
+      [
+         "RO",
+         [
+            20,
+            "3a20776562736f636b65740d0a436f6e6e656374"
+         ]
+      ],
+      [
+         "RO",
+         [
+            68,
+            "696f6e3a20557067726164650d0a5365632d576562536f636b65742d4163636570743a20446c7269526c5855643253674c356d392b30775366413448596b453d ..."
+         ]
+      ],
+      [
+         "TF",
+         [
+            24,
+            "non-continuation payload"
+         ],
+         0,
+         true,
+         0,
+         "75c6bedb",
+         null,
+         null,
+         true
+      ],
+      [
+         "TO",
+         [
+            30,
+            "809875c6bedb1ba9d0f616a9d0af1ca8cbba01afd1b555b6dfa219a9dfbf"
+         ],
+         true
+      ],
+      [
+         "TF",
+         [
+            13,
+            "Hello, world!"
+         ],
+         1,
+         true,
+         0,
+         "b836a2b3",
+         null,
+         null,
+         true
+      ],
+      [
+         "KL",
+         1
+      ],
+      [
+         "TO",
+         [
+            19,
+            "818db836a2b3f053cedfd71a82c4d744ced799"
+         ],
+         true
+      ],
+      [
+         "RO",
+         [
+            2,
+            "8802"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "03ea"
+         ]
+      ],
+      [
+         "RF",
+         [
+            2,
+            "0x03ea"
+         ],
+         8,
+         true,
+         0,
+         false,
+         null
+      ],
+      [
+         "TF",
+         [
+            2,
+            "0x03e8"
+         ],
+         8,
+         true,
+         0,
+         "409fa56d",
+         null,
+         null,
+         false
+      ],
+      [
+         "TO",
+         [
+            8,
+            "8882409fa56d4377"
+         ],
+         false
+      ]
+   ]
+}

@@ -1,0 +1,350 @@
+{
+   "agent": "Arduino Mega2560",
+   "behavior": "OK",
+   "behaviorClose": "OK",
+   "case": 42,
+   "closedByMe": false,
+   "createStats": true,
+   "createWirelog": true,
+   "description": "Send small text message, then send frame with reserved control <b>Opcode = 13</b>, then send Ping.",
+   "droppedByMe": false,
+   "duration": 23,
+   "expectation": "Echo for first message is received, but then connection is failed immediately, since reserved opcode frame is used. A Pong is not received.",
+   "expected": {
+      "NON-STRICT": [],
+      "OK": [
+         [
+            "message",
+            "Hello, world!",
+            false
+         ]
+      ]
+   },
+   "expectedClose": {
+      "closeCode": [
+         1002
+      ],
+      "closedByMe": false,
+      "requireClean": false
+   },
+   "failedByMe": false,
+   "httpRequest": "GET / HTTP/1.1\r\nUser-Agent: AutobahnTestSuite/0.8.0-0.10.9\r\nHost: 192.168.46.179:3000\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nSec-WebSocket-Key: +8VhTfQcPDSqc4umtSmGrQ==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: SNZAQEX1R/sAZbpqUeXoBQ6AIXg=\r\n\r\n",
+   "id": "4.2.3",
+   "isServer": false,
+   "localCloseCode": 1000,
+   "localCloseReason": null,
+   "received": [
+      [
+         "message",
+         "Hello, world!",
+         false
+      ]
+   ],
+   "remoteCloseCode": 1002,
+   "remoteCloseReason": null,
+   "reportCompressionRatio": false,
+   "reportTime": false,
+   "result": "Actual events match at least one expected.",
+   "resultClose": "Connection was properly closed",
+   "rxFrameStats": {
+      "1": 1,
+      "8": 1
+   },
+   "rxOctetStats": {
+      "1": 2,
+      "2": 3,
+      "3": 3,
+      "4": 5,
+      "5": 3,
+      "6": 1,
+      "10": 1,
+      "15": 1,
+      "65": 1
+   },
+   "started": "2018-07-24T14:57:41.127Z",
+   "trafficStats": null,
+   "txFrameStats": {
+      "1": 1,
+      "8": 1,
+      "9": 1,
+      "13": 1
+   },
+   "txOctetStats": {
+      "6": 2,
+      "8": 1,
+      "19": 1,
+      "245": 1
+   },
+   "wasClean": true,
+   "wasCloseHandshakeTimeout": false,
+   "wasNotCleanReason": null,
+   "wasOpenHandshakeTimeout": false,
+   "wasServerConnectionDropTimeout": false,
+   "wirelog": [
+      [
+         "TO",
+         [
+            245,
+            "474554202f20485454502f312e310d0a557365722d4167656e743a204175746f6261686e5465737453756974652f302e382e302d302e31302e390d0a486f7374 ..."
+         ],
+         false
+      ],
+      [
+         "RO",
+         [
+            4,
+            "48545450"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "2f312e"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "31203130"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "31205377"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "6974636869"
+         ]
+      ],
+      [
+         "RO",
+         [
+            10,
+            "6e672050726f746f636f"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "6c"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "730d0a5570"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "6772"
+         ]
+      ],
+      [
+         "RO",
+         [
+            6,
+            "6164653a2077"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "65"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "6273"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "6f636b"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "65740d0a43"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "6f6e6e65"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "637469"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "6f6e"
+         ]
+      ],
+      [
+         "RO",
+         [
+            65,
+            "3a20557067726164650d0a5365632d576562536f636b65742d4163636570743a20534e5a4151455831522f73415a6270715565586f425136414958673d0d0a0d ..."
+         ]
+      ],
+      [
+         "TF",
+         [
+            13,
+            "Hello, world!"
+         ],
+         1,
+         true,
+         0,
+         "1f0214cf",
+         null,
+         null,
+         false
+      ],
+      [
+         "TO",
+         [
+            19,
+            "818d1f0214cf576778a3702e34b8707078ab3e"
+         ],
+         false
+      ],
+      [
+         "TF",
+         [
+            0,
+            ""
+         ],
+         13,
+         true,
+         0,
+         "f4451e3f",
+         null,
+         null,
+         false
+      ],
+      [
+         "TO",
+         [
+            6,
+            "8d80f4451e3f"
+         ],
+         false
+      ],
+      [
+         "TF",
+         [
+            0,
+            ""
+         ],
+         9,
+         true,
+         0,
+         "c45da36d",
+         null,
+         null,
+         false
+      ],
+      [
+         "TO",
+         [
+            6,
+            "8980c45da36d"
+         ],
+         false
+      ],
+      [
+         "KL",
+         1
+      ],
+      [
+         "RO",
+         [
+            15,
+            "810d48656c6c6f2c20776f726c6421"
+         ]
+      ],
+      [
+         "RF",
+         [
+            13,
+            "Hello, world!"
+         ],
+         1,
+         true,
+         0,
+         false,
+         null
+      ],
+      [
+         "RO",
+         [
+            4,
+            "880203ea"
+         ]
+      ],
+      [
+         "RF",
+         [
+            2,
+            "0x03ea"
+         ],
+         8,
+         true,
+         0,
+         false,
+         null
+      ],
+      [
+         "TF",
+         [
+            2,
+            "0x03e8"
+         ],
+         8,
+         true,
+         0,
+         "fe631761",
+         null,
+         null,
+         false
+      ],
+      [
+         "TO",
+         [
+            8,
+            "8882fe631761fd8b"
+         ],
+         false
+      ]
+   ]
+}

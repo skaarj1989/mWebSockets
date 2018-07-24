@@ -1,0 +1,283 @@
+{
+   "agent": "Arduino Mega2560",
+   "behavior": "OK",
+   "behaviorClose": "OK",
+   "case": 21,
+   "closedByMe": false,
+   "createStats": true,
+   "createWirelog": true,
+   "description": "Send ping with binary payload of 126 octets.",
+   "droppedByMe": false,
+   "duration": 40,
+   "expectation": "Connection is failed immediately (1002/Protocol Error), since control frames are only allowed to have payload up to and including 125 octets..",
+   "expected": {
+      "OK": []
+   },
+   "expectedClose": {
+      "closeCode": [
+         1002
+      ],
+      "closedByMe": false,
+      "requireClean": false
+   },
+   "failedByMe": false,
+   "httpRequest": "GET / HTTP/1.1\r\nUser-Agent: AutobahnTestSuite/0.8.0-0.10.9\r\nHost: 192.168.46.179:3000\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nSec-WebSocket-Key: uwyw3ean25Z31JUCx8YbTQ==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: ShwCLxaHp/5Q4glIndJZoA6LsKE=\r\n\r\n",
+   "id": "2.5",
+   "isServer": false,
+   "localCloseCode": 1000,
+   "localCloseReason": null,
+   "received": [],
+   "remoteCloseCode": 1002,
+   "remoteCloseReason": null,
+   "reportCompressionRatio": false,
+   "reportTime": false,
+   "result": "Actual events match at least one expected.",
+   "resultClose": "Connection was properly closed",
+   "rxFrameStats": {
+      "8": 1
+   },
+   "rxOctetStats": {
+      "1": 2,
+      "2": 3,
+      "3": 4,
+      "4": 5,
+      "5": 3,
+      "6": 2,
+      "8": 1,
+      "58": 1
+   },
+   "started": "2018-07-24T14:57:38.749Z",
+   "trafficStats": null,
+   "txFrameStats": {
+      "8": 1,
+      "9": 1
+   },
+   "txOctetStats": {
+      "8": 1,
+      "134": 1,
+      "245": 1
+   },
+   "wasClean": true,
+   "wasCloseHandshakeTimeout": false,
+   "wasNotCleanReason": null,
+   "wasOpenHandshakeTimeout": false,
+   "wasServerConnectionDropTimeout": false,
+   "wirelog": [
+      [
+         "TO",
+         [
+            245,
+            "474554202f20485454502f312e310d0a557365722d4167656e743a204175746f6261686e5465737453756974652f302e382e302d302e31302e390d0a486f7374 ..."
+         ],
+         false
+      ],
+      [
+         "RO",
+         [
+            4,
+            "48545450"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "2f"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "312e31"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "2031303120"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "5377"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "697463"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "6869"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "6e6720"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "50726f746f"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "636f6c73"
+         ]
+      ],
+      [
+         "RO",
+         [
+            6,
+            "0d0a55706772"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "61"
+         ]
+      ],
+      [
+         "RO",
+         [
+            6,
+            "64653a207765"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "6273"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "6f636b"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "65740d0a43"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "6f6e6e65"
+         ]
+      ],
+      [
+         "RO",
+         [
+            8,
+            "6374696f6e3a2055"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "70677261"
+         ]
+      ],
+      [
+         "RO",
+         [
+            58,
+            "64650d0a5365632d576562536f636b65742d4163636570743a20536877434c786148702f355134676c496e644a5a6f41364c734b453d0d0a0d0a"
+         ]
+      ],
+      [
+         "TF",
+         [
+            126,
+            "0xfefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefe ..."
+         ],
+         9,
+         true,
+         0,
+         "1788c724",
+         null,
+         null,
+         false
+      ],
+      [
+         "TO",
+         [
+            134,
+            "89fe007e1788c724e97639dae97639dae97639dae97639dae97639dae97639dae97639dae97639dae97639dae97639dae97639dae97639dae97639dae97639da ..."
+         ],
+         false
+      ],
+      [
+         "KL",
+         1
+      ],
+      [
+         "RO",
+         [
+            4,
+            "880203ea"
+         ]
+      ],
+      [
+         "RF",
+         [
+            2,
+            "0x03ea"
+         ],
+         8,
+         true,
+         0,
+         false,
+         null
+      ],
+      [
+         "TF",
+         [
+            2,
+            "0x03e8"
+         ],
+         8,
+         true,
+         0,
+         "148924d9",
+         null,
+         null,
+         false
+      ],
+      [
+         "TO",
+         [
+            8,
+            "8882148924d91761"
+         ],
+         false
+      ]
+   ]
+}
