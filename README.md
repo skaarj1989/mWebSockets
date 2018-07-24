@@ -1,6 +1,10 @@
-# ArduinoWebSocket
+# ArduinoWebSockets
 
-This library allows you to connect Arduino to WebSocket server
+Simple to use implementation of WebSocket client and server for Arduino
+
+Autobahn test suite results for [server](https://skaarj1989.github.io/ArduinoWebSocket/autobahn-testsuite/servers/index.html)
+
+###### client tests in progress ...
 
 ## Table of contents
 
@@ -73,18 +77,37 @@ Uncomment these if you want additional informations in serial monitor:
 
 ### Server
 
-```js
-const WebSocket = require('ws');
-const wss = new WebSocket.Server({ host: 'ip', port: 3000 });
+```cpp
+#include <WebSocketServer.h>
 
-wss.on('connection', function connection(ws, req) {
-  // set callbacks here ...
+WebSocketServer server(3000);
+
+void onOpen(WebSocket &ws) {
+  char message[] = "Hello from Arduino server!";
+  ws.send(message, strlen(message));
+}
+
+void onClose(WebSocket &ws, eWebSocketCloseEvent code, const char *reason, uint16_t length) { /* ... */ }
+void onMessage(WebSocket &ws, const char *message, uint16_t length) { /* */ }
+
+void setup() {
+  // Ethernet initialization goes here ...
+  // ...
+
+  server.setOnMessageCallback(onMessage);
+  server.begin();
   
-  ws.send('Hello from Node.js!');
-});
+  client.setOnOpenCallback(onOpen);
+  client.setOnCloseCallback(onClose);
+  client.setOnMessageCallback(onMessage);
+}
+
+void loop() {
+  server.listen();
+}
 ```
 
-##### More node.js server examples [here](node.js)
+##### Node.js server examples [here](node.js)
 
 ### Client
 
@@ -93,18 +116,16 @@ wss.on('connection', function connection(ws, req) {
 
 WebSocketClient client;
 
-void onOpen(WebSocketClient &ws) {
-  char message[] = "Hello from Arduino!";
+void onOpen(WebSocket &ws) {
+  char message[] = "Hello from Arduino client!";
   ws.send(message, strlen(message));
 }
 
-void onClose(WebSocketClient &ws, eWebSocketCloseEvent code, const char *reason, uint16_t length) { /* ... */ }
-
-void onMessage(WebSocketClient &ws, const char *message, uint16_t length) { /* */ }
+void onClose(WebSocket &ws, eWebSocketCloseEvent code, const char *reason, uint16_t length) { /* ... */ }
+void onMessage(WebSocket &ws, const char *message, uint16_t length) { /* */ }
 
 void setup() {
   // Ethernet initialization goes here ...
-  
   // ...
   
   client.setOnOpenCallback(onOpen);
