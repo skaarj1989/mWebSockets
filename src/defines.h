@@ -85,18 +85,13 @@ enum eWebSocketError {
 	UNSUPPORTED_OPCODE
 };
 
-struct frame_t {
-	bool isFinal;
-	bool rsv1;
-	bool rsv2;
-	bool rsv3;
-	
-	eWebSocketOpcode opcode;
-	bool isMasked;
+struct webSocketHeader_t {
+	bool fin;
+	bool rsv1, rsv2, rsv3;
+	uint8_t opcode;
+	bool mask;
+	byte maskingKey[4] = { '\0' };
 	uint32_t length;
-	
-	byte mask[4] = { 0x00 };
-	char *data = NULL;
 };
 
 class WebSocket;

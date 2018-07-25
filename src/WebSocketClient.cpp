@@ -202,7 +202,11 @@ bool WebSocketClient::open(const char *host, uint16_t port, char path[]) {
 }
 
 void WebSocketClient::listen() {
-	_handleFrame(false); // masking prohibited
+	//_handleFrame(false); // masking prohibited
+	
+	_handleFrame();
+	
+
 }
 
 // ---

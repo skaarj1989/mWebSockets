@@ -7,8 +7,6 @@
 void generateSecKey(char output[]);
 void encodeSecKey(char output[], const char *key);
 
-bool isCloseCodeValid(const uint16_t code);
-
 void printf(const __FlashStringHelper *fmt, ...);
 
 #ifdef _DEBUG

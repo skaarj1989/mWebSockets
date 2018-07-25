@@ -3,14 +3,12 @@
 
 #include "defines.h"
 
-bool isControlFrame(const eWebSocketOpcode opcode);
-
 class WebSocket {
 public:
 	friend class WebSocketServer;
 	
 public:
-	WebSocket();
+	WebSocket();	// default constructor for client init
 	~WebSocket();
 	
 	void close(const eWebSocketCloseEvent code = NORMAL_CLOSURE, const char *reason = NULL, uint16_t length = 0, bool instant = false);
@@ -22,13 +20,13 @@ public:
 	const eWebSocketReadyState &getReadyState() const;
 	
 protected:
-	WebSocket(EthernetClient client);
+	WebSocket(EthernetClient client);		// private constructor for server init
 
-	void _send(const eWebSocketOpcode, const char *data, uint16_t length);
-	void _send(const eWebSocketOpcode, const char *data, uint16_t length, byte maskingKey[]);
+	bool _readHeader(webSocketHeader_t &header);
+	void _readData(const webSocketHeader_t &header, char *payload);
+	void _handleFrame();
 	
-	frame_t *_getFrame(bool maskingAllowed);	
-	void _handleFrame(bool maskingAllowed);
+	void _send(uint8_t opcode, bool fin, bool mask, const char *data, uint16_t length);
 	
 	void _triggerError(const eWebSocketError code);
 	
@@ -37,7 +35,9 @@ protected:
 	eWebSocketReadyState m_eReadyState;
 	
 	uint8_t m_NumPings;
-	char m_DataBuffer[_MAX_FRAME_LENGTH];
+	char m_DataBuffer[BUFFER_MAX_SIZE];
+	
+	bool m_bMaskEnabled;
 	
 	onOpenCallback *_onOpen;
 	onCloseCallback *_onClose;

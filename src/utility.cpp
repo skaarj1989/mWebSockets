@@ -38,18 +38,6 @@ void encodeSecKey(char output[], const char *key) {
 	sha1.clear();
 }
 
-
-bool isCloseCodeValid(const uint16_t code) {
-	return (
-    (code >= 1000 &&
-      code <= 1013 &&
-      code != 1004 &&
-      code != 1005 &&
-      code != 1006) ||
-    (code >= 3000 && code <= 4999)
-	);
-}
-
 void printf(const __FlashStringHelper *fmt, ... ){
   char buf[128];
   va_list args;

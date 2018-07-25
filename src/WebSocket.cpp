@@ -1,21 +1,40 @@
 #include "WebSocket.h"
 
-bool isControlFrame(const eWebSocketOpcode opcode) {
-	switch (opcode) {
-	case CONNECTION_CLOSE_FRAME:
-	case PING_FRAME:
-	case PONG_FRAME:
-		return true;
-	}
+void generateMask(byte *target) {
+	randomSeed(analogRead(0));
 	
-	return false;
+	for (uint8_t i = 0; i < 4; i++)
+		target[i] = random(0xFF);
 }
 
+bool isControlFrame(uint8_t opcode) {
+	return (
+		(opcode == PING_FRAME) ||
+		(opcode == PONG_FRAME) ||
+		(opcode == CONNECTION_CLOSE_FRAME)
+	);
+}
+
+bool isCloseCodeValid(const uint16_t code) {
+	return (
+    (code >= 1000 &&
+      code <= 1013 &&
+      code != 1004 &&
+      code != 1005 &&
+      code != 1006) ||
+    (code >= 3000 && code <= 4999)
+	);
+}
+
+//
+//
+//
+
 WebSocket::WebSocket() :
-	m_eReadyState(CLOSED), m_NumPings(0),
+	m_eReadyState(CLOSED), m_NumPings(0), m_bMaskEnabled(true),
 	_onOpen(NULL), _onClose(NULL), _onMessage(NULL), _onError(NULL)
 {
-	memset(m_DataBuffer, '\0', _MAX_FRAME_LENGTH);
+	memset(m_DataBuffer, '\0', BUFFER_MAX_SIZE);
 }
 
 WebSocket::~WebSocket() {
@@ -25,15 +44,19 @@ WebSocket::~WebSocket() {
 void WebSocket::close(const eWebSocketCloseEvent code, const char *reason, uint16_t length, bool instant) {
 	if (m_eReadyState != OPEN) return;
 	
-	char buffer[32] = { (code >> 8) & 0xFF, code & 0xFF, '\0' };
+	char buffer[32] ={
+		(code >> 8) & 0xFF,
+		code & 0xFF,
+		'\0',
+	};
 	memcpy(&buffer[2], reason, sizeof(char) * length);
 		
-	_send(CONNECTION_CLOSE_FRAME, buffer, 2 + length);
+	_send(CONNECTION_CLOSE_FRAME, true, false, buffer, 2 + length);
 	
 	if (instant)
 		terminate();
 	else
-		m_eReadyState = CLOSING;	
+		m_eReadyState = CLOSING;
 }
 
 void WebSocket::terminate() {
@@ -44,26 +67,14 @@ void WebSocket::terminate() {
 void WebSocket::send(const eWebSocketDataType dataType, const char *message, uint16_t length, bool mask) {
 	if (m_eReadyState != OPEN) return;
 	
-	uint8_t opcode = (dataType == TEXT) ? TEXT_FRAME : BINARY_FRAME;
-	
-	if (mask) {
-		randomSeed(analogRead(0));
-		
-		byte maskingKey[4] = { 0x00 };
-		for (uint8_t i = 0; i < 4; i++)
-			maskingKey[i] = random(0xFF);
-		
-		_send(opcode, message, length, maskingKey);
-	}
-	else {
-		_send(opcode, message, length);
-	}
+	_send(dataType == TEXT ? 0x1 : 0x2,
+		true, mask, message, length);
 }
 
 void WebSocket::ping() {
 	if (m_eReadyState != OPEN) return; 
 		
-	_send(PING_FRAME, NULL, 0);
+	_send(PING_FRAME, true, false, NULL, 0);
 	m_NumPings++;
 	
 	if (m_NumPings > 5) {
@@ -85,191 +96,128 @@ const eWebSocketReadyState &WebSocket::getReadyState() const {
 //
 
 WebSocket::WebSocket(EthernetClient client) :
-	m_Client(client), m_eReadyState(OPEN), m_NumPings(0),
+	m_Client(client), m_eReadyState(OPEN), m_NumPings(0), m_bMaskEnabled(false),
 	_onOpen(NULL), _onClose(NULL), _onMessage(NULL), _onError(NULL)
 {
-	memset(m_DataBuffer, '\0', _MAX_FRAME_LENGTH);
+	memset(m_DataBuffer, '\0', BUFFER_MAX_SIZE);
 }
 
-void WebSocket::_send(const eWebSocketOpcode opcode, const char *data, uint16_t length) {
-	m_Client.write(static_cast<byte>(opcode | 0x80));
-	if (length >= 126) {
-		m_Client.write(static_cast<byte>(126));
-		m_Client.write(static_cast<byte>((length >> 8) & 0xFF));
-		m_Client.write(static_cast<byte>((length >> 0) & 0xFF));
-	} 
-	else {
-		m_Client.write(static_cast<byte>(length));
-	}
-	
-	m_Client.write(data, length);
-	m_Client.flush();
-}
+// 	0                   1                   2                   3
+// 	0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+// 	+-+-+-+-+-------+-+-------------+-------------------------------+
+// 	|F|R|R|R| opcode|M| Payload len |    Extended payload length    |
+// 	|I|S|S|S|  (4)  |A|     (7)     |             (16/64)           |
+// 	|N|V|V|V|       |S|             |   (if payload len==126/127)   |
+// 	| |1|2|3|       |K|             |                               |
+// 	+-+-+-+-+-------+-+-------------+ - - - - - - - - - - - - - - - +
+// 	|     Extended payload length continued, if payload len == 127  |
+// 	+ - - - - - - - - - - - - - - - +-------------------------------+
+// 	|                               |Masking-key, if MASK set to 1  |
+// 	+-------------------------------+-------------------------------+
+// 	| Masking-key (continued)       |          Payload Data         |
+// 	+-------------------------------- - - - - - - - - - - - - - - - +
+// 	:                     Payload Data continued ...                :
+// 	+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - +
+// 	|                     Payload Data continued ...                |
+// 	+---------------------------------------------------------------+
 
-void WebSocket::_send(const eWebSocketOpcode opcode, const char *data, uint16_t length, byte maskingKey[]) {	
-	m_Client.write(static_cast<byte>(opcode | 0x80));
-	if (length >= 126) {
-		m_Client.write(static_cast<byte>(126 |  0x80));
-		m_Client.write(static_cast<byte>((length >> 8) & 0xFF));
-		m_Client.write(static_cast<byte>((length >> 0) & 0xFF));
-	} 
-	else {
-		m_Client.write(static_cast<byte>(length | 0x80));
+bool WebSocket::_readHeader(webSocketHeader_t &header) {
+	byte temp[2] = { 0 };
+	m_Client.read(temp, 2);
+	
+	header.fin = temp[0] & 0x80;
+	header.rsv1 = temp[0] & 0x40;
+	header.rsv2 = temp[0] & 0x20;
+	header.rsv3 = temp[0] & 0x10;
+	header.opcode = temp[0] & 0x0F;
+	
+	if (header.rsv1 || header.rsv2 || header.rsv3) {
+		close(PROTOCOL_ERROR, NULL, 0, true);
+		return false;
 	}
 	
-	m_Client.write(maskingKey, 4);
+	header.mask = temp[1] & 0x80;
+	header.length = temp[1] & 0x7F;
+	
+	if (isControlFrame(header.opcode)) {
+		if (!header.fin || header.length > 125) {
+			close(PROTOCOL_ERROR, NULL, 0, true);
+			return false;
+		}
+	}
+	
+	if (header.length == 126) {
+		header.length = m_Client.read() << 8;
+		header.length |= m_Client.read();
+	}
+	else if (header.length == 127) {		
+		close(PROTOCOL_ERROR, NULL, 0, true);
+		return false;
+	}
+	
+	if (header.length > BUFFER_MAX_SIZE) {
+		close(PROTOCOL_ERROR, NULL, 0, true);
+		return false;
+	}
+
+	if (header.mask)
+		m_Client.read(header.maskingKey, 4);
+	
+#ifdef _DUMP_HEADER
+	printf(F("RX FRAME : OPCODE=%u, FIN=%s, RSV=%d, PAYLOAD-LEN=%u, MASK="),
+		header.opcode, header.fin ? "True" : "False", header.rsv1, header.length);
 		
-	for (uint16_t i = 0; i < length; i++)
-		m_Client.write(static_cast<byte>(data[i] ^ maskingKey[i % 4]));
+	!header.mask ? printf(F("None\n")) : printf(F("%x%x%x%x\n"),
+		header.maskingKey[0], header.maskingKey[1], header.maskingKey[2], header.maskingKey[3]);
+#endif
 	
-	m_Client.flush();
+	return true;
 }
 
-frame_t *WebSocket::_getFrame(bool maskingAllowed) {
-	if (m_eReadyState == CLOSED) return;
+void WebSocket::_readData(const webSocketHeader_t &header, char *payload) {
+	memset(payload, 0, header.length + 1);
+	
+	if (header.mask) {
+		for (uint16_t i = 0; i < header.length; i++)
+			payload[i] = m_Client.read() ^ header.maskingKey[i % 4];
+	}
+	else
+		m_Client.read(payload, header.length);
+	
+#ifdef _DUMP_FRAME
+	if (header.length) printf(F("%s\n"), payload);
+#endif
+}
+
+void WebSocket::_handleFrame() {
+	if (m_eReadyState == CLOSED) return false;
 	
 	if (!m_Client.connected() || !m_Client.available())
-		return NULL;
-	
-	frame_t *pFrame = new frame_t;
-	
-	byte bite = m_Client.read();
-	pFrame->opcode = bite & 0x0F;
-	pFrame->isFinal = bite & 0x80;
-	
-	pFrame->rsv1 = bite & 0x40;
-	pFrame->rsv2 = bite & 0x20;
-	pFrame->rsv3 = bite & 0x10;
-	
-	if (pFrame->rsv1 || pFrame->rsv2 || pFrame->rsv3) {
-		close(PROTOCOL_ERROR, NULL, 0, true);
-		return NULL;
-	}
-	
-#ifdef _DUMP_FRAME		
-	printf(F("------------------------------\n"));
-	printf(F("bite = 0x%02x\n"), bite);
-	printf(F("frame.isFinal = %s\n"), pFrame->isFinal ? "true" : "false");
-	printf(F("frame.opcode = %d\n"), pFrame->opcode);
-	printf(F("frame.rsv1 = %d\n"), pFrame->rsv1);
-	printf(F("frame.rsv2 = %d\n"), pFrame->rsv2);
-	printf(F("frame.rsv3 = %d\n"), pFrame->rsv3);	
-#endif 
-	
-	bite = m_Client.read();
-	pFrame->length = bite & 0x7F;
-	pFrame->isMasked = bite & 0x80;
-	
-	if (!maskingAllowed && pFrame->isMasked) {
-		__debugOutput(F("A server must not mask any frames that it sends to the client."));
-		//_triggerError();
-		close(PROTOCOL_ERROR, (PGM_P)F("Masked frame from server"), 24, true);
-		return NULL;
-	}
-	
-#ifdef _DUMP_FRAME	
-	printf(F("bite = 0x%02x\n"), bite);
-	printf(F("frame.length = %d (code)\n"), pFrame->length);
-	printf(F("frame.isMasked = %s\n"), pFrame->isMasked ? "true" : "false");
-#endif 	
+		return false;
 	
 	// ---
-
-	if (pFrame->length == 126) {
-		pFrame->length = m_Client.read() << 8;
-		pFrame->length |= m_Client.read() << 0;
-	}
-	else if (pFrame->length == 127) {
-		close(MESSAGE_TOO_BIG, NULL, 0, true);
-		return NULL;
-	}
 	
-#ifdef _DUMP_FRAME
-		printf(F("frame.length = %u\n"), pFrame->length);
-#endif
-
-	if (pFrame->length > _MAX_FRAME_LENGTH) {
-		_triggerError(FRAME_LENGTH_EXCEEDED);
-		close(MESSAGE_TOO_BIG, NULL, 0, true);
-		return NULL;
-	}
+	webSocketHeader_t header;
+	if (!_readHeader(header)) return;
+	
+	char *payload = new char[header.length + 1];
+	_readData(header, payload);
 	
 	// ---
-
-	if (pFrame->isMasked)
-	for (byte i = 0; i < 4; i++)
-		pFrame->mask[i] = m_Client.read();
 	
-#ifdef _DUMP_FRAME
-	Serial.print(F("mask = "));
-	for (byte i = 0; i < 4; i++) {
-		Serial.print("0x");
-		Serial.print(pFrame->mask[i], HEX);
-		Serial.print(F(" "));
-	}
-	
-	Serial.println();
-#endif
-	
-	pFrame->data = new char[pFrame->length + 1];
-	memset(pFrame->data, '\0', pFrame->length + 1);
-
-#ifdef _DUMP_FRAME
-	Serial.print(F("frame.data = \""));
-#endif
-
-	for (uint16_t i = 0; i < pFrame->length; i++) {
-		if (pFrame->isMasked)
-			pFrame->data[i] = m_Client.read() ^ pFrame->mask[i % 4];
-		else
-			pFrame->data[i] = m_Client.read();
-		
-#ifdef _DUMP_FRAME
-		if (pFrame->opcode != TEXT_FRAME) {
-			Serial.print(F("0x"));
-			Serial.print(static_cast<uint8_t>(pFrame->data[i]), HEX);
-			if (i < pFrame->length - 1)
-				 Serial.print(" ");
-		}
-		else
-			Serial.print(pFrame->data[i]);
-#endif
-	}
-		
-#ifdef _DUMP_FRAME
-	Serial.println(F("\""));
-#endif
-
-	return pFrame;
-}
-
-void WebSocket::_handleFrame(bool maskingAllowed) {	
-	frame_t *pFrame = _getFrame(maskingAllowed);
-	if (!pFrame) return;
-	
-	if (m_eReadyState == CLOSING)
-		if (pFrame->opcode != CONNECTION_CLOSE_FRAME)
-			return;
-		
-	if (isControlFrame(pFrame->opcode)) {
-		// control messages must not be fragmented
-		if (!pFrame->isFinal || pFrame->length > 125)
-			close(PROTOCOL_ERROR, NULL, 0, true);
-	}
-	
-	switch (pFrame->opcode) {
+	switch (header.opcode) {
 	case CONTINUATION_FRAME:
 		if (!strlen(m_DataBuffer)) {
 			close(PROTOCOL_ERROR, NULL, 0, true);
 			break;
 		}
 		
-		strncat(m_DataBuffer, pFrame->data, pFrame->length);
-		if (pFrame->isFinal) {
+		strncat(m_DataBuffer, payload, header.length);
+		if (header.fin) {
 			if (_onMessage)
 				_onMessage(*this, TEXT, m_DataBuffer, strlen(m_DataBuffer));
 			
-			memset(m_DataBuffer, '\0', _MAX_FRAME_LENGTH);
+			memset(m_DataBuffer, '\0', BUFFER_MAX_SIZE);
 		}
 	break;
 	
@@ -279,23 +227,23 @@ void WebSocket::_handleFrame(bool maskingAllowed) {
 			break;
 		}
 	
-		if (pFrame->isFinal) {			
+		if (header.fin) {			
 			if (_onMessage)
-				_onMessage(*this, TEXT, pFrame->data, pFrame->length);
+				_onMessage(*this, TEXT, payload, header.length);
 		}
 		else
-			strncat(m_DataBuffer, pFrame->data, pFrame->length);
+			strncat(m_DataBuffer, payload, header.length);
 		
 	break;
 	
 	case BINARY_FRAME:
-		strncat(m_DataBuffer, pFrame->data, pFrame->length);
+		strncat(m_DataBuffer, payload, header.length);
 		
-		if (pFrame->isFinal) {			
+		if (header.fin) {			
 			if (_onMessage)
 				_onMessage(*this, BINARY, m_DataBuffer, strlen(m_DataBuffer));
 			
-			memset(m_DataBuffer, '\0', _MAX_FRAME_LENGTH);
+			memset(m_DataBuffer, '\0', BUFFER_MAX_SIZE);
 		}
 	break;
 	
@@ -303,22 +251,22 @@ void WebSocket::_handleFrame(bool maskingAllowed) {
 		uint16_t code = 0;
 		const char *reason = NULL;
 
-		if (pFrame->length) {
-			for (int i = 0; i < 2; i++)
-				code = (code << 8) + (pFrame->data[i] & 0xFF);
+		if (header.length) {
+			for (byte i = 0; i < 2; i++)
+				code = (code << 8) + (payload[i] & 0xFF);
 			
 			if (!isCloseCodeValid(code)) {
 				close(PROTOCOL_ERROR, NULL, 0, true);
 				break;
 			}
 			
-			reason = (pFrame->length) ?
-			&(pFrame->data[2]) : NULL;
+			reason = (header.length) ?
+				&(payload[2]) : NULL;
 		}
 		
 		if (m_eReadyState == OPEN) {
-			if (pFrame->length)
-				_send(pFrame->opcode, pFrame->data, pFrame->length);
+			if (header.length)
+				_send(header.opcode, true, false, payload, header.length);
 			else
 				close(NORMAL_CLOSURE, NULL, 0, true);
 			
@@ -326,13 +274,13 @@ void WebSocket::_handleFrame(bool maskingAllowed) {
 		}
 		
 		if (_onClose)
-			_onClose(*this, code, reason, pFrame->length);
+			_onClose(*this, code, reason, header.length - 2);
 	
 		terminate();
 	}
 	break;
 	case PING_FRAME:
-		_send(PONG_FRAME, pFrame->data, pFrame->length);
+		_send(PONG_FRAME, true, false, payload, header.length);
 	break;
 	
 	case PONG_FRAME:
@@ -340,14 +288,52 @@ void WebSocket::_handleFrame(bool maskingAllowed) {
 	break;
 	
 	default:
-		__debugOutput(F("Unrecognized frame opcode: %d\n"), pFrame->opcode);
+		__debugOutput(F("Unrecognized frame opcode: %d\n"), header.opcode);
 		_triggerError(UNKNOWN_OPCODE);
-		close(PROTOCOL_ERROR);
+		close(PROTOCOL_ERROR, NULL, 0, true);
 	break;
 	}
 	
-	delete[] pFrame->data;
-	delete pFrame;
+	delete[] payload;
+}
+
+void WebSocket::_send(uint8_t opcode, bool fin, bool mask, const char *data, uint16_t length) {
+#ifdef _DUMP_HEADER
+	printf(F("TX FRAME : OPCODE=%u, FIN=%s, RSV=0, PAYLOAD-LEN=%u, MASK="),
+		opcode, fin ? "True" : "False", length);
+#endif
+	
+	m_Client.write(opcode | (fin ? 0x80 : 0));
+	
+	if (length > 125) {
+		m_Client.write(126);
+		m_Client.write((length >> 8) & 0xFF);
+		m_Client.write((length >> 0) & 0xFF);
+	}
+	else
+		m_Client.write(length | (mask ? 0x80 : 0));
+	
+	if (mask) {
+		byte maskingKey[4];
+		generateMask(maskingKey);
+		
+#ifdef _DUMP_HEADER
+		printf(F("%x%x%x%x\n"),
+		maskingKey[0], maskingKey[1], maskingKey[2], maskingKey[3]);
+#endif
+
+		for (uint16_t i = 0; i < length; i++)
+			m_Client.write(data[i] ^ maskingKey[i % 4]);
+	}
+	else {
+#ifdef _DUMP_HEADER
+		printf(F("None\n"));
+#endif
+		
+		m_Client.write(data, length);
+	}
+	
+	m_Client.flush();
 }
 
 void WebSocket::_triggerError(const eWebSocketError code) {

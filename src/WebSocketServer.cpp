@@ -61,7 +61,7 @@ void WebSocketServer::listen() {
 		// ---
 		
 		if (pSocket)
-			pSocket->_handleFrame(true);	// masking allowed
+			pSocket->_handleFrame();	// masking allowed
 	}
 	
 	_heartbeat();

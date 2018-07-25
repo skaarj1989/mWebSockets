@@ -1,11 +1,16 @@
 #ifndef __WEBSOCKETCLIENT_CONFIG_DOT_H_INCLUDED_
 #define __WEBSOCKETCLIENT_CONFIG_DOT_H_INCLUDED_
 
-//#define _DEBUG
-//#define _DUMP_HANDSHAKE
-//#define _DUMP_FRAME
+/*
+#define _DEBUG
 
-#define _MAX_FRAME_LENGTH   2048
+#define _DUMP_HANDSHAKE
+
+#define _DUMP_FRAME
+#define _DUMP_HEADER
+*/
+
+#define BUFFER_MAX_SIZE		5000
 
 #define W5100			1
 #define W5500			2
