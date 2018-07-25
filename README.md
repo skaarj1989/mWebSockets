@@ -1,4 +1,4 @@
-# ArduinoWebSockets
+# ArduinoWebSockets [![Build Status](https://travis-ci.org/skaarj1989/ArduinoWebSockets.svg?branch=master)](https://travis-ci.org/skaarj1989/ArduinoWebSockets)
 
 Simple to use implementation of WebSocket client and server for Arduino
 
