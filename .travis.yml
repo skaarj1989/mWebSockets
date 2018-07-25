@@ -1,7 +1,6 @@
 language: c
 
 before_install:
-  - echo $PWD
   - ARD_VER="1.8.0"
   - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_1.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :1 -ac -screen 0 1280x1024x16"
   - sleep 3
@@ -19,8 +18,8 @@ install:
   - ln -s $PWD/src /usr/local/share/arduino/libraries/ArduinoWebSockets
   
 script:
-  - arduino --verify --board ${BOARD} $PWD/examples/simple/simple.ino
-#  - arduino --verify --board ${BOARD} $PWD/examples/chat/chat.ino
+  - arduino --verify --board ${BOARD} $PWD/examples/simple-server/simple-server.ino
+  - arduino --verify --board ${BOARD} $PWD/examples/simple-client/simple-client.ino
   
 notifications:
   email:
