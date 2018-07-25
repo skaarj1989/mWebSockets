@@ -12,7 +12,6 @@ before_install:
   
 install:
   - ln -s $PWD /usr/local/share/arduino/libraries/ArduinoWebSockets
-  - arduino --install-library "arduinolibs"
   
 script:
   - arduino --verify --board ${BOARD} $PWD/examples/simple/simple.ino
@@ -28,12 +27,12 @@ env:
 # - BOARD=arduino:avr:yun
 # - BOARD=arduino:avr:diecimila:cpu=atmega168
 # - BOARD=arduino:avr:diecimila:cpu=atmega328
- - BOARD=arduino:avr:nano:cpu=atmega168
- - BOARD=arduino:avr:nano:cpu=atmega328
- - BOARD=arduino:avr:mega:cpu=atmega1280
- - BOARD=arduino:avr:mega:cpu=atmega2560
+# - BOARD=arduino:avr:nano:cpu=atmega168
+# - BOARD=arduino:avr:nano:cpu=atmega328
+# - BOARD=arduino:avr:mega:cpu=atmega1280
+# - BOARD=arduino:avr:mega:cpu=atmega2560
 # - BOARD=arduino:avr:megaADK
- - BOARD=arduino:avr:leonardo
+# - BOARD=arduino:avr:leonardo
 # - BOARD=arduino:avr:micro
 # - BOARD=arduino:avr:esplora
 # - BOARD=arduino:avr:mini:cpu=atmega168
