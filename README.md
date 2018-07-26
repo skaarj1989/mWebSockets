@@ -2,7 +2,9 @@
 
 Simple to use implementation of WebSocket client and server for Arduino
 
-Autobahn test suite results for [server](https://skaarj1989.github.io/ArduinoWebSockets/autobahn-testsuite/servers/index.html) ... some tests will never pass just because of memory lack in ATmega family.
+Autobahn test suite results for [server](https://skaarj1989.github.io/ArduinoWebSockets/autobahn-testsuite/servers/index.html) ... 
+
+some tests will never pass just because of memory lack in ATmega family.
 
 ###### client tests in progress ...
 
@@ -31,7 +33,6 @@ Autobahn test suite results for [server](https://skaarj1989.github.io/ArduinoWeb
 * Ethernet module or shield (Confirmed working):
   * Arduino Ethernet Shield W5100
   * WizNet W5500 module
-  * ENC28j60 module
 * Libraries:
   * CryptoLegacy from [arduinolibs](https://github.com/rweather/arduinolibs), you can grab it [here](CryptoLegacy.zip)
   * [Ethernet "2"](https://github.com/adafruit/Ethernet2) for W5500
@@ -54,7 +55,14 @@ Uncomment these if you want additional informations in serial monitor:
 ```
 //#define _DEBUG
 //#define _DUMP_HANDSHAKE
-//#define _DUMP_FRAME
+//#define _DUMP_FRAME_DATA
+//#define _DUMP_HEADER
+```
+
+Increase below value if you expect big data frames (or decrease for devices with small amount of memory)
+
+```
+#define BUFFER_MAX_SIZE		256
 ```
 
 ### Physical connection
@@ -87,7 +95,7 @@ void onOpen(WebSocket &ws) {
   ws.send(message, strlen(message));
 }
 
-void onClose(WebSocket &ws, eWebSocketCloseEvent code, const char *reason, uint16_t length) { /* ... */ }
+void onClose(WebSocket &ws, const eWebSocketCloseEvent code, const char *reason, uint16_t length) { /* ... */ }
 void onMessage(WebSocket &ws, const char *message, uint16_t length) { /* */ }
 
 void setup() {
@@ -121,7 +129,7 @@ void onOpen(WebSocket &ws) {
   ws.send(message, strlen(message));
 }
 
-void onClose(WebSocket &ws, eWebSocketCloseEvent code, const char *reason, uint16_t length) { /* ... */ }
+void onClose(WebSocket &ws, const eWebSocketCloseEvent code, const char *reason, uint16_t length) { /* ... */ }
 void onMessage(WebSocket &ws, const char *message, uint16_t length) { /* */ }
 
 void setup() {
