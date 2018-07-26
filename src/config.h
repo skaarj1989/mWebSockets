@@ -6,11 +6,11 @@
 
 #define _DUMP_HANDSHAKE
 
-#define _DUMP_FRAME
+#define _DUMP_FRAME_DATA
 #define _DUMP_HEADER
 */
 
-#define BUFFER_MAX_SIZE		5000
+#define BUFFER_MAX_SIZE		512
 
 #define W5100			1
 #define W5500			2

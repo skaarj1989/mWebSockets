@@ -44,14 +44,14 @@ WebSocket::~WebSocket() {
 void WebSocket::close(const eWebSocketCloseEvent code, const char *reason, uint16_t length, bool instant) {
 	if (m_eReadyState != OPEN) return;
 	
-	char buffer[32] ={
+	char buffer[128] = {
 		(code >> 8) & 0xFF,
 		code & 0xFF,
 		'\0',
 	};
 	memcpy(&buffer[2], reason, sizeof(char) * length);
 		
-	_send(CONNECTION_CLOSE_FRAME, true, false, buffer, 2 + length);
+	_send(CONNECTION_CLOSE_FRAME, true, m_bMaskEnabled, buffer, 2 + length);
 	
 	if (instant)
 		terminate();
@@ -62,6 +62,10 @@ void WebSocket::close(const eWebSocketCloseEvent code, const char *reason, uint1
 void WebSocket::terminate() {
 	m_Client.stop();
 	m_eReadyState = CLOSED;
+}
+
+void WebSocket::send(const eWebSocketDataType dataType, const char *message, uint16_t length) {
+	send(dataType, message, length, m_bMaskEnabled);
 }
 
 void WebSocket::send(const eWebSocketDataType dataType, const char *message, uint16_t length, bool mask) {
@@ -184,7 +188,7 @@ void WebSocket::_readData(const webSocketHeader_t &header, char *payload) {
 	else
 		m_Client.read(payload, header.length);
 	
-#ifdef _DUMP_FRAME
+#ifdef _DUMP_FRAME_DATA
 	if (header.length) printf(F("%s\n"), payload);
 #endif
 }
@@ -204,6 +208,11 @@ void WebSocket::_handleFrame() {
 	_readData(header, payload);
 	
 	// ---
+	
+	if (m_eReadyState == CLOSING && header.opcode != CONNECTION_CLOSE_FRAME) {
+		delete[] payload;
+		return;
+	}
 	
 	switch (header.opcode) {
 	case CONTINUATION_FRAME:
@@ -265,17 +274,15 @@ void WebSocket::_handleFrame() {
 		}
 		
 		if (m_eReadyState == OPEN) {
-			if (header.length)
-				_send(header.opcode, true, false, payload, header.length);
+			if (header.length) 
+				close(code, reason, header.length - 2, true);
 			else
 				close(NORMAL_CLOSURE, NULL, 0, true);
-			
-			m_eReadyState = CLOSING;
 		}
 		
 		if (_onClose)
 			_onClose(*this, code, reason, header.length - 2);
-	
+		
 		terminate();
 	}
 	break;
@@ -298,23 +305,28 @@ void WebSocket::_handleFrame() {
 }
 
 void WebSocket::_send(uint8_t opcode, bool fin, bool mask, const char *data, uint16_t length) {
+	m_Client.write(opcode | (fin ? 0x80 : 0x0));
+	
+	if (length <= 125) {
+		m_Client.write((mask ? 0x80 : 0x00) | static_cast<byte>(length));
+	}
+	else if (length <= 0xFFFF) {
+		m_Client.write((mask ? 0x80 : 0x00) | 126);
+    m_Client.write(static_cast<uint8_t>(length >> 8) & 0xFF);
+    m_Client.write(static_cast<uint8_t>(length & 0xFF));
+	}
+	else {
+		// Too big ...
+		return;
+	}	
+	
 #ifdef _DUMP_HEADER
 	printf(F("TX FRAME : OPCODE=%u, FIN=%s, RSV=0, PAYLOAD-LEN=%u, MASK="),
 		opcode, fin ? "True" : "False", length);
 #endif
 	
-	m_Client.write(opcode | (fin ? 0x80 : 0));
-	
-	if (length > 125) {
-		m_Client.write(126);
-		m_Client.write((length >> 8) & 0xFF);
-		m_Client.write((length >> 0) & 0xFF);
-	}
-	else
-		m_Client.write(length | (mask ? 0x80 : 0));
-	
 	if (mask) {
-		byte maskingKey[4];
+		byte maskingKey[4] = { 0 };
 		generateMask(maskingKey);
 		
 #ifdef _DUMP_HEADER
@@ -322,8 +334,10 @@ void WebSocket::_send(uint8_t opcode, bool fin, bool mask, const char *data, uin
 		maskingKey[0], maskingKey[1], maskingKey[2], maskingKey[3]);
 #endif
 
+		m_Client.write(maskingKey, 4);
+
 		for (uint16_t i = 0; i < length; i++)
-			m_Client.write(data[i] ^ maskingKey[i % 4]);
+			m_Client.write(static_cast<byte>(data[i] ^ maskingKey[i % 4]));
 	}
 	else {
 #ifdef _DUMP_HEADER
@@ -332,6 +346,10 @@ void WebSocket::_send(uint8_t opcode, bool fin, bool mask, const char *data, uin
 		
 		m_Client.write(data, length);
 	}
+	
+#ifdef _DUMP_FRAME_DATA
+	printf(F("%s\n"), data);	
+#endif
 	
 	m_Client.flush();
 }

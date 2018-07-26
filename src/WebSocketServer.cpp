@@ -34,6 +34,9 @@ void WebSocketServer::listen() {
 			
 			for (byte i = 0; i < MAX_CONNECTIONS; i++) {
 				if (!m_pSockets[i]) {
+					
+					// Found free room ...
+					
 					if (_handleRequest(client)) {
 						pSocket = new WebSocket(client);
 						m_pSockets[i] = pSocket;
@@ -46,9 +49,9 @@ void WebSocketServer::listen() {
 						pSocket->_onError = _onError;
 						
 						if (_onOpen) pSocket->_onOpen(*pSocket);
-		
-						break;
 					}
+					
+					break;
 				}
 				
 				if (i == MAX_CONNECTIONS - 1) {
@@ -213,7 +216,7 @@ bool WebSocketServer::_handleRequest(EthernetClient &client) {
 				else if (strcmp_P(header, (PGM_P)F("Upgrade")) == 0) {
 					value = strtok(NULL, " ");
 					
-					if (strcmp_P(value, (PGM_P)F("WebSocket")) != 0) {
+					if (strcasecmp_P(value, (PGM_P)F("websocket")) != 0) {
 						_rejectRequest(client, BAD_REQUEST);
 						return false;
 					}

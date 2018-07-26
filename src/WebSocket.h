@@ -14,6 +14,7 @@ public:
 	void close(const eWebSocketCloseEvent code = NORMAL_CLOSURE, const char *reason = NULL, uint16_t length = 0, bool instant = false);
 	void terminate();
 	
+	void send(const eWebSocketDataType dataType, const char *message, uint16_t length);
 	void send(const eWebSocketDataType dataType, const char *message, uint16_t length, bool mask);
 	void ping();
 	

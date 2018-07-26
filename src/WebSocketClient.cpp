@@ -8,7 +8,7 @@ WebSocketClient::~WebSocketClient() {
 }
 
 bool WebSocketClient::open(const char *host, uint16_t port, char path[]) {
-	close();	// close if already open
+	close(GOING_AWAY, NULL, 0, true);	// Close if already open
 	
 	if (!m_Client.connect(host, port)) {
 		__debugOutput(F("Error in connection establishment: net::ERR_CONNECTION_REFUSED\n"));
@@ -109,7 +109,7 @@ bool WebSocketClient::open(const char *host, uint16_t port, char path[]) {
 				if (strcmp_P(header, (PGM_P)F("Upgrade")) == 0) {
 					value = strtok(NULL, " ");
 
-					if (strcasecmp_P(value, (PGM_P)F("WebSocket")) != 0) {
+					if (strcasecmp_P(value, (PGM_P)F("websocket")) != 0) {
 						__debugOutput(F("Error during WebSocket handshake: 'Upgrade' header value is not 'websocket': %s\n"), value);
 						_triggerError(UPGRADE_REQUIRED);
 						terminate();
@@ -202,11 +202,7 @@ bool WebSocketClient::open(const char *host, uint16_t port, char path[]) {
 }
 
 void WebSocketClient::listen() {
-	//_handleFrame(false); // masking prohibited
-	
 	_handleFrame();
-	
-
 }
 
 // ---
