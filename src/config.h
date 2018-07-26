@@ -10,7 +10,7 @@
 #define _DUMP_HEADER
 */
 
-#define BUFFER_MAX_SIZE		512
+#define BUFFER_MAX_SIZE		256
 
 #define W5100			1
 #define W5500			2
