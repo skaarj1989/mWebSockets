@@ -1,0 +1,405 @@
+{
+   "agent": "Mega2560 / W5500",
+   "behavior": "OK",
+   "behaviorClose": "OK",
+   "case": 176,
+   "closedByMe": true,
+   "createStats": true,
+   "createWirelog": true,
+   "description": "Send a text message with payload which is valid UTF-8 in one fragment.<br><br>Payload: 0xf0bfbfbf",
+   "droppedByMe": false,
+   "duration": 16,
+   "expectation": "The message is echo'ed back to us.",
+   "expected": {
+      "OK": [
+         [
+            "message",
+            "\ud8bf\udfff",
+            false
+         ]
+      ]
+   },
+   "expectedClose": {
+      "closeCode": [
+         1000
+      ],
+      "closedByMe": true,
+      "requireClean": true
+   },
+   "failedByMe": false,
+   "httpRequest": "GET / HTTP/1.1\r\nUser-Agent: AutobahnTestSuite/0.8.0-0.10.9\r\nHost: 192.168.46.179:3000\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nSec-WebSocket-Key: WHTHDO2vK4zWZsU+QsGLtA==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: adTvwq7G06eA6ADq+NDVOW+X6tI=\r\n\r\n",
+   "id": "6.22.8",
+   "isServer": false,
+   "localCloseCode": 1000,
+   "localCloseReason": null,
+   "received": [
+      [
+         "message",
+         "\ud8bf\udfff",
+         false
+      ]
+   ],
+   "remoteCloseCode": 1000,
+   "remoteCloseReason": null,
+   "reportCompressionRatio": false,
+   "reportTime": false,
+   "result": "Actual events match at least one expected.",
+   "resultClose": "Connection was properly closed",
+   "rxFrameStats": {
+      "1": 1,
+      "8": 1
+   },
+   "rxOctetStats": {
+      "1": 6,
+      "2": 17,
+      "3": 3,
+      "4": 3,
+      "5": 4,
+      "6": 1,
+      "52": 1
+   },
+   "started": "2018-07-26T21:10:04.432Z",
+   "trafficStats": null,
+   "txFrameStats": {
+      "1": 1,
+      "8": 1
+   },
+   "txOctetStats": {
+      "8": 1,
+      "10": 1,
+      "245": 1
+   },
+   "wasClean": true,
+   "wasCloseHandshakeTimeout": false,
+   "wasNotCleanReason": null,
+   "wasOpenHandshakeTimeout": false,
+   "wasServerConnectionDropTimeout": false,
+   "wirelog": [
+      [
+         "TO",
+         [
+            245,
+            "474554202f20485454502f312e310d0a557365722d4167656e743a204175746f6261686e5465737453756974652f302e382e302d302e31302e390d0a486f7374 ..."
+         ],
+         false
+      ],
+      [
+         "RO",
+         [
+            1,
+            "48"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "5454"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "502f312e"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "3120"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "3130"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "3120"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "537769"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "7463"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "68"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "69"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "6e67"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "20"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "5072"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "6f74"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "6f63"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "6f6c730d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "5570"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "677261"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "64653a20"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "7765"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "6273"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "6f63"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "6b65"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "740d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "436f"
+         ]
+      ],
+      [
+         "RO",
+         [
+            6,
+            "6e6e65637469"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "6f"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "6e3a205570"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "6772"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "6164650d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            52,
+            "5365632d576562536f636b65742d4163636570743a20616454767771374730366541364144712b4e44564f572b583674493d0d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "0d0a"
+         ]
+      ],
+      [
+         "TF",
+         [
+            4,
+            "\ud8bf\udfff"
+         ],
+         1,
+         true,
+         0,
+         "8eb7e2d0",
+         null,
+         null,
+         false
+      ],
+      [
+         "TO",
+         [
+            10,
+            "81848eb7e2d07e085d6f"
+         ],
+         false
+      ],
+      [
+         "KL",
+         0.5
+      ],
+      [
+         "RO",
+         [
+            1,
+            "81"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "04f0bfbfbf"
+         ]
+      ],
+      [
+         "RF",
+         [
+            4,
+            "\ud8bf\udfff"
+         ],
+         1,
+         true,
+         0,
+         false,
+         null
+      ],
+      [
+         "TF",
+         [
+            2,
+            "0x03e8"
+         ],
+         8,
+         true,
+         0,
+         "78f88598",
+         null,
+         null,
+         false
+      ],
+      [
+         "TO",
+         [
+            8,
+            "888278f885987b10"
+         ],
+         false
+      ],
+      [
+         "RO",
+         [
+            4,
+            "880203e8"
+         ]
+      ],
+      [
+         "RF",
+         [
+            2,
+            "0x03e8"
+         ],
+         8,
+         true,
+         0,
+         false,
+         null
+      ]
+   ]
+}

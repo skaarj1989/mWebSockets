@@ -1,0 +1,299 @@
+{
+   "agent": "Mega2560 / W5500",
+   "behavior": "FAILED",
+   "behaviorClose": "FAILED",
+   "case": 141,
+   "closedByMe": true,
+   "createStats": true,
+   "createWirelog": true,
+   "description": "Send a text message with payload which is not valid UTF-8 in one fragment.<br><br>Payload: 0xf08080af",
+   "droppedByMe": true,
+   "duration": 10,
+   "expectation": "The connection is failed immediately, since the payload is not valid UTF-8.",
+   "expected": {
+      "OK": []
+   },
+   "expectedClose": {
+      "closeCode": [
+         1007
+      ],
+      "closedByMe": false,
+      "closedByWrongEndpointIsFatal": true,
+      "requireClean": false
+   },
+   "failedByMe": true,
+   "httpRequest": "GET / HTTP/1.1\r\nUser-Agent: AutobahnTestSuite/0.8.0-0.10.9\r\nHost: 192.168.46.179:3000\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nSec-WebSocket-Key: G+4ZyirI7s20zglk7XJfyg==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: k55fN8ZJgZPbv7vlAu2Bta1EidU=\r\n\r\n",
+   "id": "6.17.3",
+   "isServer": false,
+   "localCloseCode": 1007,
+   "localCloseReason": "encountered invalid UTF-8 while processing text message at payload octet index 1",
+   "received": [],
+   "remoteCloseCode": null,
+   "remoteCloseReason": null,
+   "reportCompressionRatio": false,
+   "reportTime": false,
+   "result": "Actual events match at least one expected.",
+   "resultClose": "The connection was failed by the wrong endpoint",
+   "rxFrameStats": {
+      "1": 1
+   },
+   "rxOctetStats": {
+      "1": 3,
+      "2": 2,
+      "3": 10,
+      "4": 1,
+      "5": 1,
+      "6": 3,
+      "8": 1,
+      "9": 1,
+      "54": 1
+   },
+   "started": "2018-07-26T21:09:59.957Z",
+   "trafficStats": null,
+   "txFrameStats": {
+      "1": 1,
+      "8": 1
+   },
+   "txOctetStats": {
+      "10": 1,
+      "88": 1,
+      "245": 1
+   },
+   "wasClean": false,
+   "wasCloseHandshakeTimeout": false,
+   "wasNotCleanReason": null,
+   "wasOpenHandshakeTimeout": false,
+   "wasServerConnectionDropTimeout": false,
+   "wirelog": [
+      [
+         "TO",
+         [
+            245,
+            "474554202f20485454502f312e310d0a557365722d4167656e743a204175746f6261686e5465737453756974652f302e382e302d302e31302e390d0a486f7374 ..."
+         ],
+         false
+      ],
+      [
+         "RO",
+         [
+            5,
+            "485454502f"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "312e"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "31"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "20"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "313031"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "20537769"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "746368"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "696e67"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "205072"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "6f746f"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "636f6c"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "730d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "557067"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "726164"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "65"
+         ]
+      ],
+      [
+         "RO",
+         [
+            9,
+            "3a20776562736f636b"
+         ]
+      ],
+      [
+         "RO",
+         [
+            6,
+            "65740d0a436f"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "6e6e65"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "6374"
+         ]
+      ],
+      [
+         "RO",
+         [
+            8,
+            "696f6e3a20557067"
+         ]
+      ],
+      [
+         "RO",
+         [
+            6,
+            "726164650d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            54,
+            "5365632d576562536f636b65742d4163636570743a206b3535664e385a4a675a50627637766c41753242746131456964553d0d0a0d0a"
+         ]
+      ],
+      [
+         "TF",
+         [
+            4,
+            "0xf08080af"
+         ],
+         1,
+         true,
+         0,
+         "0ad261da",
+         null,
+         null,
+         false
+      ],
+      [
+         "TO",
+         [
+            10,
+            "81840ad261dafa52e175"
+         ],
+         false
+      ],
+      [
+         "KL",
+         0.5
+      ],
+      [
+         "RO",
+         [
+            6,
+            "8104f08080af"
+         ]
+      ],
+      [
+         "TF",
+         [
+            82,
+            "0x03ef656e636f756e746572656420696e76616c6964205554462d38207768696c652070726f63657373696e672074657874206d65737361676520617420706179 ..."
+         ],
+         8,
+         true,
+         0,
+         "3cf1244d",
+         null,
+         null,
+         false
+      ],
+      [
+         "TO",
+         [
+            88,
+            "88d23cf1244d3f1e41235f9e51234894562858d14d234a90482458d171197adc1c6d4b994d2159d1543f5392413e4f984a2a1c85413548d149284f82452a59d1 ..."
+         ],
+         false
+      ],
+      [
+         "RF",
+         [
+            0,
+            ""
+         ],
+         1,
+         true,
+         0,
+         false,
+         null
+      ]
+   ]
+}

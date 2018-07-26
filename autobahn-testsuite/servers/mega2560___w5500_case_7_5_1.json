@@ -1,0 +1,329 @@
+{
+   "agent": "Mega2560 / W5500",
+   "behavior": "FAILED",
+   "behaviorClose": "WRONG CODE",
+   "case": 222,
+   "closedByMe": true,
+   "createStats": true,
+   "createWirelog": true,
+   "description": "Send a close frame with invalid UTF8 payload",
+   "droppedByMe": true,
+   "duration": 14,
+   "expectation": "Clean close with protocol error or invalid utf8 code or dropped TCP.",
+   "expected": {
+      "OK": []
+   },
+   "expectedClose": {
+      "closeCode": [
+         1002,
+         1007
+      ],
+      "closedByMe": true,
+      "requireClean": false
+   },
+   "failedByMe": true,
+   "httpRequest": "GET / HTTP/1.1\r\nUser-Agent: AutobahnTestSuite/0.8.0-0.10.9\r\nHost: 192.168.46.179:3000\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nSec-WebSocket-Key: tYhWRZGCqoMSF4bNVSo7gA==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: VWkshJvsLyYkP34ZCzi4mRbN3xA=\r\n\r\n",
+   "id": "7.5.1",
+   "isServer": false,
+   "localCloseCode": 1000,
+   "localCloseReason": "cebae1bdb9cf83cebcceb5eda080656469746564",
+   "received": [],
+   "remoteCloseCode": 1000,
+   "remoteCloseReason": "\u03ba\u1f79\u03c3\u03bc\u03b5\ud800edited",
+   "reportCompressionRatio": false,
+   "reportTime": false,
+   "result": "The close code should have been 1002,1007 or empty",
+   "resultClose": "The close code should have been 1002,1007 or empty",
+   "rxFrameStats": {
+      "8": 1
+   },
+   "rxOctetStats": {
+      "1": 6,
+      "2": 9,
+      "3": 7,
+      "4": 6,
+      "6": 1,
+      "24": 1,
+      "54": 1
+   },
+   "started": "2018-07-26T21:10:11.186Z",
+   "trafficStats": null,
+   "txFrameStats": {
+      "8": 1
+   },
+   "txOctetStats": {
+      "28": 1,
+      "245": 1
+   },
+   "wasClean": false,
+   "wasCloseHandshakeTimeout": false,
+   "wasNotCleanReason": null,
+   "wasOpenHandshakeTimeout": false,
+   "wasServerConnectionDropTimeout": false,
+   "wirelog": [
+      [
+         "TO",
+         [
+            245,
+            "474554202f20485454502f312e310d0a557365722d4167656e743a204175746f6261686e5465737453756974652f302e382e302d302e31302e390d0a486f7374 ..."
+         ],
+         false
+      ],
+      [
+         "RO",
+         [
+            2,
+            "4854"
+         ]
+      ],
+      [
+         "RO",
+         [
+            6,
+            "54502f312e31"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "20"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "313031"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "205377"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "697463"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "68696e"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "67205072"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "6f74"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "6f636f6c"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "730d0a55"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "70677261"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "6465"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "3a20"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "77"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "656273"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "6f636b"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "6574"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "0d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "436f"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "6e6e"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "6563"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "74"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "696f6e3a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "20"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "55"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "70"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "677261"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "64650d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            54,
+            "5365632d576562536f636b65742d4163636570743a2056576b73684a76734c79596b5033345a437a69346d52624e3378413d0d0a0d0a"
+         ]
+      ],
+      [
+         "TF",
+         [
+            22,
+            "0x03e8cebae1bdb9cf83cebcceb5eda080656469746564"
+         ],
+         8,
+         true,
+         0,
+         "5387490d",
+         null,
+         null,
+         false
+      ],
+      [
+         "TO",
+         [
+            28,
+            "88965387490d506f87b7b23af0c2d049f5c3e66ae98d36e3207936e3"
+         ],
+         false
+      ],
+      [
+         "KL",
+         1
+      ],
+      [
+         "RO",
+         [
+            24,
+            "881603e8cebae1bdb9cf83cebcceb5eda080656469746564"
+         ]
+      ],
+      [
+         "RF",
+         [
+            22,
+            "0x03e8cebae1bdb9cf83cebcceb5eda080656469746564"
+         ],
+         8,
+         true,
+         0,
+         false,
+         null
+      ]
+   ]
+}

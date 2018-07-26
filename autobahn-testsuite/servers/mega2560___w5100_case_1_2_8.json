@@ -1,0 +1,303 @@
+{
+   "agent": "Mega2560 / W5100",
+   "behavior": "FAILED",
+   "behaviorClose": "FAILED",
+   "case": 16,
+   "closedByMe": false,
+   "createStats": true,
+   "createWirelog": true,
+   "description": "Send binary message message with payload of length 65536. Sent out data in chops of 997 octets.",
+   "droppedByMe": false,
+   "duration": 18,
+   "expectation": "Receive echo'ed binary message (with payload as sent). Clean close with normal code.",
+   "expected": {
+      "OK": [
+         [
+            "message",
+            "0xfefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefe ...",
+            true
+         ]
+      ]
+   },
+   "expectedClose": {
+      "closeCode": [
+         1000
+      ],
+      "closedByMe": true,
+      "requireClean": true
+   },
+   "failedByMe": false,
+   "httpRequest": "GET / HTTP/1.1\r\nUser-Agent: AutobahnTestSuite/0.8.0-0.10.9\r\nHost: 192.168.46.68:3000\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nSec-WebSocket-Key: +bhLNwVDu5Hcz3rR4ZgwhA==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: 6h88jNRjH+Q8mTdsX6De+mqcXgc=\r\n\r\n",
+   "id": "1.2.8",
+   "isServer": false,
+   "localCloseCode": 1000,
+   "localCloseReason": null,
+   "received": [],
+   "remoteCloseCode": 1002,
+   "remoteCloseReason": null,
+   "reportCompressionRatio": false,
+   "reportTime": false,
+   "result": "Actual events differ from any expected.",
+   "resultClose": "The connection was failed by the wrong endpoint",
+   "rxFrameStats": {
+      "8": 1
+   },
+   "rxOctetStats": {
+      "1": 3,
+      "2": 3,
+      "3": 2,
+      "4": 2,
+      "5": 1,
+      "6": 1,
+      "7": 1,
+      "8": 1,
+      "11": 1,
+      "19": 1,
+      "54": 1
+   },
+   "started": "2018-07-26T21:13:53.485Z",
+   "trafficStats": null,
+   "txFrameStats": {
+      "2": 1,
+      "8": 1
+   },
+   "txOctetStats": {
+      "244": 1,
+      "997": 7
+   },
+   "wasClean": true,
+   "wasCloseHandshakeTimeout": false,
+   "wasNotCleanReason": null,
+   "wasOpenHandshakeTimeout": false,
+   "wasServerConnectionDropTimeout": false,
+   "wirelog": [
+      [
+         "TO",
+         [
+            244,
+            "474554202f20485454502f312e310d0a557365722d4167656e743a204175746f6261686e5465737453756974652f302e382e302d302e31302e390d0a486f7374 ..."
+         ],
+         false
+      ],
+      [
+         "RO",
+         [
+            2,
+            "4854"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "54"
+         ]
+      ],
+      [
+         "RO",
+         [
+            8,
+            "502f312e31203130"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "312053"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "77"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "69"
+         ]
+      ],
+      [
+         "RO",
+         [
+            7,
+            "746368696e6720"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "50726f"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "746f636f"
+         ]
+      ],
+      [
+         "RO",
+         [
+            11,
+            "6c730d0a55706772616465"
+         ]
+      ],
+      [
+         "RO",
+         [
+            19,
+            "3a20776562736f636b65740d0a436f6e6e6563"
+         ]
+      ],
+      [
+         "RO",
+         [
+            6,
+            "74696f6e3a20"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "55706772"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "6164650d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            54,
+            "5365632d576562536f636b65742d4163636570743a20366838386a4e526a482b51386d546473583644652b6d71635867633d0d0a0d0a"
+         ]
+      ],
+      [
+         "TF",
+         [
+            65536,
+            "0xfefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefe ..."
+         ],
+         2,
+         true,
+         0,
+         "03ab6513",
+         null,
+         997,
+         false
+      ],
+      [
+         "TO",
+         [
+            997,
+            "82ff000000000001000003ab6513fd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd55 ..."
+         ],
+         true
+      ],
+      [
+         "KL",
+         10
+      ],
+      [
+         "TO",
+         [
+            997,
+            "edfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559b ..."
+         ],
+         true
+      ],
+      [
+         "TO",
+         [
+            997,
+            "fd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bed ..."
+         ],
+         true
+      ],
+      [
+         "TO",
+         [
+            997,
+            "559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd ..."
+         ],
+         true
+      ],
+      [
+         "TO",
+         [
+            997,
+            "9bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd55 ..."
+         ],
+         true
+      ],
+      [
+         "RO",
+         [
+            2,
+            "8802"
+         ]
+      ],
+      [
+         "TO",
+         [
+            997,
+            "edfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559b ..."
+         ],
+         true
+      ],
+      [
+         "RO",
+         [
+            2,
+            "03ea"
+         ]
+      ],
+      [
+         "RF",
+         [
+            2,
+            "0x03ea"
+         ],
+         8,
+         true,
+         0,
+         false,
+         null
+      ],
+      [
+         "TF",
+         [
+            2,
+            "0x03e8"
+         ],
+         8,
+         true,
+         0,
+         "7a75ad8e",
+         null,
+         null,
+         false
+      ],
+      [
+         "TO",
+         [
+            997,
+            "fd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bedfd559bed ..."
+         ],
+         true
+      ]
+   ]
+}
