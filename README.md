@@ -50,7 +50,7 @@ Change below definition if you use a different controller:
 
 Uncomment these if you want additional informations in serial monitor:
 
-```
+```cpp
 //#define _DEBUG
 //#define _DUMP_HANDSHAKE
 //#define _DUMP_FRAME_DATA
@@ -59,7 +59,7 @@ Uncomment these if you want additional informations in serial monitor:
 
 Increase below value if you expect big data frames (or decrease for devices with small amount of memory)
 
-```
+```cpp
 #define BUFFER_MAX_SIZE		256
 ```
 
