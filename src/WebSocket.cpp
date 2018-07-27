@@ -49,7 +49,9 @@ void WebSocket::close(const eWebSocketCloseEvent code, const char *reason, uint1
 		code & 0xFF,
 		'\0',
 	};
-	memcpy(&buffer[2], reason, sizeof(char) * length);
+	
+	if (length)
+		memcpy(&buffer[2], reason, sizeof(char) * length);
 		
 	_send(CONNECTION_CLOSE_FRAME, true, m_bMaskEnabled, buffer, 2 + length);
 	
@@ -78,7 +80,7 @@ void WebSocket::send(const eWebSocketDataType dataType, const char *message, uin
 void WebSocket::ping() {
 	if (m_eReadyState != OPEN) return; 
 		
-	_send(PING_FRAME, true, false, NULL, 0);
+	_send(PING_FRAME, true, m_bMaskEnabled, NULL, 0);
 	m_NumPings++;
 	
 	if (m_NumPings > 5) {
@@ -287,7 +289,7 @@ void WebSocket::_handleFrame() {
 	}
 	break;
 	case PING_FRAME:
-		_send(PONG_FRAME, true, false, payload, header.length);
+		_send(PONG_FRAME, true, m_bMaskEnabled, payload, header.length);
 	break;
 	
 	case PONG_FRAME:

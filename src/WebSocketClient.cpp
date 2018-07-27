@@ -16,7 +16,7 @@ bool WebSocketClient::open(const char *host, uint16_t port, char path[]) {
 		terminate();
 		return false;
 	}
-	
+
 	//
 	// Send request (client handshake):
 	//
