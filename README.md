@@ -2,11 +2,9 @@
 
 Simple to use implementation of WebSocket client and server for Arduino
 
-Autobahn test suite results for [server](https://skaarj1989.github.io/ArduinoWebSockets/autobahn-testsuite/servers/index.html) ... 
+Autobahn test suite results for [server](https://skaarj1989.github.io/ArduinoWebSockets/autobahn-testsuite/servers/index.html) and [client](https://skaarj1989.github.io/ArduinoWebSockets/autobahn-testsuite/clients/index.html)
 
 some tests will never pass just because of memory lack in ATmega family.
-
-###### client tests in progress ...
 
 ## Table of contents
 
