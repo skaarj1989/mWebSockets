@@ -231,12 +231,11 @@ Following screenshots shows Rasperry Pi server, browser client and Arduino clien
 
 ## Known issues
 
-Currently **UIPEthernet** library causes some problems with **ENC28j60** on Arduino **Mega2560**:
+1. Currently **UIPEthernet** library causes some problems with **ENC28j60** on Arduino **Mega2560**:
 Client can't connect to server but after reset everything is ok (every second reset, which is weird and I don't know reason of this behavior).
+  * Nonetheless on Arduino Uno everything works fine.
 
-Nonetheless on Arduino Uno everything works fine.
-
-For now ESP8266 works only with **WebSocketClient**
+2. For now ESP8266 works only with **WebSocketClient**
 
 ## License
 
