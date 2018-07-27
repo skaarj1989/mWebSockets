@@ -1,0 +1,528 @@
+{
+   "agent": "Mega2560",
+   "behavior": "OK",
+   "behaviorClose": "OK",
+   "case": 12,
+   "closedByMe": true,
+   "createStats": true,
+   "createWirelog": true,
+   "description": "Send binary message message with payload of length 127.",
+   "droppedByMe": true,
+   "duration": 98,
+   "expectation": "Receive echo'ed binary message (with payload as sent). Clean close with normal code.",
+   "expected": {
+      "OK": [
+         [
+            "message",
+            "0xfefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefe ...",
+            true
+         ]
+      ]
+   },
+   "expectedClose": {
+      "closeCode": [
+         1000
+      ],
+      "closedByMe": true,
+      "requireClean": true
+   },
+   "failedByMe": false,
+   "httpRequest": "GET /runCase?case=12&agent=Mega2560 HTTP/1.1\r\nHost: 192.168.46.9:9001\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: 3SacbAGr7RAQKL0puQ679w==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/0.8.0-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: kPH5mUxUB9lYGFOLseG3R9abG+c=\r\n\r\n",
+   "id": "1.2.4",
+   "isServer": true,
+   "localCloseCode": 1000,
+   "localCloseReason": null,
+   "received": [
+      [
+         "message",
+         "0xfefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefe ...",
+         true
+      ]
+   ],
+   "remoteCloseCode": 1000,
+   "remoteCloseReason": null,
+   "reportCompressionRatio": false,
+   "reportTime": false,
+   "result": "Actual events match at least one expected.",
+   "resultClose": "Connection was properly closed",
+   "rxFrameStats": {
+      "2": 1,
+      "8": 1
+   },
+   "rxOctetStats": {
+      "1": 5,
+      "2": 15,
+      "3": 11,
+      "4": 10,
+      "5": 2,
+      "6": 1,
+      "7": 4,
+      "10": 1,
+      "12": 1,
+      "66": 1,
+      "89": 1
+   },
+   "started": "2018-07-27T00:16:18.064Z",
+   "trafficStats": null,
+   "txFrameStats": {
+      "2": 1,
+      "8": 1
+   },
+   "txOctetStats": {
+      "4": 1,
+      "131": 1,
+      "206": 1
+   },
+   "wasClean": true,
+   "wasCloseHandshakeTimeout": false,
+   "wasNotCleanReason": null,
+   "wasOpenHandshakeTimeout": false,
+   "wasServerConnectionDropTimeout": false,
+   "wirelog": [
+      [
+         "RO",
+         [
+            89,
+            "474554202f72756e436173653f636173653d3132266167656e743d4d6567613235363020485454502f312e310d0a486f73743a203139322e3136382e34362e39 ..."
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "0d0a436f"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "6e6e65"
+         ]
+      ],
+      [
+         "RO",
+         [
+            66,
+            "6374696f6e3a20557067726164650d0a5365632d576562536f636b65742d4b65793a203353616362414772375241514b4c30707551363739773d3d0d0a536563 ..."
+         ]
+      ],
+      [
+         "RO",
+         [
+            7,
+            "6562536f636b65"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "742d56"
+         ]
+      ],
+      [
+         "RO",
+         [
+            12,
+            "657273696f6e3a2031330d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "0d0a"
+         ]
+      ],
+      [
+         "TO",
+         [
+            206,
+            "485454502f312e312031303120537769746368696e672050726f746f636f6c730d0a5365727665723a204175746f6261686e5465737453756974652f302e382e ..."
+         ],
+         false
+      ],
+      [
+         "TF",
+         [
+            127,
+            "0xfefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefe ..."
+         ],
+         2,
+         true,
+         0,
+         null,
+         null,
+         null,
+         false
+      ],
+      [
+         "TO",
+         [
+            131,
+            "827e007ffefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefe ..."
+         ],
+         false
+      ],
+      [
+         "KL",
+         1
+      ],
+      [
+         "RO",
+         [
+            2,
+            "82fe"
+         ]
+      ],
+      [
+         "RO",
+         [
+            7,
+            "007ff838271206"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "c6d9ec06"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "c6d9ec06"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "c6"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "d9ec"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "06c6d9ec"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "06c6d9ec"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "06"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "c6d9ec"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "06c6d9"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "ec06c6d9"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "ec06"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "c6d9"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "ec"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "06c6"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "d9ec06c6"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "d9ec06c6d9"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "ec06c6d9ec"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "06c6"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "d9ec"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "06c6"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "d9ec"
+         ]
+      ],
+      [
+         "RO",
+         [
+            10,
+            "06c6d9ec06c6d9ec06c6"
+         ]
+      ],
+      [
+         "RO",
+         [
+            6,
+            "d9ec06c6d9ec"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "06c6"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "d9ec"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "06c6d9"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "ec06c6"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "d9ec06"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "c6d9ec"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "06"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "c6d9ec06"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "c6d9ec"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "06c6"
+         ]
+      ],
+      [
+         "RO",
+         [
+            7,
+            "d9ec06c6d9ec06"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "c6d9ec"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "06c6d9ec"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "06c6"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "d9ec"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "06c6d9"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "ec06c6d9"
+         ]
+      ],
+      [
+         "RF",
+         [
+            127,
+            "0xfefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefe ..."
+         ],
+         2,
+         true,
+         0,
+         true,
+         "f8382712"
+      ],
+      [
+         "TF",
+         [
+            2,
+            "0x03e8"
+         ],
+         8,
+         true,
+         0,
+         null,
+         null,
+         null,
+         false
+      ],
+      [
+         "TO",
+         [
+            4,
+            "880203e8"
+         ],
+         false
+      ],
+      [
+         "RO",
+         [
+            1,
+            "88"
+         ]
+      ],
+      [
+         "RO",
+         [
+            7,
+            "82ca5e65dec9b6"
+         ]
+      ],
+      [
+         "RF",
+         [
+            2,
+            "0x03e8"
+         ],
+         8,
+         true,
+         0,
+         true,
+         "ca5e65de"
+      ]
+   ]
+}
