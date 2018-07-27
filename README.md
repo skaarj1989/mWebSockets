@@ -2,9 +2,9 @@
 
 Simple to use implementation of WebSocket client and server for Arduino
 
-Autobahn test suite results for [server](https://skaarj1989.github.io/ArduinoWebSockets/autobahn-testsuite/servers/index.html) and [client](https://skaarj1989.github.io/ArduinoWebSockets/autobahn-testsuite/clients/index.html)
+Autobahn test suite reports for [server](https://skaarj1989.github.io/ArduinoWebSockets/autobahn-testsuite/servers/index.html) and [client](https://skaarj1989.github.io/ArduinoWebSockets/autobahn-testsuite/clients/index.html)
 
-some tests will never pass just because of memory lack in ATmega family.
+Some tests will never pass just because of memory lack in ATmega family.
 
 ## Table of contents
 
@@ -32,13 +32,13 @@ some tests will never pass just because of memory lack in ATmega family.
   * Arduino Ethernet Shield W5100
   * WizNet W5500 module
 * Libraries:
-  * CryptoLegacy from [arduinolibs](https://github.com/rweather/arduinolibs), you can grab it [here](CryptoLegacy.zip)
+  * CryptoLegacy from [arduinolibs](https://github.com/rweather/arduinolibs), you can grab it from [here](CryptoLegacy.zip)
   * [Ethernet "2"](https://github.com/adafruit/Ethernet2) for W5500
   * [UIPEthernet](https://github.com/ntruchsess/arduino_uip) for ENC28j60
 
 ## Installation
 
-Install this library and CryptoLegacy in Arduino libraries directory, follow [this](https://www.arduino.cc/en/Guide/Libraries) guide if you don't know how to do it.
+Install this library and **CryptoLegacy** in Arduino libraries directory, follow [this](https://www.arduino.cc/en/Guide/Libraries) guide if you don't know how to do it.
 
 ### config.h
 
