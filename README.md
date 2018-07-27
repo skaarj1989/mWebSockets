@@ -31,7 +31,7 @@ Some tests will never pass just because of memory lack in ATmega family.
   * Arduino Uno (ATmega328P)
   * Arduino Mega2560
   * Arduino Pro Mini (ATmega328P)
-* Ethernet module or shield (Confirmed working):
+* Ethernet module or shield (confirmed working):
   * Arduino Ethernet Shield W5100
   * WizNet W5500 module
 * Libraries:
