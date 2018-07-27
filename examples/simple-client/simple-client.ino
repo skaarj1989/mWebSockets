@@ -8,7 +8,7 @@ void onOpen(WebSocket &ws) {
   Serial.println(F("Connected"));
   
   char message[] = "Hello from Arduino client!";
-  ws.send(TEXT, message, strlen(message), true);
+  ws.send(TEXT, message, strlen(message));
 }
 
 void onClose(WebSocket &ws, const eWebSocketCloseEvent code, const char *reason, uint16_t length) {
@@ -31,7 +31,7 @@ void onError(const eWebSocketError code) {
 }
 
 void setup() {
-  Serial.begin(57600);
+  Serial.begin(115200);
   while (!Serial) ;
   
   Serial.println(F("Initializing ... "));
