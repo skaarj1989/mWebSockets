@@ -5,6 +5,11 @@
 
 Simple to use implementation of WebSocket client and server for Arduino.
 
+**List of supported MCUs:**
+- ATmega328P
+- ATmega2560 
+- ESP8266
+
 Autobahn test suite reports for [server](https://skaarj1989.github.io/ArduinoWebSockets/autobahn-testsuite/servers/index.html) and [client](https://skaarj1989.github.io/ArduinoWebSockets/autobahn-testsuite/clients/index.html)
 
 Some tests will never pass just because of memory lack in ATmega family.
@@ -31,6 +36,8 @@ Some tests will never pass just because of memory lack in ATmega family.
   * Arduino Uno (ATmega328P)
   * Arduino Mega2560
   * Arduino Pro Mini (ATmega328P)
+  * WeMos D1 mini (ESP8266)
+  * NodeMCU v3 (ESP8266)
 * Ethernet module or shield (confirmed working):
   * Arduino Ethernet Shield W5100
   * WizNet W5500 module
@@ -48,6 +55,11 @@ Install this library and **CryptoLegacy** in Arduino libraries directory, follow
 Change below definition if you use a different controller:
 
 ```cpp
+...
+
+#define _USE_ETHERNET
+//#define _USE_WIFI
+
 #define ETHERNET_CONTROLLER   W5100
 ```
 
@@ -223,6 +235,8 @@ Currently **UIPEthernet** library causes some problems with **ENC28j60** on Ardu
 Client can't connect to server but after reset everything is ok (every second reset, which is weird and I don't know reason of this behavior).
 
 Nonetheless on Arduino Uno everything works fine.
+
+For now ESP8266 works only with **WebSocketClient**
 
 ## License
 
