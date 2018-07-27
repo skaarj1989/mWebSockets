@@ -1,6 +1,9 @@
-# ArduinoWebSockets [![Build Status](https://travis-ci.org/skaarj1989/ArduinoWebSockets.svg?branch=master)](https://travis-ci.org/skaarj1989/ArduinoWebSockets)
+# ArduinoWebSockets
+[![Build Status](https://travis-ci.org/skaarj1989/ArduinoWebSockets.svg?branch=master)](https://travis-ci.org/skaarj1989/ArduinoWebSockets)
+![GitHub issues](https://img.shields.io/github/issues/skaarj1989/ArduinoWebSockets.svg)
+![GitHub](https://img.shields.io/github/license/skaarj1989/ArduinoWebSockets.svg)
 
-Simple to use implementation of WebSocket client and server for Arduino
+Simple to use implementation of WebSocket client and server for Arduino.
 
 Autobahn test suite reports for [server](https://skaarj1989.github.io/ArduinoWebSockets/autobahn-testsuite/servers/index.html) and [client](https://skaarj1989.github.io/ArduinoWebSockets/autobahn-testsuite/clients/index.html)
 
