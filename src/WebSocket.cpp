@@ -31,7 +31,7 @@ bool isCloseCodeValid(const uint16_t code) {
 //
 
 WebSocket::WebSocket() :
-	m_eReadyState(CLOSED), m_NumPings(0), m_bMaskEnabled(true),
+	m_eReadyState(WSRS_CLOSED), m_NumPings(0), m_bMaskEnabled(true),
 	_onOpen(NULL), _onClose(NULL), _onMessage(NULL), _onError(NULL)
 {
 	memset(m_DataBuffer, '\0', BUFFER_MAX_SIZE);
@@ -42,7 +42,9 @@ WebSocket::~WebSocket() {
 }
 
 void WebSocket::close(const eWebSocketCloseEvent code, const char *reason, uint16_t length, bool instant) {
-	if (m_eReadyState != OPEN) return;
+	if (m_eReadyState != WSRS_OPEN) return;
+	
+	__debugOutput(F("sending close: code = %u, reason = %s\n"), code, reason ? reason : "");
 	
 	char buffer[128] = {
 		(code >> 8) & 0xFF,
@@ -58,12 +60,14 @@ void WebSocket::close(const eWebSocketCloseEvent code, const char *reason, uint1
 	if (instant)
 		terminate();
 	else
-		m_eReadyState = CLOSING;
+		m_eReadyState = WSRS_CLOSING;
 }
 
 void WebSocket::terminate() {
+	m_Client.flush();
+	
 	m_Client.stop();
-	m_eReadyState = CLOSED;
+	m_eReadyState = WSRS_CLOSED;
 }
 
 void WebSocket::send(const eWebSocketDataType dataType, const char *message, uint16_t length) {
@@ -71,15 +75,15 @@ void WebSocket::send(const eWebSocketDataType dataType, const char *message, uin
 }
 
 void WebSocket::send(const eWebSocketDataType dataType, const char *message, uint16_t length, bool mask) {
-	if (m_eReadyState != OPEN) return;
+	if (m_eReadyState != WSRS_OPEN) return;
 	
 	_send(dataType == TEXT ? 0x1 : 0x2,
 		true, mask, message, length);
 }
 
 void WebSocket::ping() {
-	if (m_eReadyState != OPEN) return; 
-		
+	if (m_eReadyState != WSRS_OPEN) return; 
+	
 	_send(PING_FRAME, true, m_bMaskEnabled, NULL, 0);
 	m_NumPings++;
 	
@@ -101,11 +105,45 @@ const eWebSocketReadyState &WebSocket::getReadyState() const {
 // Private functions:
 //
 
+
+#if defined(_USE_WIFI) && defined(ESP8266)
+WebSocket::WebSocket(WiFiClient client) :
+#else
 WebSocket::WebSocket(EthernetClient client) :
-	m_Client(client), m_eReadyState(OPEN), m_NumPings(0), m_bMaskEnabled(false),
+#endif
+	m_Client(client), m_eReadyState(WSRS_OPEN), m_NumPings(0), m_bMaskEnabled(false),
 	_onOpen(NULL), _onClose(NULL), _onMessage(NULL), _onError(NULL)
 {
 	memset(m_DataBuffer, '\0', BUFFER_MAX_SIZE);
+}
+
+bool WebSocket::_poll(uint16_t maxAttempts, uint8_t time) {
+	uint16_t attempts = 0;
+	
+	while (!m_Client.available() && attempts < maxAttempts) {
+		attempts++;
+		delay(time);
+	}
+	
+	return attempts < maxAttempts;
+}
+
+int WebSocket::_read() {
+#ifdef _USE_WIFI
+	while (!m_Client.available())
+		delay(1);
+#endif 
+	
+	return m_Client.read();
+}
+
+void WebSocket::_read(uint8_t *buf, size_t size) {
+#ifdef _USE_WIFI
+	while (m_Client.available() < size)
+		delay(1);
+#endif 
+	
+	m_Client.read(buf, size);
 }
 
 // 	0                   1                   2                   3
@@ -127,9 +165,10 @@ WebSocket::WebSocket(EthernetClient client) :
 // 	|                     Payload Data continued ...                |
 // 	+---------------------------------------------------------------+
 
-bool WebSocket::_readHeader(webSocketHeader_t &header) {
+bool WebSocket::_readHeader(webSocketHeader_t &header) {	
 	byte temp[2] = { 0 };
-	m_Client.read(temp, 2);
+	//m_Client.read(temp, 2);
+	_read(temp, 2);
 	
 	header.fin = temp[0] & 0x80;
 	header.rsv1 = temp[0] & 0x40;
@@ -153,8 +192,10 @@ bool WebSocket::_readHeader(webSocketHeader_t &header) {
 	}
 	
 	if (header.length == 126) {
-		header.length = m_Client.read() << 8;
-		header.length |= m_Client.read();
+		//header.length = m_Client.read() << 8;
+		//header.length |= m_Client.read();
+		header.length = _read() << 8;
+		header.length |= _read();
 	}
 	else if (header.length == 127) {		
 		close(PROTOCOL_ERROR, NULL, 0, true);
@@ -166,8 +207,10 @@ bool WebSocket::_readHeader(webSocketHeader_t &header) {
 		return false;
 	}
 
-	if (header.mask)
-		m_Client.read(header.maskingKey, 4);
+	if (header.mask) {
+		//m_Client.read(header.maskingKey, 4);
+		_read(header.maskingKey, 4);
+	}
 	
 #ifdef _DUMP_HEADER
 	printf(F("RX FRAME : OPCODE=%u, FIN=%s, RSV=%d, PAYLOAD-LEN=%u, MASK="),
@@ -184,11 +227,15 @@ void WebSocket::_readData(const webSocketHeader_t &header, char *payload) {
 	memset(payload, 0, header.length + 1);
 	
 	if (header.mask) {
-		for (uint16_t i = 0; i < header.length; i++)
-			payload[i] = m_Client.read() ^ header.maskingKey[i % 4];
+		for (uint16_t i = 0; i < header.length; i++) {
+			//payload[i] = m_Client.read() ^ header.maskingKey[i % 4];
+			payload[i] = _read() ^ header.maskingKey[i % 4];
+		}
 	}
-	else
-		m_Client.read(payload, header.length);
+	else {
+		//m_Client.read((uint8_t*)payload, header.length);
+		_read((uint8_t*)payload, header.length);
+	}
 	
 #ifdef _DUMP_FRAME_DATA
 	if (header.length) printf(F("%s\n"), payload);
@@ -196,10 +243,15 @@ void WebSocket::_readData(const webSocketHeader_t &header, char *payload) {
 }
 
 void WebSocket::_handleFrame() {
-	if (m_eReadyState == CLOSED) return false;
+	if (m_eReadyState == WSRS_CLOSED) return;
 	
+#ifdef _USE_WIFI
+	while (!m_Client.available())
+    delay(1);
+#else
 	if (!m_Client.connected() || !m_Client.available())
-		return false;
+		return;
+#endif
 	
 	// ---
 	
@@ -211,7 +263,7 @@ void WebSocket::_handleFrame() {
 	
 	// ---
 	
-	if (m_eReadyState == CLOSING && header.opcode != CONNECTION_CLOSE_FRAME) {
+	if (m_eReadyState == WSRS_CLOSING && header.opcode != CONNECTION_CLOSE_FRAME) {
 		delete[] payload;
 		return;
 	}
@@ -275,15 +327,15 @@ void WebSocket::_handleFrame() {
 				&(payload[2]) : NULL;
 		}
 		
-		if (m_eReadyState == OPEN) {
+		if (m_eReadyState == WSRS_OPEN) {
 			if (header.length) 
-				close(code, reason, header.length - 2, true);
+				close((eWebSocketCloseEvent)code, reason, header.length - 2, true);
 			else
 				close(NORMAL_CLOSURE, NULL, 0, true);
 		}
 		
 		if (_onClose)
-			_onClose(*this, code, reason, header.length - 2);
+			_onClose(*this, (eWebSocketCloseEvent)code, reason, header.length - 2);
 		
 		terminate();
 	}
@@ -307,15 +359,16 @@ void WebSocket::_handleFrame() {
 }
 
 void WebSocket::_send(uint8_t opcode, bool fin, bool mask, const char *data, uint16_t length) {
-	m_Client.write(opcode | (fin ? 0x80 : 0x0));
+	uint16_t bytesWritten = 0;
+	bytesWritten += m_Client.write(opcode | (fin ? 0x80 : 0x0));
 	
 	if (length <= 125) {
-		m_Client.write((mask ? 0x80 : 0x00) | static_cast<byte>(length));
+		bytesWritten += m_Client.write((mask ? 0x80 : 0x00) | static_cast<byte>(length));
 	}
 	else if (length <= 0xFFFF) {
-		m_Client.write((mask ? 0x80 : 0x00) | 126);
-    m_Client.write(static_cast<uint8_t>(length >> 8) & 0xFF);
-    m_Client.write(static_cast<uint8_t>(length & 0xFF));
+		bytesWritten += m_Client.write((mask ? 0x80 : 0x00) | 126);
+    bytesWritten += m_Client.write(static_cast<uint8_t>(length >> 8) & 0xFF);
+    bytesWritten += m_Client.write(static_cast<uint8_t>(length & 0xFF));
 	}
 	else {
 		// Too big ...
@@ -336,24 +389,28 @@ void WebSocket::_send(uint8_t opcode, bool fin, bool mask, const char *data, uin
 		maskingKey[0], maskingKey[1], maskingKey[2], maskingKey[3]);
 #endif
 
-		m_Client.write(maskingKey, 4);
+		bytesWritten += m_Client.write(maskingKey, 4);
 
 		for (uint16_t i = 0; i < length; i++)
-			m_Client.write(static_cast<byte>(data[i] ^ maskingKey[i % 4]));
+			bytesWritten += m_Client.write(static_cast<byte>(data[i] ^ maskingKey[i % 4]));
 	}
 	else {
 #ifdef _DUMP_HEADER
 		printf(F("None\n"));
 #endif
 		
-		m_Client.write(data, length);
+		if (length)
+			bytesWritten += m_Client.write(data, length);
 	}
 	
 #ifdef _DUMP_FRAME_DATA
-	printf(F("%s\n"), data);	
+	if (length) printf(F("%s\n"), data);	
 #endif
+
+	printf(F("TX BYTES = %u\n"), bytesWritten);
 	
 	m_Client.flush();
+	delay(100);
 }
 
 void WebSocket::_triggerError(const eWebSocketError code) {

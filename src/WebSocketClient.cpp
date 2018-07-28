@@ -16,7 +16,7 @@ bool WebSocketClient::open(const char *host, uint16_t port, char path[]) {
 		terminate();
 		return false;
 	}
-
+	
 	//
 	// Send request (client handshake):
 	//
@@ -53,7 +53,7 @@ bool WebSocketClient::open(const char *host, uint16_t port, char path[]) {
 	// Wait for response (5sec by default):
 	//
 	
-	if (!_poll(5000)) {
+	if (!_poll(TIMEOUT_INTERVAL)) {
 		__debugOutput(F("Error in connection establishment: net::ERR_CONNECTION_TIMED_OUT\n"));
 		_triggerError(CONNECTION_TIMED_OUT);
 		terminate();
@@ -84,7 +84,8 @@ bool WebSocketClient::open(const char *host, uint16_t port, char path[]) {
 		buffer[counter++] = bite;
 
 		if (static_cast<char>(bite) == '\n') {
-			buffer[strcspn(buffer, "\r\n")] = '\0'; // trim CRLF
+			uint8_t lineBreakPos = strcspn(buffer, "\r\n");
+			buffer[lineBreakPos] = '\0';
 
 #ifdef _DUMP_HANDSHAKE
 			printf(F("[Line #%d] %s\n"), currentLine, buffer);
@@ -99,72 +100,74 @@ bool WebSocketClient::open(const char *host, uint16_t port, char path[]) {
 				}
 			}
 			else {
-				char *header = strtok(buffer, ":");
-				char *value = NULL;
+				if (lineBreakPos > 0) {
+					char *header = strtok(buffer, ":");
+					char *value = NULL;
 
-				//
-				// [2] Upgrade header:
-				//
-				
-				if (strcmp_P(header, (PGM_P)F("Upgrade")) == 0) {
-					value = strtok(NULL, " ");
-
-					if (strcasecmp_P(value, (PGM_P)F("websocket")) != 0) {
-						__debugOutput(F("Error during WebSocket handshake: 'Upgrade' header value is not 'websocket': %s\n"), value);
-						_triggerError(UPGRADE_REQUIRED);
-						terminate();
-						return false;
-					}
-
-					hasUpgrade = true;
-				}
-				
-				//
-				// [3] Connection header:
-				//
-				
-				else if (strcmp_P(header, (PGM_P)F("Connection")) == 0) {
-					value = strtok(NULL, " ");
-
-					if (strcmp_P(value, (PGM_P)F("Upgrade")) != 0) {
-						__debugOutput(F("Error during WebSocket handshake: 'Connection' header value is not 'Upgrade': %s\n"), value);
-						_triggerError(UPGRADE_REQUIRED);
-						terminate();
-						return false;
-					}
-
-					hasConnection = true;
-				}
-				
-				//
-				// [4] Sec-WebSocket-Accept header:
-				//
-				
-				else if (strcmp_P(header, (PGM_P)F("Sec-WebSocket-Accept")) == 0) {
-					value = strtok(NULL, " ");
-
-					char encodedKey[32] = { '\0' };
-					encodeSecKey(encodedKey, key);
+					//
+					// [2] Upgrade header:
+					//
 					
-					if (strcmp(value, encodedKey) != 0) {
-						__debugOutput(F("Error during WebSocket handshake: Incorrect 'Sec-WebSocket-Accept' header value\n"));
-						_triggerError(BAD_REQUEST);
-						terminate();
-						return false;
-					}
+					if (strcmp_P(header, (PGM_P)F("Upgrade")) == 0) {
+						value = strtok(NULL, " ");
 
-					hasAcceptKey = true;
+						if (strcasecmp_P(value, (PGM_P)F("websocket")) != 0) {
+							__debugOutput(F("Error during WebSocket handshake: 'Upgrade' header value is not 'websocket': %s\n"), value);
+							_triggerError(UPGRADE_REQUIRED);
+							terminate();
+							return false;
+						}
+
+						hasUpgrade = true;
+					}
+					
+					//
+					// [3] Connection header:
+					//
+					
+					else if (strcmp_P(header, (PGM_P)F("Connection")) == 0) {
+						value = strtok(NULL, " ");
+
+						if (strcmp_P(value, (PGM_P)F("Upgrade")) != 0) {
+							__debugOutput(F("Error during WebSocket handshake: 'Connection' header value is not 'Upgrade': %s\n"), value);
+							_triggerError(UPGRADE_REQUIRED);
+							terminate();
+							return false;
+						}
+
+						hasConnection = true;
+					}
+					
+					//
+					// [4] Sec-WebSocket-Accept header:
+					//
+					
+					else if (strcmp_P(header, (PGM_P)F("Sec-WebSocket-Accept")) == 0) {
+						value = strtok(NULL, " ");
+
+						char encodedKey[32] = { '\0' };
+						encodeSecKey(encodedKey, key);
+						
+						if (strcmp(value, encodedKey) != 0) {
+							__debugOutput(F("Error during WebSocket handshake: Incorrect 'Sec-WebSocket-Accept' header value\n"));
+							_triggerError(BAD_REQUEST);
+							terminate();
+							return false;
+						}
+
+						hasAcceptKey = true;
+					}
+					else {
+						// Don't care about other headers ...
+					}
 				}
 				
 				//
 				// [5] Empty line (end of response)
 				//
 				
-				else if (strcmp(header, 0) == 0) {
-					break;
-				}
 				else {
-					// Don't care about other headers ...
+					break;
 				}
 			}
 
@@ -195,7 +198,7 @@ bool WebSocketClient::open(const char *host, uint16_t port, char path[]) {
 		return false;
 	}
 	
-	m_eReadyState = OPEN;
+	m_eReadyState = WSRS_OPEN;
 	
 	if (_onOpen) _onOpen(*this);
 	return true;
@@ -221,20 +224,4 @@ void WebSocketClient::setOnMessageCallback(onMessageCallback *callback) {
 
 void WebSocketClient::setOnErrorCallback(onErrorCallback *callback) {
 	_onError = callback;
-}
-
-//
-// Private functions:
-//
-
-
-bool WebSocketClient::_poll(uint16_t maxAttempts, uint8_t time) {
-	uint16_t attempts = 0;
-	
-	while (!m_Client.available() && attempts < maxAttempts) {
-		attempts++;
-		delay(time);
-	}
-	
-	return attempts < maxAttempts;
 }

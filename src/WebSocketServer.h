@@ -25,15 +25,25 @@ public:
 private:
 	void _heartbeat();
 
+#if defined(_USE_WIFI) && defined(ESP8266)
+	WebSocket *_getWebSocket(WiFiClient client);
+	bool _handleRequest(WiFiClient &client);
+	void _rejectRequest(WiFiClient &client, const eWebSocketError code);
+#else
 	WebSocket *_getWebSocket(EthernetClient client);
-	
 	bool _handleRequest(EthernetClient &client);
 	void _rejectRequest(EthernetClient &client, const eWebSocketError code);
+#endif
 	
 	void _triggerError(const eWebSocketError code);
 	
 private:
+#if defined(_USE_WIFI) && defined(ESP8266)
+	WiFiServer m_Server;
+#else
 	EthernetServer m_Server;
+#endif
+
 	WebSocket *m_pSockets[MAX_CONNECTIONS];
 	
 	onOpenCallback *_onOpen;

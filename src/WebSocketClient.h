@@ -17,9 +17,6 @@ public:
 	void setOnCloseCallback(onCloseCallback *callback);
 	void setOnMessageCallback(onMessageCallback *callback);
 	void setOnErrorCallback(onErrorCallback *callback);
-	
-private:
-	bool _poll(uint16_t maxAttempts, uint8_t time = 1);
 };
 
 #endif

@@ -21,8 +21,16 @@ public:
 	const eWebSocketReadyState &getReadyState() const;
 	
 protected:
+#if defined(_USE_WIFI) && defined(ESP8266)
+	WebSocket(WiFiClient client);		// private constructor for server init
+#else
 	WebSocket(EthernetClient client);		// private constructor for server init
+#endif
 
+	bool _poll(uint16_t maxAttempts, uint8_t time = 1);
+	int _read();
+	void _read(uint8_t *buf, size_t size);
+	
 	bool _readHeader(webSocketHeader_t &header);
 	void _readData(const webSocketHeader_t &header, char *payload);
 	void _handleFrame();
@@ -32,7 +40,12 @@ protected:
 	void _triggerError(const eWebSocketError code);
 	
 protected:
+#if defined(_USE_WIFI) && defined(ESP8266)
+	WiFiClient m_Client;
+#else
 	EthernetClient m_Client;
+#endif
+
 	eWebSocketReadyState m_eReadyState;
 	
 	uint8_t m_NumPings;

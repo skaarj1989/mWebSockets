@@ -39,14 +39,20 @@ void encodeSecKey(char output[], const char *key) {
 }
 
 void printf(const __FlashStringHelper *fmt, ... ){
-  char buf[128];
+  char buffer[128];
   va_list args;
   va_start (args, fmt);
+	
+/*
 # ifdef __AVR__
-  vsnprintf_P(buf, sizeof(buf), (const char *)fmt, args);
+  vsnprintf_P(buffer, sizeof(buffer), (const char *)fmt, args);
 # else
-  vsnprintf(buf, sizeof(buf), (const char *)fmt, args);
+  vsnprintf(buffer, sizeof(buffer), (const char *)fmt, args);
 # endif
+*/
+
+	vsnprintf_P(buffer, sizeof(buffer), (const char *)fmt, args);
+
   va_end(args);
-  Serial.print(buf);
+  Serial.print(buffer);
 }

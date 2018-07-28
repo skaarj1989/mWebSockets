@@ -1,6 +1,3 @@
-#ifndef __WEBSOCKETSERVER_DEFINES_DOT_H_INCLUDED_
-#define __WEBSOCKETSERVER_DEFINES_DOT_H_INCLUDED_
-
 /*
 	https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers
 	https://tools.ietf.org/id/draft-ietf-hybi-thewebsocketprotocol-09.html
@@ -9,26 +6,36 @@
 	https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent
 */
 
+#ifndef __WEBSOCKETSERVER_DEFINES_DOT_H_INCLUDED_
+#define __WEBSOCKETSERVER_DEFINES_DOT_H_INCLUDED_
+
 #include "utility.h"
 
-#if ETHERNET_CONTROLLER == W5100
-# include <Ethernet.h>
-# define MAX_CONNECTIONS	4
-#elif ETHERNET_CONTROLLER == W5500
-# include <Ethernet2.h>
-# define MAX_CONNECTIONS	8
-#elif ETHERNET_CONTROLLER == ENC28J60
-# include <UIPEthernet.h>
-# define MAX_CONNECTIONS	4
+#if defined(_USE_WIFI) && defined(ESP8266)
+# include <ESP8266WiFi.h>
+# include <WiFiClient.h>
+# include <WiFiServer.h>
+# define MAX_CONNECTIONS 8
 #else
-# error "Unknown controller"
+# if ETHERNET_CONTROLLER == W5100
+#  include <Ethernet.h>
+#  define MAX_CONNECTIONS	4
+# elif ETHERNET_CONTROLLER == W5500
+#  include <Ethernet2.h>
+#  define MAX_CONNECTIONS	8
+# elif ETHERNET_CONTROLLER == ENC28J60
+#  include <UIPEthernet.h>
+#  define MAX_CONNECTIONS	4
+# else
+#  error "Unknown controller"
+# endif
 #endif
 
 enum eWebSocketReadyState {
-	CONNECTING,
-	OPEN,
-	CLOSING,
-	CLOSED
+	WSRS_CONNECTING,
+	WSRS_OPEN,
+	WSRS_CLOSING,
+	WSRS_CLOSED
 };
 
 enum eWebSocketCloseEvent {
@@ -90,7 +97,7 @@ struct webSocketHeader_t {
 	bool rsv1, rsv2, rsv3;
 	uint8_t opcode;
 	bool mask;
-	byte maskingKey[4] = { '\0' };
+	byte maskingKey[4] = { 0x0 };
 	uint32_t length;
 };
 

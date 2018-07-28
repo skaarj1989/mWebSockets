@@ -23,13 +23,17 @@ void WebSocketServer::shutdown() {
 }
 
 void WebSocketServer::listen() {
-	EthernetClient client = m_Server.available();
-	
-	if (client) {
+#if defined(_USE_WIFI) && defined(ESP8266)
+	WiFiClient client = m_Server.available();
+#else
+		EthernetClient client = m_Server.available();
+#endif
+
+	if (client) {		
 		WebSocket *pSocket = _getWebSocket(client);
 		
 		if (!pSocket) {
-			
+
 			// New client ...
 			
 			for (byte i = 0; i < MAX_CONNECTIONS; i++) {
@@ -64,7 +68,7 @@ void WebSocketServer::listen() {
 		// ---
 		
 		if (pSocket)
-			pSocket->_handleFrame();	// masking allowed
+			pSocket->_handleFrame();
 	}
 	
 	_heartbeat();
@@ -101,22 +105,36 @@ void WebSocketServer::setOnErrorCallback(onErrorCallback *callback) {
 //
 
 void WebSocketServer::_heartbeat() {
-	for (byte i = 0; i < MAX_CONNECTIONS; i++) {
-		WebSocket *pSocket = m_pSockets[i];
-		
-		if (pSocket) {
-			bool alive = pSocket->m_Client.connected();
-			alive &= pSocket->m_eReadyState != CLOSED;
+	static unsigned long previousTime = 0;
+	
+	unsigned long currentTime = millis();
+  if (currentTime - previousTime > 100) {
+    previousTime = currentTime;
+
+		for (byte i = 0; i < MAX_CONNECTIONS; i++) {
+			WebSocket *pSocket = m_pSockets[i];
 			
-			if (!alive) {
-				delete pSocket;
-				m_pSockets[i] = NULL;
+			if (pSocket) {
+				bool alive = pSocket->m_Client.connected();
+				alive &= pSocket->m_eReadyState != WSRS_CLOSED;
+				
+				if (!alive) {
+					delete pSocket;
+					m_pSockets[i] = NULL;
+				}
+				else {
+					//pSocket->ping();
+				}
 			}
 		}
-	}
+  }
 }
 
+#if defined(_USE_WIFI) && defined(ESP8266)
+WebSocket *WebSocketServer::_getWebSocket(WiFiClient client) {
+#else
 WebSocket *WebSocketServer::_getWebSocket(EthernetClient client) {
+#endif
 	for (byte i = 0; i < MAX_CONNECTIONS; i++) {
 		WebSocket *pSocket = m_pSockets[i];
 		if (pSocket && pSocket->m_Client == client)
@@ -126,7 +144,12 @@ WebSocket *WebSocketServer::_getWebSocket(EthernetClient client) {
 	return NULL;
 }
 
+#if defined(_USE_WIFI) && defined(ESP8266)
+bool WebSocketServer::_handleRequest(WiFiClient &client) {
+#else
 bool WebSocketServer::_handleRequest(EthernetClient &client) {
+#endif
+
 	bool hasUpgrade = false;
 	bool hasConnection = false;
 	bool hasSecKey = false;
@@ -151,11 +174,16 @@ bool WebSocketServer::_handleRequest(EthernetClient &client) {
 	char buffer[132] = { '\0' };
 	char secKey[32] = { '\0' };
 	
+	while(!client.available()) {
+    delay(10);
+  }
+
 	while ((bite = client.read()) != -1) {
 		buffer[counter++] = bite;
 		
 		if (static_cast<char>(bite) == '\n') {
-			buffer[strcspn(buffer, "\r\n")] = '\0';		// trim CRLF
+			uint8_t lineBreakPos = strcspn(buffer, "\r\n");
+			buffer[lineBreakPos] = '\0';		// trim CRLF
 		
 #ifdef _DUMP_HANDSHAKE		
 			printf(F("[Line #%d] %s\n"), currentLine, buffer);
@@ -196,86 +224,90 @@ bool WebSocketServer::_handleRequest(EthernetClient &client) {
 				}
 			}
 			else {
-				char *header = strtok(buffer, ":");
-				char *value = NULL;
-				
-				//
-				// [2] Host header:
-				//
-				
-				if (strcmp_P(header, (PGM_P)F("Host")) == 0) {
-					value = strtok(NULL, " ");
+				if (lineBreakPos > 0) {
+					char *header = strtok(buffer, ":");
+					char *value = NULL;
 					
-					// #TODO ...
-				}
-				
-				//
-				// [3] Upgrade header:
-				//
-				
-				else if (strcmp_P(header, (PGM_P)F("Upgrade")) == 0) {
-					value = strtok(NULL, " ");
+					//
+					// [2] Host header:
+					//
 					
-					if (strcasecmp_P(value, (PGM_P)F("websocket")) != 0) {
-						_rejectRequest(client, BAD_REQUEST);
-						return false;
+					if (strcmp_P(header, (PGM_P)F("Host")) == 0) {
+						value = strtok(NULL, " ");
+						
+						// #TODO ...
+					}
+					
+					//
+					// [3] Upgrade header:
+					//
+					
+					else if (strcmp_P(header, (PGM_P)F("Upgrade")) == 0) {
+						value = strtok(NULL, " ");
+						
+						if (strcasecmp_P(value, (PGM_P)F("websocket")) != 0) {
+							_rejectRequest(client, BAD_REQUEST);
+							return false;
+						}
+						else {
+							hasUpgrade = true;
+						}
+					}
+					
+					//
+					// [4] Connection header:
+					//
+					
+					else if (strcmp_P(header, (PGM_P)F("Connection")) == 0) {
+						value = strtok(NULL, " ");
+						
+						if (strcmp_P(value, (PGM_P)F("Upgrade")) != 0) {
+							_rejectRequest(client, UPGRADE_REQUIRED);
+							return false;
+						}
+						else
+							hasConnection = true;
+					}
+					
+					//
+					// [5] Sec-WebSocket-Key header:
+					//
+					
+					else if (strcmp_P(header, (PGM_P)F("Sec-WebSocket-Key")) == 0) {
+						value = strtok(NULL, " ");
+						
+						strcpy(secKey, value);
+						hasSecKey = true;
+					}
+					
+					//
+					// [6] Sec-WebSocket-Version header:
+					//
+					
+					else if (strcmp_P(header, (PGM_P)F("Sec-WebSocket-Version")) == 0) {
+						value = strtok(NULL, " ");
+						uint8_t version = atoi(value);
+						
+						switch (version) {
+						case 13:
+							hasVersion = true;
+						break;
+							
+						default:
+							_rejectRequest(client, BAD_REQUEST);
+							return false;
+						}
 					}
 					else {
-						hasUpgrade = true;
-					}
-				}
-				
-				//
-				// [4] Connection header:
-				//
-				
-				else if (strcmp_P(header, (PGM_P)F("Connection")) == 0) {
-					value = strtok(NULL, " ");
-					
-					if (strcmp_P(value, (PGM_P)F("Upgrade")) != 0) {
-						_rejectRequest(client, UPGRADE_REQUIRED);
-						return false;
-					}
-					else
-						hasConnection = true;
-				}
-				
-				//
-				// [5] Sec-WebSocket-Key header:
-				//
-				
-				else if (strcmp_P(header, (PGM_P)F("Sec-WebSocket-Key")) == 0) {
-					value = strtok(NULL, " ");
-					
-					strcpy(secKey, value);
-					hasSecKey = true;
-				}
-				
-				//
-				// [6] Sec-WebSocket-Version header:
-				//
-				
-				else if (strcmp_P(header, (PGM_P)F("Sec-WebSocket-Version")) == 0) {
-					value = strtok(NULL, " ");
-					uint8_t version = atoi(value);
-					
-					switch (version) {
-					case 13:
-						hasVersion = true;
-					break;
-						
-					default:
-						_rejectRequest(client, BAD_REQUEST);
-						return false;
+						// Don't care about other headers ...
 					}
 				}
 				
 				//
 				// [7] Empty line (end of request)
 				//
-				
-				else if (strcmp(header, 0) == 0) {
-				
+					
+				else {
 					if (!hasUpgrade || !hasConnection) {
 						_rejectRequest(client, UPGRADE_REQUIRED);
 						return false;
@@ -308,11 +340,12 @@ bool WebSocketServer::_handleRequest(EthernetClient &client) {
 					client.println(F("Connection: Upgrade"));
 					client.println(secWebSocketAccept);
 					client.println();
+					
+#ifdef _USE_WIFI
+					delay(1);
+#endif
 
 					return true;
-				}
-				else {
-					// Don't care about other headers ...
 				}
 			}
 			
@@ -326,7 +359,11 @@ bool WebSocketServer::_handleRequest(EthernetClient &client) {
 	return false;
 }
 
+#if defined(_USE_WIFI) && defined(ESP8266)
+void WebSocketServer::_rejectRequest(WiFiClient &client, const eWebSocketError code) {
+#else
 void WebSocketServer::_rejectRequest(EthernetClient &client, const eWebSocketError code) {
+#endif
 	switch (code) {
 	case BAD_REQUEST:
 		client.println(F("HTTP/1.1 400 Bad Request"));
