@@ -1,7 +1,6 @@
 language: c
 
 before_install:
-  - git clone --depth=50 --branch=master https://github.com/adamvr/arduino-base64 skaarj1989/arduino-base64
   - ARD_VER="1.8.5"
   - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_1.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :1 -ac -screen 0 1280x1024x16"
   - sleep 3
@@ -11,8 +10,7 @@ before_install:
   - sudo mv arduino-$ARD_VER /usr/local/share/arduino
   - sudo ln -s /usr/local/share/arduino/arduino /usr/local/bin/arduino
   
-  - mv arduino-base64 /usr/local/share/arduino/libraries
-  
+  - git clone --depth=50 --branch=master https://github.com/adamvr/arduino-base64 /usr/local/share/arduino/libraries/arduino-base64
   - wget https://github.com/skaarj1989/ArduinoWebSockets/blob/master/CryptoLegacy.tar.gz
   - sudo tar -zxvf CryptoLegacy.tar.gz
   - sudo mv CryptoLegacy /usr/local/share/arduino/libraries
