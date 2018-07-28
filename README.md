@@ -42,13 +42,14 @@ Some tests will never pass just because of memory lack in ATmega family.
   * Arduino Ethernet Shield W5100
   * WizNet W5500 module
 * Libraries:
+  * [arduino-base64](https://github.com/adamvr/arduino-base64)
   * CryptoLegacy from [arduinolibs](https://github.com/rweather/arduinolibs), you can grab it from [here](CryptoLegacy.zip)
   * [Ethernet "2"](https://github.com/adafruit/Ethernet2) for W5500
   * [UIPEthernet](https://github.com/ntruchsess/arduino_uip) for ENC28j60
 
 ## Installation
 
-Install this library and **CryptoLegacy** in Arduino libraries directory, follow [this](https://www.arduino.cc/en/Guide/Libraries) guide if you don't know how to do it.
+Install this library, **arduino-base64** and **CryptoLegacy** in Arduino libraries directory, follow [this](https://www.arduino.cc/en/Guide/Libraries) guide if you don't know how to do it.
 
 ### config.h
 
