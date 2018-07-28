@@ -115,12 +115,11 @@ void setup() {
   // Ethernet/WiFi initialization goes here ...
   // ...
 
-  server.setOnMessageCallback(onMessage);
-  server.begin();
-  
   server.setOnOpenCallback(onOpen);
   server.setOnCloseCallback(onClose);
   server.setOnMessageCallback(onMessage);
+  
+  server.begin();
 }
 
 void loop() {
