@@ -15,7 +15,7 @@ void onClose(WebSocket &ws, const eWebSocketCloseEvent code, const char *reason,
   Serial.println(F("Disconnected"));
 }
 
-void onMessage(WebSocket &ws, const eWebSocketDataType dataType, const char *message, byte length) {
+void onMessage(WebSocket &ws, const eWebSocketDataType dataType, const char *message, uint16_t length) {
   switch (dataType) {
     case TEXT:
       Serial.print(F("Received: ")); Serial.println(message);
