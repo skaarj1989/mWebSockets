@@ -34,8 +34,8 @@ Some tests will never pass just because of memory lack in ATmega family.
 
 * Development board (confirmed working, other boards may or may not work):
   * Arduino Uno (ATmega328P)
-  * Arduino Mega2560
   * Arduino Pro Mini (ATmega328P)
+  * Arduino Mega2560
   * WeMos D1 mini (ESP8266)
   * NodeMCU v3 (ESP8266)
 * Ethernet module or shield (confirmed working):
