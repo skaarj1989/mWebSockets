@@ -15,7 +15,7 @@
 //
 
 #define TIMEOUT_INTERVAL  5000
-#define BUFFER_MAX_SIZE		512
+#define BUFFER_MAX_SIZE		256
 
 //
 //

@@ -44,7 +44,7 @@ WebSocket::~WebSocket() {
 void WebSocket::close(const eWebSocketCloseEvent code, const char *reason, uint16_t length, bool instant) {
 	if (m_eReadyState != WSRS_OPEN) return;
 	
-	__debugOutput(F("sending close: code = %u, reason = %s\n"), code, reason ? reason : "");
+	m_eReadyState = WSRS_CLOSING;
 	
 	char buffer[128] = {
 		(code >> 8) & 0xFF,
@@ -54,17 +54,15 @@ void WebSocket::close(const eWebSocketCloseEvent code, const char *reason, uint1
 	
 	if (length)
 		memcpy(&buffer[2], reason, sizeof(char) * length);
-		
+	
 	_send(CONNECTION_CLOSE_FRAME, true, m_bMaskEnabled, buffer, 2 + length);
 	
 	if (instant)
 		terminate();
-	else
-		m_eReadyState = WSRS_CLOSING;
 }
 
 void WebSocket::terminate() {
-	m_Client.flush();
+	//m_Client.flush();
 	
 	m_Client.stop();
 	m_eReadyState = WSRS_CLOSED;
@@ -90,6 +88,8 @@ void WebSocket::ping() {
 	if (m_NumPings > 5) {
 		__debugOutput(F("Dead connection, terminating\n"));
 
+		m_eReadyState = WSRS_CLOSING;
+		
 		if (_onClose)
 			_onClose(*this, ABNORMAL_CLOSURE, NULL, 0);
 
@@ -129,19 +129,15 @@ bool WebSocket::_poll(uint16_t maxAttempts, uint8_t time) {
 }
 
 int WebSocket::_read() {
-#ifdef _USE_WIFI
 	while (!m_Client.available())
 		delay(1);
-#endif 
-	
+
 	return m_Client.read();
 }
 
 void WebSocket::_read(uint8_t *buf, size_t size) {
-#ifdef _USE_WIFI
 	while (m_Client.available() < size)
 		delay(1);
-#endif 
 	
 	m_Client.read(buf, size);
 }
@@ -167,8 +163,9 @@ void WebSocket::_read(uint8_t *buf, size_t size) {
 
 bool WebSocket::_readHeader(webSocketHeader_t &header) {	
 	byte temp[2] = { 0 };
-	//m_Client.read(temp, 2);
 	_read(temp, 2);
+	
+	__debugOutput(F("B[0] = %x, B[1] = %x\n"), temp[0], temp[1]);
 	
 	header.fin = temp[0] & 0x80;
 	header.rsv1 = temp[0] & 0x40;
@@ -177,6 +174,10 @@ bool WebSocket::_readHeader(webSocketHeader_t &header) {
 	header.opcode = temp[0] & 0x0F;
 	
 	if (header.rsv1 || header.rsv2 || header.rsv3) {
+		__debugOutput(F("Reserved bits should be empty!\n"));
+		__debugOutput(F("RSV1 = %d, RSV2 = %d, RSV3 = %d\n"),
+			header.rsv1, header.rsv2, header.rsv3);
+		
 		close(PROTOCOL_ERROR, NULL, 0, true);
 		return false;
 	}
@@ -185,32 +186,37 @@ bool WebSocket::_readHeader(webSocketHeader_t &header) {
 	header.length = temp[1] & 0x7F;
 	
 	if (isControlFrame(header.opcode)) {
-		if (!header.fin || header.length > 125) {
+		if (!header.fin) {
+			__debugOutput(F("Control frames must not be fragmented!\n"));
+			close(PROTOCOL_ERROR, NULL, 0, true);
+			return false;
+		}
+		
+		if (header.length > 125) {
+			__debugOutput(F("Control frames max length = 125, here = %d\n"), header.length);
 			close(PROTOCOL_ERROR, NULL, 0, true);
 			return false;
 		}
 	}
 	
 	if (header.length == 126) {
-		//header.length = m_Client.read() << 8;
-		//header.length |= m_Client.read();
 		header.length = _read() << 8;
 		header.length |= _read();
 	}
-	else if (header.length == 127) {		
+	else if (header.length == 127) {
+		__debugOutput(F("Unsupported frame size!\n"));
 		close(PROTOCOL_ERROR, NULL, 0, true);
 		return false;
 	}
 	
 	if (header.length > BUFFER_MAX_SIZE) {
+		__debugOutput(F("Unsupported frame size = %d\n"), header.length);
 		close(PROTOCOL_ERROR, NULL, 0, true);
 		return false;
 	}
 
-	if (header.mask) {
-		//m_Client.read(header.maskingKey, 4);
+	if (header.mask)
 		_read(header.maskingKey, 4);
-	}
 	
 #ifdef _DUMP_HEADER
 	printf(F("RX FRAME : OPCODE=%u, FIN=%s, RSV=%d, PAYLOAD-LEN=%u, MASK="),
@@ -227,15 +233,11 @@ void WebSocket::_readData(const webSocketHeader_t &header, char *payload) {
 	memset(payload, 0, header.length + 1);
 	
 	if (header.mask) {
-		for (uint16_t i = 0; i < header.length; i++) {
-			//payload[i] = m_Client.read() ^ header.maskingKey[i % 4];
+		for (uint16_t i = 0; i < header.length; i++)
 			payload[i] = _read() ^ header.maskingKey[i % 4];
-		}
 	}
-	else {
-		//m_Client.read((uint8_t*)payload, header.length);
-		_read((uint8_t*)payload, header.length);
-	}
+	else
+		_read((byte*)payload, header.length);
 	
 #ifdef _DUMP_FRAME_DATA
 	if (header.length) printf(F("%s\n"), payload);
@@ -251,12 +253,18 @@ void WebSocket::_handleFrame() {
 #else
 	if (!m_Client.connected() || !m_Client.available())
 		return;
+	
+	/*if (!m_Client.available())
+		return;*/
 #endif
 	
 	// ---
 	
 	webSocketHeader_t header;
-	if (!_readHeader(header)) return;
+	if (!_readHeader(header)) {
+		__debugOutput(F("Failed to read header!\n"));
+		return;
+	}
 	
 	char *payload = new char[header.length + 1];
 	_readData(header, payload);
@@ -264,6 +272,7 @@ void WebSocket::_handleFrame() {
 	// ---
 	
 	if (m_eReadyState == WSRS_CLOSING && header.opcode != CONNECTION_CLOSE_FRAME) {
+		__debugOutput(F("waiting for close frame!\n"));
 		delete[] payload;
 		return;
 	}
@@ -319,6 +328,7 @@ void WebSocket::_handleFrame() {
 				code = (code << 8) + (payload[i] & 0xFF);
 			
 			if (!isCloseCodeValid(code)) {
+				__debugOutput(F("Invalid close code: %d\n"), code);
 				close(PROTOCOL_ERROR, NULL, 0, true);
 				break;
 			}
@@ -327,8 +337,11 @@ void WebSocket::_handleFrame() {
 				&(payload[2]) : NULL;
 		}
 		
+		__debugOutput(F("Received close frame: code = %u, reason = %s\n"), code, reason);
+		
 		if (m_eReadyState == WSRS_OPEN) {
 			if (header.length) 
+				//_send(header.opcode, true, m_bMaskEnabled, payload, header.length);
 				close((eWebSocketCloseEvent)code, reason, header.length - 2, true);
 			else
 				close(NORMAL_CLOSURE, NULL, 0, true);
@@ -400,7 +413,7 @@ void WebSocket::_send(uint8_t opcode, bool fin, bool mask, const char *data, uin
 #endif
 		
 		if (length)
-			bytesWritten += m_Client.write(data, length);
+			bytesWritten += m_Client.write((byte*)data, length);
 	}
 	
 #ifdef _DUMP_FRAME_DATA

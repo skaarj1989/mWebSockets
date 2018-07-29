@@ -39,6 +39,7 @@ enum eWebSocketReadyState {
 };
 
 enum eWebSocketCloseEvent {
+	NONE = 0,
 	NORMAL_CLOSURE = 1000,
 	GOING_AWAY,
 	PROTOCOL_ERROR,
@@ -59,11 +60,35 @@ enum eWebSocketCloseEvent {
 
 enum eWebSocketOpcode {
 	CONTINUATION_FRAME = 0x00,
+	
+	//
+	// Data Frames (non-control):
+	//
+	
 	TEXT_FRAME = 0x01,
 	BINARY_FRAME = 0x02,
+	
+	// Reserved non-control frames:
+	// 0x03
+	// 0x04
+	// 0x05
+	// 0x06
+	// 0x07
+	
+	//
+	// Control frames:
+	//
+	
 	CONNECTION_CLOSE_FRAME = 0x08,
 	PING_FRAME = 0x09,
 	PONG_FRAME = 0x0A
+	
+	// Reserved control opcodes:
+	// 0x0B
+	// 0x0C
+	// 0x0D
+	// 0x0E
+	// 0x0F
 };
 
 enum eWebSocketDataType {

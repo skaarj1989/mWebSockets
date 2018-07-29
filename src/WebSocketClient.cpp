@@ -80,9 +80,9 @@ bool WebSocketClient::open(const char *host, uint16_t port, char path[]) {
 	// [5] 
 	//
 	
-	while ((bite = m_Client.read()) != -1) {
+	while ((bite = _read()) != -1) {
 		buffer[counter++] = bite;
-
+		
 		if (static_cast<char>(bite) == '\n') {
 			uint8_t lineBreakPos = strcspn(buffer, "\r\n");
 			buffer[lineBreakPos] = '\0';

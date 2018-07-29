@@ -174,9 +174,11 @@ bool WebSocketServer::_handleRequest(EthernetClient &client) {
 	char buffer[132] = { '\0' };
 	char secKey[32] = { '\0' };
 	
+#ifdef _USE_WIFI
 	while(!client.available()) {
-    delay(10);
-  }
+		delay(10);
+	}
+#endif
 
 	while ((bite = client.read()) != -1) {
 		buffer[counter++] = bite;
