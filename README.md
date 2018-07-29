@@ -46,7 +46,7 @@ Some tests will never pass just because of memory lack in ATmega family.
   * [arduino-base64](https://github.com/adamvr/arduino-base64)
   * CryptoLegacy from [arduinolibs](https://github.com/rweather/arduinolibs), you can grab it from [here](CryptoLegacy.zip)
   * [Ethernet "2"](https://github.com/adafruit/Ethernet2) for W5500
-  * [UIPEthernet](https://github.com/UIPEthernet/UIPEthernet) for ENC28j60
+  * UIPEthernet [#1](https://github.com/ntruchsess/arduino_uip) or [#2](https://github.com/UIPEthernet/UIPEthernet) (the choice is yours) for ENC28j60
 
 ## Installation
 
@@ -230,9 +230,24 @@ Following screenshots shows Rasperry Pi server, browser client and Arduino clien
 #endif
 ```
 
-## Known issues
+## Known issues		
 
-For now ESP8266 works only with **WebSocketClient**
+1. ENC28j60 is slow, eats much more memory than W5100/W5500 and hangs on following **Autobahn**|Testsuite cases:
+  * Pings/Pongs
+    + 2.6
+    + 2.11
+  * Reserved Bits
+    + 3.4
+  * Opcodes
+    + 4.1.5
+    + 4.2.5
+  * Fragmentation
+    + 5.5
+    + 5.8
+    + 5.11
+    + 5.14
+
+2. For now ESP8266 works only with **WebSocketClient**
 
 ## License
 
