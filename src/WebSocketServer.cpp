@@ -26,10 +26,13 @@ void WebSocketServer::listen() {
 #if defined(_USE_WIFI) && defined(ESP8266)
 	WiFiClient client = m_Server.available();
 #else
-		EthernetClient client = m_Server.available();
+	EthernetClient client = m_Server.available();
 #endif
 
-	if (client) {		
+	if (client) {
+
+		Serial.println("got client");
+	
 		WebSocket *pSocket = _getWebSocket(client);
 		
 		if (!pSocket) {
@@ -72,6 +75,16 @@ void WebSocketServer::listen() {
 	}
 	
 	_heartbeat();
+}
+
+void WebSocketServer::broadcast(const eWebSocketDataType dataType, const char *message, uint16_t length) {
+	for (byte i = 0; i < MAX_CONNECTIONS; i++) {
+		WebSocket *pSocket = m_pSockets[i];
+		if (!pSocket)
+			continue;
+		
+		pSocket->send(dataType, message, length);
+	}
 }
 
 uint8_t WebSocketServer::countClients() {
@@ -344,7 +357,9 @@ bool WebSocketServer::_handleRequest(EthernetClient &client) {
 					client.println();
 					
 #ifdef _USE_WIFI
-					delay(1);
+					client.setNoDelay(true);
+					client.setTimeout(TIMEOUT_INTERVAL);
+					//delay(1);
 #endif
 
 					return true;

@@ -12,6 +12,7 @@ public:
 	void shutdown();
 	
 	void listen();
+	void broadcast(const eWebSocketDataType dataType, const char *message, uint16_t length);
 	
 	uint8_t countClients();
 	
