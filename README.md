@@ -9,6 +9,7 @@ Simple to use implementation of WebSocket client and server for Arduino.
 - ATmega328P
 - ATmega2560 
 - ESP8266
+- ARM Cortex M0 **new!**
 
 The **Autobahn**|Testsuite reports for [server](https://skaarj1989.github.io/ArduinoWebSockets/autobahn-testsuite/servers/index.html) and [client](https://skaarj1989.github.io/ArduinoWebSockets/autobahn-testsuite/clients/index.html)
 
@@ -38,6 +39,7 @@ Some tests will never pass just because of memory lack in ATmega family.
   * Arduino Mega2560
   * WeMos D1 mini (ESP8266)
   * NodeMCU v3 (ESP8266)
+  * Arduino Zero / SAMD21 M0 (ARM Cortex M0)
 * Ethernet module or shield (confirmed working):
   * Arduino Ethernet Shield W5100
   * WizNet W5500 module
@@ -59,10 +61,13 @@ Change below definition if you use a different controller:
 ```cpp
 ...
 
-#define _USE_ETHERNET
-//#define _USE_WIFI
+#define NETWORK_CONTROLLER ETHERNET_CONTROLLER_W5100
 
-#define ETHERNET_CONTROLLER   W5100
+// ... from platform.h
+ETHERNET_CONTROLLER_W5100
+ETHERNET_CONTROLLER_W5500
+ETHERNET_CONTROLLER_ENC28J60
+NETWORK_CONTROLLER_WIFI
 ```
 
 Uncomment these if you want additional informations in serial monitor:
@@ -77,17 +82,17 @@ Uncomment these if you want additional informations in serial monitor:
 Increase below value if you expect big data frames (or decrease for devices with small amount of memory)
 
 ```cpp
-#define BUFFER_MAX_SIZE		256
+#define BUFFER_MAX_SIZE 256
 ```
 
 ### Physical connection
 
-| W5100 Ethernet shield  | Arduino Uno / Mega2560 |  Arduino Pro Mini
-| :---: | :---: | :---: |
-| (ICSP) MISO  | (ICSP) MISO  | PIN 12 |
-| (ICSP) MOSI  | (ICSP) MOSI  | PIN 11 |
-| (ICSP) SCK  | (ICSP) SCK | PIN 13 |
-| (SS) PIN 10  | PIN 10 | PIN 10 |
+| W5100 Ethernet shield  | Arduino Uno / Mega2560 |  Arduino Pro Mini | Arduino Zero |
+| :---: | :---: | :---: | :---: |
+| (ICSP) MISO  | (ICSP) MISO  | PIN 12 | (ICSP) MISO |
+| (ICSP) MOSI  | (ICSP) MOSI  | PIN 11 | (ICSP) MOSI |
+| (ICSP) SCK  | (ICSP) SCK | PIN 13 | (ICSP) SCK |
+| (SS) PIN 10  | PIN 10 | PIN 10 | PIN 10 |
 
 | W5500 / ENC28j60  | Arduino Uno / Pro Mini | Arduino Mega2560 |
 | :---: | :---: | :---: | 
@@ -197,6 +202,7 @@ Following screenshots shows Rasperry Pi server, browser client and Arduino clien
 | Arduino Uno  | 21500 bytes (64%)  | 886 bytes (43%) |
 | Arduino Mega2560  | 21754 bytes (8%) | 886 bytes (10%) |
 | Arduino Pro Mini | 21500 bytes (69%) | 886 bytes (43%) |
+| Arduino Zero | 30012 bytes (11%) | |
 
 ### Ethernet2.h (W5500)
 
@@ -205,6 +211,7 @@ Following screenshots shows Rasperry Pi server, browser client and Arduino clien
 | Arduino Uno  | 21104 bytes (65%)  | 779 bytes (38%) |
 | Arduino Mega2560  | 21258 bytes (8%) | 779 bytes (9%) |
 | Arduino Pro Mini | 21104 bytes (68%) | 779 bytes (38%) |
+| Arduino Zero | 27692 (10%) | |
 
 ### UIPEthernet.h (ENC28j60)
 
@@ -213,6 +220,9 @@ Following screenshots shows Rasperry Pi server, browser client and Arduino clien
 | Arduino Uno  | 29442 bytes (91%)  | 1574 bytes (76%) |
 | Arduino Mega2560  | 29658 bytes (11%) | 1574 bytes (19%) |
 | Arduino Pro Mini | 29442 bytes (95%) | 1574 bytes (76%) |
+
+**This library is incompatibile with Arduino Zero!**
+
 
 ## Ethernet "2" library modification
 
