@@ -1,7 +1,7 @@
-#ifndef __WEBSOCKETCLIENT_UTILITY_DOT_H_INCLUDED_
-#define __WEBSOCKETCLIENT_UTILITY_DOT_H_INCLUDED_
+#ifndef __WEBSOCKETS_UTILITY_DOT_H_INCLUDED_
+#define __WEBSOCKETS_UTILITY_DOT_H_INCLUDED_
 
-#include "config.h"
+#include "platform.h"
 #include <Arduino.h>
 
 void generateSecKey(char output[]);

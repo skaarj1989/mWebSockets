@@ -6,30 +6,10 @@
 	https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent
 */
 
-#ifndef __WEBSOCKETSERVER_DEFINES_DOT_H_INCLUDED_
-#define __WEBSOCKETSERVER_DEFINES_DOT_H_INCLUDED_
+#ifndef __WEBSOCKETS_DEFINES_DOT_H_INCLUDED_
+#define __WEBSOCKETS_DEFINES_DOT_H_INCLUDED_
 
-#include "utility.h"
-
-#if defined(_USE_WIFI) && defined(ESP8266)
-# include <ESP8266WiFi.h>
-# include <WiFiClient.h>
-# include <WiFiServer.h>
-# define MAX_CONNECTIONS 8
-#else
-# if ETHERNET_CONTROLLER == W5100
-#  include <Ethernet.h>
-#  define MAX_CONNECTIONS	4
-# elif ETHERNET_CONTROLLER == W5500
-#  include <Ethernet2.h>
-#  define MAX_CONNECTIONS	8
-# elif ETHERNET_CONTROLLER == ENC28J60
-#  include <UIPEthernet.h>
-#  define MAX_CONNECTIONS	4
-# else
-#  error "Unknown controller"
-# endif
-#endif
+#include "platform.h"
 
 enum eWebSocketReadyState {
 	WSRS_CONNECTING,

@@ -1,4 +1,5 @@
 #include "WebSocket.h"
+#include "utility.h"
 
 void generateMask(byte *target) {
 	randomSeed(analogRead(0));
@@ -106,7 +107,7 @@ const eWebSocketReadyState &WebSocket::getReadyState() const {
 //
 
 
-#if defined(_USE_WIFI) && defined(ESP8266)
+#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
 WebSocket::WebSocket(WiFiClient client) :
 #else
 WebSocket::WebSocket(EthernetClient client) :
@@ -165,7 +166,7 @@ bool WebSocket::_readHeader(webSocketHeader_t &header) {
 	byte temp[2] = { 0 };
 	_read(temp, 2);
 	
-	__debugOutput(F("B[0] = %x, B[1] = %x\n"), temp[0], temp[1]);
+	//__debugOutput(F("B[0] = %x, B[1] = %x\n"), temp[0], temp[1]);
 	
 	header.fin = temp[0] & 0x80;
 	header.rsv1 = temp[0] & 0x40;
@@ -247,7 +248,7 @@ void WebSocket::_readData(const webSocketHeader_t &header, char *payload) {
 void WebSocket::_handleFrame() {
 	if (m_eReadyState == WSRS_CLOSED) return;
 	
-#ifdef _USE_WIFI
+#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
 	while (!m_Client.available())
     delay(1);
 #else
@@ -267,6 +268,7 @@ void WebSocket::_handleFrame() {
 	}
 	
 	char *payload = new char[header.length + 1];
+	memset(payload, '\0', sizeof(char) * header.length + 1);
 	_readData(header, payload);
 	
 	// ---
@@ -350,7 +352,7 @@ void WebSocket::_handleFrame() {
 		if (_onClose)
 			_onClose(*this, (eWebSocketCloseEvent)code, reason, header.length - 2);
 		
-		terminate();
+		//terminate();
 	}
 	break;
 	case PING_FRAME:
@@ -420,10 +422,12 @@ void WebSocket::_send(uint8_t opcode, bool fin, bool mask, const char *data, uin
 	if (length) printf(F("%s\n"), data);	
 #endif
 
+#ifdef _DEBUG
 	printf(F("TX BYTES = %u\n"), bytesWritten);
+#endif
 	
 	m_Client.flush();
-	delay(100);
+	//delay(100);
 }
 
 void WebSocket::_triggerError(const eWebSocketError code) {

@@ -26,7 +26,7 @@ public:
 private:
 	void _heartbeat();
 
-#if defined(_USE_WIFI) && defined(ESP8266)
+#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
 	WebSocket *_getWebSocket(WiFiClient client);
 	bool _handleRequest(WiFiClient &client);
 	void _rejectRequest(WiFiClient &client, const eWebSocketError code);
@@ -39,7 +39,7 @@ private:
 	void _triggerError(const eWebSocketError code);
 	
 private:
-#if defined(_USE_WIFI) && defined(ESP8266)
+#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
 	WiFiServer m_Server;
 #else
 	EthernetServer m_Server;

@@ -1,4 +1,5 @@
 #include "WebSocketServer.h"
+#include "utility.h"
 
 WebSocketServer::WebSocketServer(uint16_t port) :
 	m_Server(port),
@@ -23,7 +24,7 @@ void WebSocketServer::shutdown() {
 }
 
 void WebSocketServer::listen() {
-#if defined(_USE_WIFI) && defined(ESP8266)
+#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
 	WiFiClient client = m_Server.available();
 #else
 	EthernetClient client = m_Server.available();
@@ -143,7 +144,7 @@ void WebSocketServer::_heartbeat() {
   }
 }
 
-#if defined(_USE_WIFI) && defined(ESP8266)
+#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
 WebSocket *WebSocketServer::_getWebSocket(WiFiClient client) {
 #else
 WebSocket *WebSocketServer::_getWebSocket(EthernetClient client) {
@@ -157,7 +158,7 @@ WebSocket *WebSocketServer::_getWebSocket(EthernetClient client) {
 	return NULL;
 }
 
-#if defined(_USE_WIFI) && defined(ESP8266)
+#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
 bool WebSocketServer::_handleRequest(WiFiClient &client) {
 #else
 bool WebSocketServer::_handleRequest(EthernetClient &client) {
@@ -187,7 +188,7 @@ bool WebSocketServer::_handleRequest(EthernetClient &client) {
 	char buffer[132] = { '\0' };
 	char secKey[32] = { '\0' };
 	
-#ifdef _USE_WIFI
+#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
 	while(!client.available()) {
 		delay(10);
 	}
@@ -356,7 +357,7 @@ bool WebSocketServer::_handleRequest(EthernetClient &client) {
 					client.println(secWebSocketAccept);
 					client.println();
 					
-#ifdef _USE_WIFI
+#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
 					client.setNoDelay(true);
 					client.setTimeout(TIMEOUT_INTERVAL);
 					//delay(1);
@@ -376,7 +377,7 @@ bool WebSocketServer::_handleRequest(EthernetClient &client) {
 	return false;
 }
 
-#if defined(_USE_WIFI) && defined(ESP8266)
+#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
 void WebSocketServer::_rejectRequest(WiFiClient &client, const eWebSocketError code) {
 #else
 void WebSocketServer::_rejectRequest(EthernetClient &client, const eWebSocketError code) {

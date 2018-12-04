@@ -21,7 +21,7 @@ public:
 	const eWebSocketReadyState &getReadyState() const;
 	
 protected:
-#if defined(_USE_WIFI) && defined(ESP8266)
+#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
 	WebSocket(WiFiClient client);		// private constructor for server init
 #else
 	WebSocket(EthernetClient client);		// private constructor for server init
@@ -40,7 +40,7 @@ protected:
 	void _triggerError(const eWebSocketError code);
 	
 protected:
-#if defined(_USE_WIFI) && defined(ESP8266)
+#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
 	WiFiClient m_Client;
 #else
 	EthernetClient m_Client;

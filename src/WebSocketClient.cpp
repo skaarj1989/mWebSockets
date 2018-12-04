@@ -1,4 +1,5 @@
 #include "WebSocketClient.h"
+#include "utility.h"
 
 WebSocketClient::WebSocketClient() {
 }
@@ -205,6 +206,19 @@ bool WebSocketClient::open(const char *host, uint16_t port, char path[]) {
 }
 
 void WebSocketClient::listen() {
+		if (!m_Client.connected()) {
+		//__debugOutput(F("client not connected!\n"));
+		
+		if (m_eReadyState == WSRS_OPEN) {
+			if (_onClose)
+				_onClose(*this, ABNORMAL_CLOSURE, NULL, 0);
+			
+			terminate();
+		}
+		
+		return;
+	}
+	
 	_handleFrame();
 }
 
