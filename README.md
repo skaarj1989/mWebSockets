@@ -62,8 +62,9 @@ Change below definition if you use a different controller:
 ...
 
 #define NETWORK_CONTROLLER ETHERNET_CONTROLLER_W5100
+```
 
-// ... from platform.h
+```
 ETHERNET_CONTROLLER_W5100
 ETHERNET_CONTROLLER_W5500
 ETHERNET_CONTROLLER_ENC28J60
@@ -214,15 +215,13 @@ Following screenshots shows Rasperry Pi server, browser client and Arduino clien
 | Arduino Zero | 27692 (10%) | |
 
 ### UIPEthernet.h (ENC28j60)
+:warning: **This library is incompatibile with Arduino Zero!** :warning:
 
 | Board  | Program space | Dynamic memory |
 | :---: | :---: | :---: | 
 | Arduino Uno  | 29442 bytes (91%)  | 1574 bytes (76%) |
 | Arduino Mega2560  | 29658 bytes (11%) | 1574 bytes (19%) |
 | Arduino Pro Mini | 29442 bytes (95%) | 1574 bytes (76%) |
-
-**This library is incompatibile with Arduino Zero!**
-
 
 ## Ethernet "2" library modification
 
