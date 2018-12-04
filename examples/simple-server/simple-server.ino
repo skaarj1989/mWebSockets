@@ -1,48 +1,54 @@
 #include <SPI.h>
 #include <WebSocketServer.h>
 
+#if PLATFORM_ARCH == PLATFORM_ARCHITECTURE_SAMD21
+# define CONSOLE SerialUSB
+#else
+# define CONSOLE Serial
+#endif
+
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 WebSocketServer server(3000);
 
 void onOpen(WebSocket &ws) {
-  Serial.println(F("Connected"));
+  CONSOLE.println(F("Connected"));
   
   char message[] = "Hello from Arduino server!";
   ws.send(TEXT, message, strlen(message));
 }
 
 void onClose(WebSocket &ws, const eWebSocketCloseEvent code, const char *reason, uint16_t length) {
-  Serial.println(F("Disconnected"));
+  CONSOLE.println(F("Disconnected"));
 }
 
 void onMessage(WebSocket &ws, const eWebSocketDataType dataType, const char *message, uint16_t length) {
   switch (dataType) {
     case TEXT:
-      Serial.print(F("Received: ")); Serial.println(message);
+      CONSOLE.print(F("Received: ")); CONSOLE.println(message);
       break;
     case BINARY:
-      Serial.println(F("Received binary data"));
+      CONSOLE.println(F("Received binary data"));
       break;
   }
 }
 
 void onError(const eWebSocketError code) {
-  Serial.print("Error: "); Serial.println(code);
+  CONSOLE.print("Error: "); CONSOLE.println(code);
 }
 
 void setup() {
-  Serial.begin(115200);
-  while (!Serial) ;
+  CONSOLE.begin(115200);
+  while (!CONSOLE) ;
   
-  Serial.println(F("Initializing ... "));
+  CONSOLE.println(F("Initializing ... "));
   
   if (Ethernet.begin(mac) == 0) {
-    Serial.println(F("Can't open ethernet device"));
+    CONSOLE.println(F("Can't open ethernet device"));
     while (true) ;
   }
 
-  Serial.print(F("Server IP: "));
-  Serial.println(Ethernet.localIP());
+  CONSOLE.print(F("Server IP: "));
+  CONSOLE.println(Ethernet.localIP());
 
   // ---
 
