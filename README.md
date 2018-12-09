@@ -9,7 +9,7 @@ Simple to use implementation of WebSocket client and server for Arduino.
 - ATmega328P
 - ATmega2560 
 - ESP8266
-- ARM Cortex M0 **new!**
+- ARM Cortex M0
 
 The **Autobahn**|Testsuite reports for [server](https://skaarj1989.github.io/ArduinoWebSockets/autobahn-testsuite/servers/index.html) and [client](https://skaarj1989.github.io/ArduinoWebSockets/autobahn-testsuite/clients/index.html)
 
