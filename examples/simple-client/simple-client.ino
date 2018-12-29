@@ -67,7 +67,7 @@ void setup() {
     while (true) ;
   }
 
-  CONSOLE.print(F("Server IP: "));
+  CONSOLE.print(F("Device IP: "));
   CONSOLE.println(Ethernet.localIP());
 #endif
 
