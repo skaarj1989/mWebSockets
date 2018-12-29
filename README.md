@@ -28,6 +28,7 @@ Some tests will never pass just because of memory lack in ATmega family.
 - [Approx memory usage](#approx-memory-usage)
 - [Ethernet "2" library modification](#ethernet-2-library-modification)
   * [Fix for Arduino Mega](#fix-for-arduino-mega)
+- [Fix for arduino-base64 with ESP8266](#fix-for-arduino-base64-with-esp8266)
 - [Known issues](#known-issues)
 - [License](#license)
 
@@ -236,6 +237,27 @@ Following screenshots shows Rasperry Pi server, browser client and Arduino clien
 #elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
   EthernetClass() { _dhcp = NULL; w5500_cspin = 53; }
   void init(uint8_t _cspin = 53) { w5500_cspin = _cspin; }
+#endif
+```
+
+## Fix for arduino-base64 with **ESP8266**
+
+Move files: ``Base64.h`` and ``Base64.cpp`` to ``src`` directory of ``ArduinoWebSockets`` library.
+In ``Base64.cpp`` change:
+
+```
+#include <avr/pgmspace.h>
+```
+
+to this:
+
+```
+#include "platform.h"
+#include "Base64.h"
+#if PLATFORM_ARCH == PLATFORM_ARCHITECTURE_ESP8266
+#include <pgmspace.h>
+#else
+#include <avr/pgmspace.h>
 #endif
 ```
 
