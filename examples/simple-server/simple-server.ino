@@ -1,4 +1,3 @@
-#include <SPI.h>
 #include <WebSocketServer.h>
 
 #if PLATFORM_ARCH == PLATFORM_ARCHITECTURE_SAMD21
@@ -7,7 +6,13 @@
 # define CONSOLE Serial
 #endif
 
+#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
+const char *SSID = "SKYNET";
+const char *password = "***";
+#else
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+#endif
+
 WebSocketServer server(3000);
 
 void onOpen(WebSocket &ws) {
@@ -40,8 +45,23 @@ void setup() {
   CONSOLE.begin(115200);
   while (!CONSOLE) ;
   
+#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
+  CONSOLE.printf("\nConnecting to %s ", SSID);
+
+  WiFi.begin(SSID, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    CONSOLE.print(".");
+  }
+
+  CONSOLE.println(" connected");
+
+  CONSOLE.print(F("Server IP: "));
+  CONSOLE.println(WiFi.localIP());
+  //WiFi.printDiag(CONSOLE);
+#else
   CONSOLE.println(F("Initializing ... "));
-  
+
   if (Ethernet.begin(mac) == 0) {
     CONSOLE.println(F("Can't open ethernet device"));
     while (true) ;
@@ -49,9 +69,11 @@ void setup() {
 
   CONSOLE.print(F("Server IP: "));
   CONSOLE.println(Ethernet.localIP());
+#endif
 
   // ---
 
+	//server.setOnErrorCallback(onError);
   server.setOnOpenCallback(onOpen);
   server.setOnCloseCallback(onClose);
   server.setOnMessageCallback(onMessage);
