@@ -1,39 +1,66 @@
-#include <SPI.h>
 #include <WebSocketClient.h>
+
+#if PLATFORM_ARCH == PLATFORM_ARCHITECTURE_SAMD21
+# define CONSOLE SerialUSB
+#else
+# define CONSOLE Serial
+#endif
+
+#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
+const char *SSID = "SKYNET";
+const char *password = "***";
+#else
+byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+#endif
 
 #define BUFFER_SIZE 64
 char message[BUFFER_SIZE] = { '\0' };
 bool newData = false;
 
-byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 WebSocketClient client;
 
-void onOpen(WebSocketClient &ws) {
-  Serial.println(F("Type message in following format: <text>"));
-  Serial.println(F("----------------------------------------"));
+void onOpen(WebSocket &ws) {
+  CONSOLE.println(F("Type message in following format: <text>"));
+  CONSOLE.println(F("----------------------------------------"));
 }
 
-void onMessage(WebSocketClient &ws, const eWebSocketDataType dataType, const char *message, uint16_t length) {
-  Serial.println(message);
+void onMessage(WebSocket &ws, const eWebSocketDataType dataType, const char *message, uint16_t length) {
+  CONSOLE.println(message);
 }
 
-void onClose(WebSocketClient &ws) {
-  Serial.println(F("Disconnected"));
+void onClose(WebSocket &ws, const eWebSocketCloseEvent code, const char *reason, uint16_t length) {
+  CONSOLE.println(F("Disconnected"));
 }
 
 void setup() {
-  Serial.begin(115200);
-  while (!Serial) ;
+  CONSOLE.begin(115200);
+  while (!CONSOLE) ;
 
-  Serial.println(F("Initializing ..."));
+#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
+  CONSOLE.printf("\nConnecting to %s ", SSID);
+
+  WiFi.begin(SSID, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    CONSOLE.print(".");
+  }
+
+  CONSOLE.println(" connected");
+
+  CONSOLE.print(F("Device IP: "));
+  CONSOLE.println(WiFi.localIP());
+  //WiFi.printDiag(CONSOLE);
+#else
+  CONSOLE.println(F("Initializing ... "));
 
   if (Ethernet.begin(mac) == 0) {
-    Serial.println(F("Can't open ethernet device!"));
+    CONSOLE.println(F("Can't open ethernet device"));
     while (true) ;
   }
 
-  Serial.print(F("Client IP: "));
-  Serial.println(Ethernet.localIP());
+  CONSOLE.print(F("Device IP: "));
+  CONSOLE.println(Ethernet.localIP());
+#endif
 
   // ---
 
@@ -41,8 +68,8 @@ void setup() {
   client.setOnMessageCallback(onMessage);
   client.setOnCloseCallback(onClose);
 
-  if (!client.open("192.168.46.10", 3000)) {
-    Serial.println(F("Connection failed!"));
+  if (!client.open("192.168.46.9", 3000)) {
+    CONSOLE.println(F("Connection failed!"));
     while (true) ;
   }
 }
@@ -55,8 +82,8 @@ void loop() {
   
   char c;
 
-  while (Serial.available() > 0 && newData == false) {
-    c = Serial.read();
+  while (CONSOLE.available() > 0 && newData == false) {
+    c = CONSOLE.read();
 
     if (recvInProgress == true) {
       if (c != '>') {
