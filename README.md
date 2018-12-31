@@ -195,34 +195,42 @@ Following screenshots shows Rasperry Pi server, browser client and Arduino clien
 
 ## Approx memory usage
 
-###### *simple.ino example
+###### *simple-client.ino example
 
 ### Ethernet.h (W5100)
 
 | Board  | Program space | Dynamic memory |
 | :---: | :---: | :---: | 
-| Arduino Uno  | 21500 bytes (64%)  | 886 bytes (43%) |
-| Arduino Mega2560  | 21754 bytes (8%) | 886 bytes (10%) |
-| Arduino Pro Mini | 21500 bytes (69%) | 886 bytes (43%) |
-| Arduino Zero | 30012 bytes (11%) | |
+| Arduino Uno  | 24416 bytes (75%)  | 1141 bytes (55%) |
+| Arduino Mega2560  | 24704 bytes (9%) | 1177 bytes (14%) |
+| Arduino Pro Mini | 24416 bytes (79%) | 1141 bytes (55%) |
+| Arduino Zero | 28180 bytes (11%) | |
 
 ### Ethernet2.h (W5500)
 
 | Board  | Program space | Dynamic memory |
 | :---: | :---: | :---: | 
-| Arduino Uno  | 21104 bytes (65%)  | 779 bytes (38%) |
-| Arduino Mega2560  | 21258 bytes (8%) | 779 bytes (9%) |
-| Arduino Pro Mini | 21104 bytes (68%) | 779 bytes (38%) |
-| Arduino Zero | 27692 (10%) | |
+| Arduino Uno  | 21448 bytes (66%)  | 940 bytes (45%) |
+| Arduino Mega2560  | 21746 bytes (8%) | 940 bytes (11%) |
+| Arduino Pro Mini | 21448 bytes (69%) | 940 bytes (45%) |
+| Arduino Zero | 25852 bytes (9%) | |
 
 ### UIPEthernet.h (ENC28j60)
 :warning: **This library is incompatibile with Arduino Zero!** :warning:
 
 | Board  | Program space | Dynamic memory |
 | :---: | :---: | :---: | 
-| Arduino Uno  | 29442 bytes (91%)  | 1574 bytes (76%) |
-| Arduino Mega2560  | 29658 bytes (11%) | 1574 bytes (19%) |
-| Arduino Pro Mini | 29442 bytes (95%) | 1574 bytes (76%) |
+| Arduino Uno  | 29626 bytes (91%)  | 1788 bytes (87%) :warning: |
+| Arduino Mega2560  | 30032 bytes (11%) | 1788 bytes (21%) |
+| Arduino Pro Mini | 29626 bytes (96%) | 1788 bytes (87%) :warning: |
+
+### WiFi
+
+| Board  | Program space | Dynamic memory |
+| :---: | :---: | :---: | 
+| Generic ESP8266  | 265108 bytes (53%)  | 33624 bytes (41%) |
+| WeMos D1 | 265108 bytes (25%) | 33624 bytes (41%) |
+| NodeMCU | 265108 bytes (25%) | 33624 bytes (41%) |
 
 ## Ethernet "2" library modification
 
@@ -278,7 +286,7 @@ to this:
     + 5.11
     + 5.14
 
-2. For now ESP8266 works only with **WebSocketClient**
+2. For now **ESP8266** works only with **WebSocketClient**
 
 ## License
 
