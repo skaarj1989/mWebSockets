@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Send ping with small text payload.",
    "droppedByMe": true,
-   "duration": 84,
+   "duration": 99,
    "expectation": "Pong with payload echo'ed is sent in reply to Ping. Clean close with normal code.",
    "expected": {
       "OK": [
@@ -26,8 +26,8 @@
       "requireClean": true
    },
    "failedByMe": false,
-   "httpRequest": "GET /runCase?case=18&agent=Mega2560 HTTP/1.1\r\nHost: 192.168.46.9:9001\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: fyBDXzHCTK9kJ3F16UNuCQ==\r\nSec-WebSocket-Version: 13\r\n\r\n",
-   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/0.8.0-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: XdYt/o0RsecPquWxRM4oCq5YF7U=\r\n\r\n",
+   "httpRequest": "GET /runCase?case=18&agent=Mega2560 HTTP/1.1\r\nHost: 192.168.46.9:9001\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: mjJOhSD9MFDmqleRWaLVVQ==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/0.8.0-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: IvE8lGtPf9PFO08/mAG56zdzsmk=\r\n\r\n",
    "id": "2.2",
    "isServer": true,
    "localCloseCode": 1000,
@@ -49,16 +49,18 @@
       "10": 1
    },
    "rxOctetStats": {
-      "1": 5,
-      "2": 5,
-      "3": 7,
-      "4": 5,
+      "1": 3,
+      "3": 1,
+      "4": 1,
       "5": 2,
+      "6": 6,
+      "7": 3,
+      "8": 1,
       "9": 1,
       "43": 1,
-      "95": 1
+      "76": 1
    },
-   "started": "2018-07-27T01:00:21.187Z",
+   "started": "2019-03-10T12:41:23.170Z",
    "trafficStats": null,
    "txFrameStats": {
       "8": 1,
@@ -78,113 +80,92 @@
       [
          "RO",
          [
-            95,
+            76,
             "474554202f72756e436173653f636173653d3138266167656e743d4d6567613235363020485454502f312e310d0a486f73743a203139322e3136382e34362e39 ..."
          ]
       ],
       [
          "RO",
          [
-            3,
-            "656374"
+            8,
+            "64653a2077656273"
+         ]
+      ],
+      [
+         "RO",
+         [
+            7,
+            "6f636b65740d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            6,
+            "436f6e6e6563"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "74696f6e3a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            6,
+            "205570677261"
          ]
       ],
       [
          "RO",
          [
             4,
-            "696f6e3a"
-         ]
-      ],
-      [
-         "RO",
-         [
-            4,
-            "20557067"
-         ]
-      ],
-      [
-         "RO",
-         [
-            3,
-            "726164"
-         ]
-      ],
-      [
-         "RO",
-         [
-            3,
-            "650d0a"
+            "64650d0a"
          ]
       ],
       [
          "RO",
          [
             43,
-            "5365632d576562536f636b65742d4b65793a2066794244587a4843544b396b4a33463136554e7543513d3d"
+            "5365632d576562536f636b65742d4b65793a206d6a4a4f685344394d46446d716c655257614c5656513d3d"
          ]
       ],
       [
          "RO",
          [
-            2,
-            "0d0a"
+            6,
+            "0d0a5365632d"
          ]
       ],
       [
          "RO",
          [
-            4,
-            "5365632d"
+            6,
+            "576562536f63"
          ]
       ],
       [
          "RO",
          [
-            3,
-            "576562"
+            6,
+            "6b65742d5665"
          ]
       ],
       [
          "RO",
          [
-            3,
-            "536f63"
+            6,
+            "7273696f6e3a"
          ]
       ],
       [
          "RO",
          [
-            3,
-            "6b6574"
-         ]
-      ],
-      [
-         "RO",
-         [
-            2,
-            "2d56"
-         ]
-      ],
-      [
-         "RO",
-         [
-            3,
-            "657273"
-         ]
-      ],
-      [
-         "RO",
-         [
-            2,
-            "696f"
-         ]
-      ],
-      [
-         "RO",
-         [
-            9,
-            "6e3a2031330d0a0d0a"
+            7,
+            "2031330d0a0d0a"
          ]
       ],
       [
@@ -231,43 +212,29 @@
       [
          "RO",
          [
-            1,
-            "8d"
+            9,
+            "8d253f941f6d5af873"
          ]
       ],
       [
          "RO",
          [
-            4,
-            "53195652"
+            3,
+            "4a13b4"
          ]
       ],
       [
          "RO",
          [
             5,
-            "1b7c3a3e3c"
+            "684a4df87b"
          ]
       ],
       [
          "RO",
          [
-            2,
-            "3576"
-         ]
-      ],
-      [
-         "RO",
-         [
-            2,
-            "253c"
-         ]
-      ],
-      [
-         "RO",
-         [
-            4,
-            "6b3a3672"
+            1,
+            "04"
          ]
       ],
       [
@@ -280,7 +247,7 @@
          true,
          0,
          true,
-         "53195652"
+         "253f941f"
       ],
       [
          "TF",
@@ -314,22 +281,8 @@
       [
          "RO",
          [
-            1,
-            "82"
-         ]
-      ],
-      [
-         "RO",
-         [
-            5,
-            "556b2b7856"
-         ]
-      ],
-      [
-         "RO",
-         [
-            1,
-            "83"
+            7,
+            "82f4137dc5f7fb"
          ]
       ],
       [
@@ -342,7 +295,7 @@
          true,
          0,
          true,
-         "556b2b78"
+         "f4137dc5"
       ]
    ]
 }
