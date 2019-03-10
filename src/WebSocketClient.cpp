@@ -8,11 +8,12 @@ WebSocketClient::~WebSocketClient() {
 	close();
 }
 
-bool WebSocketClient::open(const char *host, uint16_t port, char path[]) {
+bool WebSocketClient::open(const char *host, uint16_t port, char *path) {
 	close(GOING_AWAY, NULL, 0, true);	// Close if already open
 	
 	if (!m_Client.connect(host, port)) {
 		__debugOutput(F("Error in connection establishment: net::ERR_CONNECTION_REFUSED\n"));
+		
 		_triggerError(CONNECTION_ERROR);
 		terminate();
 		return false;
@@ -56,6 +57,7 @@ bool WebSocketClient::open(const char *host, uint16_t port, char path[]) {
 	
 	if (!_poll(TIMEOUT_INTERVAL)) {
 		__debugOutput(F("Error in connection establishment: net::ERR_CONNECTION_TIMED_OUT\n"));
+		
 		_triggerError(CONNECTION_TIMED_OUT);
 		terminate();
 		return false;
@@ -72,7 +74,7 @@ bool WebSocketClient::open(const char *host, uint16_t port, char path[]) {
 	memset(buffer, '\0', sizeof(buffer));
 	
 	//
-	// Read response (server handshake):
+	// Read response (server-side handshake):
 	//
 	// [1] HTTP/1.1 101 Switching Protocols
 	// [2] Upgrade: websocket
@@ -206,9 +208,7 @@ bool WebSocketClient::open(const char *host, uint16_t port, char path[]) {
 }
 
 void WebSocketClient::listen() {
-		if (!m_Client.connected()) {
-		//__debugOutput(F("client not connected!\n"));
-		
+	if (!m_Client.connected()) {	
 		if (m_eReadyState == WSRS_OPEN) {
 			if (_onClose)
 				_onClose(*this, ABNORMAL_CLOSURE, NULL, 0);

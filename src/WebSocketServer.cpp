@@ -31,9 +31,6 @@ void WebSocketServer::listen() {
 #endif
 
 	if (client) {
-
-		Serial.println("got client");
-	
 		WebSocket *pSocket = _getWebSocket(client);
 		
 		if (!pSocket) {
@@ -63,7 +60,7 @@ void WebSocketServer::listen() {
 				}
 				
 				if (i == MAX_CONNECTIONS - 1) {
-					__debugOutput(F("Server is full\n"));
+					__debugOutput(F("Server is full!\n"));
 					_rejectRequest(client, BAD_REQUEST);
 				}
 			}
@@ -81,8 +78,7 @@ void WebSocketServer::listen() {
 void WebSocketServer::broadcast(const eWebSocketDataType dataType, const char *message, uint16_t length) {
 	for (byte i = 0; i < MAX_CONNECTIONS; i++) {
 		WebSocket *pSocket = m_pSockets[i];
-		if (!pSocket)
-			continue;
+		if (!pSocket) continue;
 		
 		pSocket->send(dataType, message, length);
 	}
@@ -93,7 +89,7 @@ uint8_t WebSocketServer::countClients() {
 	
 	for (byte i = 0; i < MAX_CONNECTIONS; i++)
 		if (m_pSockets[i] && m_pSockets[i]->m_Client.connected())
-				count++;
+			count++;
 	
 	return count;
 }
@@ -122,7 +118,7 @@ void WebSocketServer::_heartbeat() {
 	static unsigned long previousTime = 0;
 	
 	unsigned long currentTime = millis();
-  if (currentTime - previousTime > 100) {
+  if (currentTime - previousTime > 1000) {
     previousTime = currentTime;
 
 		for (byte i = 0; i < MAX_CONNECTIONS; i++) {

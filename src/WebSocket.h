@@ -12,7 +12,7 @@ public:
 	~WebSocket();
 	
 	void close(const eWebSocketCloseEvent code = NORMAL_CLOSURE, const char *reason = NULL, uint16_t length = 0, bool instant = false);
-	void terminate();
+	bool terminate();
 	
 	void send(const eWebSocketDataType dataType, const char *message, uint16_t length);
 	void send(const eWebSocketDataType dataType, const char *message, uint16_t length, bool mask);
@@ -29,7 +29,7 @@ protected:
 
 	bool _poll(uint16_t maxAttempts, uint8_t time = 1);
 	int _read();
-	void _read(uint8_t *buf, size_t size);
+	bool _read(uint8_t *buf, size_t size);
 	
 	bool _readHeader(webSocketHeader_t &header);
 	void _readData(const webSocketHeader_t &header, char *payload);
@@ -48,9 +48,7 @@ protected:
 
 	eWebSocketReadyState m_eReadyState;
 	
-	uint8_t m_NumPings;
 	char m_DataBuffer[BUFFER_MAX_SIZE];
-	
 	bool m_bMaskEnabled;
 	
 	onOpenCallback *_onOpen;
