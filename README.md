@@ -7,9 +7,9 @@ Simple to use implementation of WebSocket client and server for Arduino.
 
 **List of supported MCUs:**
 - ATmega328P
-- ATmega2560 
-- ESP8266
+- ATmega2560
 - ARM Cortex M0
+- ESP8266
 
 The **Autobahn**|Testsuite reports for [server](https://skaarj1989.github.io/ArduinoWebSockets/autobahn-testsuite/servers/index.html) and [client](https://skaarj1989.github.io/ArduinoWebSockets/autobahn-testsuite/clients/index.html)
 
@@ -38,9 +38,9 @@ Some tests will never pass just because of memory lack in ATmega family.
   * Arduino Uno (ATmega328P)
   * Arduino Pro Mini (ATmega328P)
   * Arduino Mega2560
+  * Arduino Zero / SAMD21 M0 (ARM Cortex M0)
   * WeMos D1 mini (ESP8266)
   * NodeMCU v3 (ESP8266)
-  * Arduino Zero / SAMD21 M0 (ARM Cortex M0)
 * Ethernet module or shield (confirmed working):
   * Arduino Ethernet Shield W5100
   * WizNet W5500 module
@@ -49,6 +49,7 @@ Some tests will never pass just because of memory lack in ATmega family.
   * [arduino-base64](https://github.com/adamvr/arduino-base64)
   * CryptoLegacy from [arduinolibs](https://github.com/rweather/arduinolibs), you can grab it from [here](CryptoLegacy.zip)
   * [Ethernet "2"](https://github.com/adafruit/Ethernet2) for W5500
+    + Even though this library may be deprecated/archived it still works better with W5500 than official Arduino Ethernet library.
   * UIPEthernet [#1](https://github.com/ntruchsess/arduino_uip) or [#2](https://github.com/UIPEthernet/UIPEthernet) (the choice is yours) for ENC28j60
 
 ## Installation
@@ -271,22 +272,21 @@ to this:
 
 ## Known issues		
 
-1. ENC28j60 is slow, eats much more memory than W5100/W5500 and hangs on following **Autobahn**|Testsuite cases:
-  * Pings/Pongs
-    + 2.6
-    + 2.11
-  * Reserved Bits
-    + 3.4
-  * Opcodes
-    + 4.1.5
-    + 4.2.5
-  * Fragmentation
-    + 5.5
-    + 5.8
-    + 5.11
-    + 5.14
-
-2. For now **ESP8266** works only with **WebSocketClient**
+1. It seems that both official Arduino Ethernet and UIPEthernet library doesn't like *octet-wise chops* and fails following **Autobahn**|Testsuite cases:
+   * Ping/Pongs
+     + 2.6
+     + 2.11
+   * Reserved Bits
+     + 3.4
+   * Opcodes
+     + 4.1.5
+     + 4.2.5
+   * Fragmentation
+     + 5.5
+     + 5.8
+     + 5.11
+2. ENC28j60 is slow and eats much more memory than W5100/W5500
+3. For now **ESP8266** works only with **WebSocketClient**
 
 ## License
 
