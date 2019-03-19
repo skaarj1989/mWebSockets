@@ -118,7 +118,7 @@ void onOpen(WebSocket &ws) {
   ws.send(message, strlen(message));
 }
 
-void onClose(WebSocket &ws, const eWebSocketCloseEvent code, const char *reason, uint16_t length) { /* ... */ }
+void onClose(WebSocket &ws, const WebSocketCloseCode code, const char *reason, uint16_t length) { /* ... */ }
 void onMessage(WebSocket &ws, const char *message, uint16_t length) { /* */ }
 
 void setup() {
@@ -151,7 +151,7 @@ void onOpen(WebSocket &ws) {
   ws.send(message, strlen(message));
 }
 
-void onClose(WebSocket &ws, const eWebSocketCloseEvent code, const char *reason, uint16_t length) { /* ... */ }
+void onClose(WebSocket &ws, const WebSocketCloseCode code, const char *reason, uint16_t length) { /* ... */ }
 void onMessage(WebSocket &ws, const char *message, uint16_t length) { /* */ }
 
 void setup() {
@@ -196,34 +196,34 @@ Following screenshots shows Rasperry Pi server, browser client and Arduino clien
 
 ## Approx memory usage
 
-###### *simple-client.ino example
+###### *simple-client.ino example (without debug output)
 
 ### Ethernet.h (W5100)
 
 | Board  | Program space | Dynamic memory |
 | :---: | :---: | :---: | 
-| Arduino Uno  | 24416 bytes (75%)  | 1141 bytes (55%) |
-| Arduino Mega2560  | 24704 bytes (9%) | 1177 bytes (14%) |
-| Arduino Pro Mini | 24416 bytes (79%) | 1141 bytes (55%) |
-| Arduino Zero | 28180 bytes (11%) | |
+| Arduino Uno  | 24364 bytes (75%)  | 1012 bytes (49%) |
+| Arduino Mega2560  | 24660 bytes (9%) | 1048 bytes (12%) |
+| Arduino Pro Mini | 24364 bytes (79%) | 1012 bytes (49%) |
+| Arduino Zero | 28092 bytes (10%) | |
 
 ### Ethernet2.h (W5500)
 
 | Board  | Program space | Dynamic memory |
 | :---: | :---: | :---: | 
-| Arduino Uno  | 21448 bytes (66%)  | 940 bytes (45%) |
-| Arduino Mega2560  | 21746 bytes (8%) | 940 bytes (11%) |
-| Arduino Pro Mini | 21448 bytes (69%) | 940 bytes (45%) |
-| Arduino Zero | 25852 bytes (9%) | |
+| Arduino Uno  | 21440 bytes (66%)  | 811 bytes (39%) |
+| Arduino Mega2560  | 21738 bytes (8%) | 811 bytes (9%) |
+| Arduino Pro Mini | 21440 bytes (69%) | 811 bytes (39%) |
+| Arduino Zero | 25780 bytes (9%) | |
 
 ### UIPEthernet.h (ENC28j60)
 :warning: **This library is incompatibile with Arduino Zero!** :warning:
 
 | Board  | Program space | Dynamic memory |
 | :---: | :---: | :---: | 
-| Arduino Uno  | 29626 bytes (91%)  | 1788 bytes (87%) :warning: |
-| Arduino Mega2560  | 30032 bytes (11%) | 1788 bytes (21%) |
-| Arduino Pro Mini | 29626 bytes (96%) | 1788 bytes (87%) :warning: |
+| Arduino Uno  | 29570 bytes (91%)  | 1659 bytes (81%) :warning: |
+| Arduino Mega2560  | 29978 bytes (11%) | 1659 bytes (20%) |
+| Arduino Pro Mini | 29570 bytes (96%) | 1659 bytes (81%) :warning: |
 
 ### WiFi
 
