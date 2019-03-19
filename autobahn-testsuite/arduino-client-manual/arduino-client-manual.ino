@@ -22,6 +22,7 @@
 # include <SPI.h>
 #endif
 #include <WebSocketClient.h>
+using namespace net;
 
 #if PLATFORM_ARCH == PLATFORM_ARCHITECTURE_SAMD21
 # define CONSOLE SerialUSB
