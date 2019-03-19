@@ -73,6 +73,9 @@ ETHERNET_CONTROLLER_ENC28J60
 NETWORK_CONTROLLER_WIFI
 ```
 
+``ETHERNET_CONTROLLER_W5100`` means official Arduino Ethernet library. It is possible to use this with both **W5100** and **W5500**.
+``ETHERNET_CONTROLLER_W5500`` stands for Ethernet "2" library.
+
 Uncomment these if you want additional informations in serial monitor:
 
 ```cpp
