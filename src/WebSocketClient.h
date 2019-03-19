@@ -8,7 +8,7 @@ public:
 	WebSocketClient();
 	~WebSocketClient();
 	
-	bool open(const char *host, uint16_t port = 3000, char *path = "/");
+	bool open(const char *host, uint16_t port = 3000, const char *path = "/");
 	void listen();
 
 	// ---
@@ -19,4 +19,4 @@ public:
 	void setOnErrorCallback(onErrorCallback *callback);
 };
 
-#endif
+#endif // __WEBSOCKETCLIENT_DOT_H_INCLUDED_

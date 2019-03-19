@@ -15,4 +15,4 @@ void printf(const __FlashStringHelper *fmt, ...);
 #define __debugOutput(...)
 #endif
 
-#endif
+#endif // __WEBSOCKETS_UTILITY_DOT_H_INCLUDED_

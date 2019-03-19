@@ -1,12 +1,12 @@
 #include "WebSocketServer.h"
 #include "utility.h"
 
-WebSocketServer::WebSocketServer(uint16_t port) :
-	m_Server(port),
-	_onOpen(NULL), _onClose(NULL), _onMessage(NULL), _onError(NULL)
+WebSocketServer::WebSocketServer(uint16_t port)
+	: server_(port), verifyClient_(NULL),
+		onOpen_(NULL), onClose_(NULL), onMessage_(NULL), onError_(NULL)
 {
 	for (byte i = 0; i < MAX_CONNECTIONS; i++)
-		m_pSockets[i] = NULL;
+		sockets_[i] = NULL;
 }
 
 WebSocketServer::~WebSocketServer() {
@@ -14,73 +14,75 @@ WebSocketServer::~WebSocketServer() {
 }
 
 void WebSocketServer::begin() {
-	m_Server.begin();
+	server_.begin();
 }
 
 void WebSocketServer::shutdown() {
 	for (byte i = 0; i < MAX_CONNECTIONS; i++)
-		if (m_pSockets[i])
-			m_pSockets[i]->close();
+		if (sockets_[i]) {
+			sockets_[i]->close(GOING_AWAY, NULL, 0, true);
+			sockets_[i] = NULL;
+		}
 }
 
 void WebSocketServer::listen() {
-#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
-	WiFiClient client = m_Server.available();
-#else
-	EthernetClient client = m_Server.available();
-#endif
+	NetClient client = server_.available();
 
 	if (client) {
-		WebSocket *pSocket = _getWebSocket(client);
+		WebSocket *socket = _getWebSocket(client);
 		
-		if (!pSocket) {
+		if (!socket) {
 
 			// New client ...
 			
 			for (byte i = 0; i < MAX_CONNECTIONS; i++) {
-				if (!m_pSockets[i]) {
+				if (!sockets_[i] || sockets_[i]->getReadyState() == WebSocketReadyState::CLOSED) {
+					if (sockets_[i]) {
+						delete sockets_[i];
+						sockets_[i] = NULL;
+					}
 					
 					// Found free room ...
 					
 					if (_handleRequest(client)) {
-						pSocket = new WebSocket(client);
-						m_pSockets[i] = pSocket;
+						socket = new WebSocket(client);
+						sockets_[i] = socket;
 						
 						// Install callbacks:
 						
-						pSocket->_onOpen = _onOpen;
-						pSocket->_onClose = _onClose;
-						pSocket->_onMessage = _onMessage;
-						pSocket->_onError = _onError;
+						socket->onOpen_ = onOpen_;
+						socket->onClose_ = onClose_;
+						socket->onMessage_ = onMessage_;
+						socket->onError_ = onError_;
 						
-						if (_onOpen) pSocket->_onOpen(*pSocket);
+						if (onOpen_) socket->onOpen_(*socket);
+						
+						//__debugOutput(F("client placed in room = %d\n"), i);
 					}
 					
 					break;
 				}
 				
-				if (i == MAX_CONNECTIONS - 1) {
-					__debugOutput(F("Server is full!\n"));
-					_rejectRequest(client, BAD_REQUEST);
-				}
+				if (i == MAX_CONNECTIONS - 1)
+					_rejectRequest(client, SERVICE_UNAVAILABLE);
 			}
 		}
 		
 		// ---
 		
-		if (pSocket)
-			pSocket->_handleFrame();
+		if (socket) socket->_handleFrame();
 	}
 	
 	_heartbeat();
 }
 
-void WebSocketServer::broadcast(const eWebSocketDataType dataType, const char *message, uint16_t length) {
+void WebSocketServer::broadcast(const WebSocketDataType dataType, const char *message, uint16_t length) {
 	for (byte i = 0; i < MAX_CONNECTIONS; i++) {
-		WebSocket *pSocket = m_pSockets[i];
-		if (!pSocket) continue;
+		WebSocket *socket = sockets_[i];
+		if (!socket || socket->getReadyState() != WebSocketReadyState::OPEN)
+			continue;
 		
-		pSocket->send(dataType, message, length);
+		socket->send(dataType, message, length);
 	}
 }
 
@@ -88,84 +90,50 @@ uint8_t WebSocketServer::countClients() {
 	byte count = 0;
 	
 	for (byte i = 0; i < MAX_CONNECTIONS; i++)
-		if (m_pSockets[i] && m_pSockets[i]->m_Client.connected())
+		if (sockets_[i] && sockets_[i]->client_.connected())
 			count++;
 	
 	return count;
 }
 
+void WebSocketServer::setVerifyClientCallback(verifyClientCallback *callback) {
+	verifyClient_ = callback;
+}
+
 void WebSocketServer::setOnOpenCallback(onOpenCallback *callback) {
-	_onOpen = callback;
+	onOpen_ = callback;
 }
 
 void WebSocketServer::setOnCloseCallback(onCloseCallback *callback) {
-	_onClose = callback;
+	onClose_ = callback;
 }
 
 void WebSocketServer::setOnMessageCallback(onMessageCallback *callback) {
-	_onMessage = callback;
+	onMessage_ = callback;
 }
 
 void WebSocketServer::setOnErrorCallback(onErrorCallback *callback) {
-	_onError = callback;
+	onError_ = callback;
 }
 
 //
 // Private functions:
 //
 
-void WebSocketServer::_heartbeat() {
-	static unsigned long previousTime = 0;
-	
-	unsigned long currentTime = millis();
-  if (currentTime - previousTime > 1000) {
-    previousTime = currentTime;
-
-		for (byte i = 0; i < MAX_CONNECTIONS; i++) {
-			WebSocket *pSocket = m_pSockets[i];
-			
-			if (pSocket) {
-				bool alive = pSocket->m_Client.connected();
-				alive &= pSocket->m_eReadyState != WSRS_CLOSED;
-				
-				if (!alive) {
-					delete pSocket;
-					m_pSockets[i] = NULL;
-				}
-				else {
-					//pSocket->ping();
-				}
-			}
-		}
-  }
-}
-
-#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
-WebSocket *WebSocketServer::_getWebSocket(WiFiClient client) {
-#else
-WebSocket *WebSocketServer::_getWebSocket(EthernetClient client) {
-#endif
+WebSocket *WebSocketServer::_getWebSocket(NetClient client) {
 	for (byte i = 0; i < MAX_CONNECTIONS; i++) {
-		WebSocket *pSocket = m_pSockets[i];
-		if (pSocket && pSocket->m_Client == client)
-			return pSocket;
+		WebSocket *socket = sockets_[i];
+		if (socket && socket->client_ == client)
+			return socket;
 	}
 	
 	return NULL;
 }
 
-#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
-bool WebSocketServer::_handleRequest(WiFiClient &client) {
-#else
-bool WebSocketServer::_handleRequest(EthernetClient &client) {
-#endif
-
-	bool hasUpgrade = false;
-	bool hasConnection = false;
-	bool hasSecKey = false;
-	bool hasVersion = false;
+bool WebSocketServer::_handleRequest(NetClient &client) {
+	uint8_t flags = 0x0;
 	
-	int16_t bite;
+	int16_t bite = -1;
 	byte currentLine = 0;
 	byte counter = 0;
 	
@@ -195,7 +163,7 @@ bool WebSocketServer::_handleRequest(EthernetClient &client) {
 		
 		if (static_cast<char>(bite) == '\n') {
 			uint8_t lineBreakPos = strcspn(buffer, "\r\n");
-			buffer[lineBreakPos] = '\0';		// trim CRLF
+			buffer[lineBreakPos] = '\0';
 		
 #ifdef _DUMP_HANDSHAKE		
 			printf(F("[Line #%d] %s\n"), currentLine, buffer);
@@ -209,27 +177,29 @@ bool WebSocketServer::_handleRequest(EthernetClient &client) {
 				char *pch = strtok(buffer, " ");
 				for (byte i = 0; pch != NULL; i++) {
 					switch (i) {
-					case 0:
-						if (strcmp_P(pch, (PGM_P)F("GET")) != 0) {
+						case 0: {
+							if (strcmp_P(pch, (PGM_P)F("GET")) != 0) {
+								_rejectRequest(client, BAD_REQUEST);
+								return false;
+							}
+							
+							break;
+						}
+						case 1: {
+							break; // path doesn't matter ...
+						}						
+						case 2: {
+							if (strcmp_P(pch, (PGM_P)F("HTTP/1.1")) != 0) {
+								_rejectRequest(client, BAD_REQUEST);
+								return false;
+							}
+							
+							break;
+						}
+						default: {
 							_rejectRequest(client, BAD_REQUEST);
 							return false;
 						}
-					break;
-					
-					case 1:
-						// path doesn't matter ...
-					break;
-					
-					case 2:
-						if (strcmp_P(pch, (PGM_P)F("HTTP/1.1")) != 0) {
-							_rejectRequest(client, BAD_REQUEST);
-							return false;
-						}
-					break;
-					
-					default:
-						_rejectRequest(client, BAD_REQUEST);
-						return false;
 					}
 					
 					pch = strtok(NULL, " ");
@@ -247,7 +217,7 @@ bool WebSocketServer::_handleRequest(EthernetClient &client) {
 					if (strcmp_P(header, (PGM_P)F("Host")) == 0) {
 						value = strtok(NULL, " ");
 						
-						// #TODO ...
+						// #TODO ... or not
 					}
 					
 					//
@@ -261,9 +231,8 @@ bool WebSocketServer::_handleRequest(EthernetClient &client) {
 							_rejectRequest(client, BAD_REQUEST);
 							return false;
 						}
-						else {
-							hasUpgrade = true;
-						}
+						else
+							flags |= VALID_UPGRADE_HEADER;
 					}
 					
 					//
@@ -278,7 +247,7 @@ bool WebSocketServer::_handleRequest(EthernetClient &client) {
 							return false;
 						}
 						else
-							hasConnection = true;
+							flags |= VALID_CONNECTION_HEADER;
 					}
 					
 					//
@@ -289,7 +258,7 @@ bool WebSocketServer::_handleRequest(EthernetClient &client) {
 						value = strtok(NULL, " ");
 						
 						strcpy(secKey, value);
-						hasSecKey = true;
+						flags |= VALID_SEC_KEY;
 					}
 					
 					//
@@ -301,17 +270,26 @@ bool WebSocketServer::_handleRequest(EthernetClient &client) {
 						uint8_t version = atoi(value);
 						
 						switch (version) {
-						case 13:
-							hasVersion = true;
-						break;
-							
-						default:
-							_rejectRequest(client, BAD_REQUEST);
-							return false;
+							case 13: {
+								flags |= VALID_VERSION;
+								break;
+							}
+							default: {
+								_rejectRequest(client, BAD_REQUEST);
+								return false;
+							}
 						}
 					}
+					
+					//
+					// [ ] Other headers
+					//
+					
 					else {
-						// Don't care about other headers ...
+						if (verifyClient_ && !verifyClient_(header, value)) {
+							_rejectRequest(client, CONNECTION_REFUSED);
+							return false;
+						}
 					}
 				}
 				
@@ -320,12 +298,12 @@ bool WebSocketServer::_handleRequest(EthernetClient &client) {
 				//
 					
 				else {
-					if (!hasUpgrade || !hasConnection) {
+					if (!(flags & (VALID_UPGRADE_HEADER | VALID_CONNECTION_HEADER))) {
 						_rejectRequest(client, UPGRADE_REQUIRED);
 						return false;
 					}
 					
-					if (!hasSecKey || !hasVersion) {
+					if (!(flags & (VALID_SEC_KEY | VALID_VERSION))) {
 						_rejectRequest(client, BAD_REQUEST);
 						return false;
 					}
@@ -352,12 +330,6 @@ bool WebSocketServer::_handleRequest(EthernetClient &client) {
 					client.println(F("Connection: Upgrade"));
 					client.println(secWebSocketAccept);
 					client.println();
-					
-#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
-					client.setNoDelay(true);
-					client.setTimeout(TIMEOUT_INTERVAL);
-					//delay(1);
-#endif
 
 					return true;
 				}
@@ -373,34 +345,56 @@ bool WebSocketServer::_handleRequest(EthernetClient &client) {
 	return false;
 }
 
-#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
-void WebSocketServer::_rejectRequest(WiFiClient &client, const eWebSocketError code) {
-#else
-void WebSocketServer::_rejectRequest(EthernetClient &client, const eWebSocketError code) {
-#endif
+void WebSocketServer::_rejectRequest(NetClient &client, const WebSocketError code) {
 	switch (code) {
-	case BAD_REQUEST:
-		client.println(F("HTTP/1.1 400 Bad Request"));
-	break;
-	
-	case UPGRADE_REQUIRED:
-		client.println(F("HTTP/1.1 426 Upgrade Required"));
-	break;
-	
-	case CONNECTION_REFUSED:
-		client.println(F("HTTP/1.1 111 Connection refused"));
-	break;
-	
-	default:
-		client.println(F("HTTP/1.1 501 Not Implemented"));
-	break;
+		case CONNECTION_REFUSED: {
+			client.println(F("HTTP/1.1 111 Connection refused"));
+			break;
+		}
+		case BAD_REQUEST: {
+			client.println(F("HTTP/1.1 400 Bad Request"));
+			break;
+		}		
+		case UPGRADE_REQUIRED: {
+			client.println(F("HTTP/1.1 426 Upgrade Required"));
+			break;
+		}		
+		case SERVICE_UNAVAILABLE: {
+			client.println(F("HTTP/1.1 503 Service Unavailable"));
+			break;
+		}
+		default: {
+			client.println(F("HTTP/1.1 501 Not Implemented"));
+			break;
+		}
 	}
 	
 	client.stop();
-	
 	_triggerError(code);
 }
 
-void WebSocketServer::_triggerError(const eWebSocketError code) {
-	if (_onError) _onError(code);
+void WebSocketServer::_heartbeat() {
+	static unsigned long previousTime = 0;
+	
+	unsigned long currentTime = millis();
+  if (currentTime - previousTime > 1000) {
+    previousTime = currentTime;
+
+		for (byte i = 0; i < MAX_CONNECTIONS; i++) {
+			WebSocket *socket = sockets_[i];
+			if (socket) {
+				if (!socket->isAlive()) {
+					delete socket;
+					sockets_[i] = NULL;
+				}
+				else {
+					//socket->ping();
+				}
+			}
+		}
+  }
+}
+
+void WebSocketServer::_triggerError(const WebSocketError code) {
+	if (onError_) onError_(code);
 }

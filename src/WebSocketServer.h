@@ -12,11 +12,13 @@ public:
 	void shutdown();
 	
 	void listen();
-	void broadcast(const eWebSocketDataType dataType, const char *message, uint16_t length);
+	void broadcast(const WebSocketDataType dataType, const char *message, uint16_t length);
 	
 	uint8_t countClients();
 	
 	// ---
+	
+	void setVerifyClientCallback(verifyClientCallback *callback);
 	
 	void setOnOpenCallback(onOpenCallback *callback);
 	void setOnCloseCallback(onCloseCallback *callback);
@@ -24,33 +26,24 @@ public:
 	void setOnErrorCallback(onErrorCallback *callback);
 	
 private:
-	void _heartbeat();
-
-#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
-	WebSocket *_getWebSocket(WiFiClient client);
-	bool _handleRequest(WiFiClient &client);
-	void _rejectRequest(WiFiClient &client, const eWebSocketError code);
-#else
-	WebSocket *_getWebSocket(EthernetClient client);
-	bool _handleRequest(EthernetClient &client);
-	void _rejectRequest(EthernetClient &client, const eWebSocketError code);
-#endif
+	WebSocket *_getWebSocket(NetClient client);
+	bool _handleRequest(NetClient &client);
+	void _rejectRequest(NetClient &client, const WebSocketError code);
 	
-	void _triggerError(const eWebSocketError code);
+	void _heartbeat();
+	
+	void _triggerError(const WebSocketError code);
 	
 private:
-#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
-	WiFiServer m_Server;
-#else
-	EthernetServer m_Server;
-#endif
-
-	WebSocket *m_pSockets[MAX_CONNECTIONS];
+	NetServer server_;
+	WebSocket *sockets_[MAX_CONNECTIONS];
 	
-	onOpenCallback *_onOpen;
-	onCloseCallback *_onClose;
-	onMessageCallback *_onMessage;
-	onErrorCallback *_onError;
+	verifyClientCallback *verifyClient_;
+
+	onOpenCallback *onOpen_;
+	onCloseCallback *onClose_;
+	onMessageCallback *onMessage_;
+	onErrorCallback *onError_;
 };
 
-#endif
+#endif // __WEBSOCKETSERVER_DOT_H_INCLUDED_

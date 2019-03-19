@@ -24,11 +24,11 @@ void onOpen(WebSocket &ws) {
   CONSOLE.println(F("----------------------------------------"));
 }
 
-void onMessage(WebSocket &ws, const eWebSocketDataType dataType, const char *message, uint16_t length) {
+void onMessage(WebSocket &ws, const WebSocketDataType dataType, const char *message, uint16_t length) {
   CONSOLE.println(message);
 }
 
-void onClose(WebSocket &ws, const eWebSocketCloseEvent code, const char *reason, uint16_t length) {
+void onClose(WebSocket &ws, const WebSocketCloseCode code, const char *reason, uint16_t length) {
   CONSOLE.println(F("Disconnected"));
 }
 
@@ -52,6 +52,9 @@ void setup() {
   //WiFi.printDiag(CONSOLE);
 #else
   CONSOLE.println(F("Initializing ... "));
+
+  // For official Arduino Ethernet library specify CS pin
+  //Ethernet.init(53);
 
   if (Ethernet.begin(mac) == 0) {
     CONSOLE.println(F("Can't open ethernet device"));

@@ -57,11 +57,11 @@ void onOpen(WebSocket &ws) {
   digitalWrite(LED_BUILTIN, HIGH);
 }
 
-void onMessage(WebSocket &ws, const eWebSocketDataType dataType, const char *message, uint16_t length) {
+void onMessage(WebSocket &ws, const WebSocketDataType dataType, const char *message, uint16_t length) {
   ws.send(dataType, message, length);
 }
 
-void onClose(WebSocket &ws, const eWebSocketCloseEvent code, const char *reason, uint16_t length) {
+void onClose(WebSocket &ws, const WebSocketCloseCode code, const char *reason, uint16_t length) {
 #ifdef _USE_SERIAL_OUTPUT
   CONSOLE.println(F("Disconnected\n"));
 #endif
@@ -104,7 +104,9 @@ void setup() {
   CONSOLE.println(F("Initializing ... "));
 # endif
 
- Ethernet.begin(mac, ip);
+  Ethernet.init(53);
+
+  Ethernet.begin(mac, ip);
 
 # ifdef _USE_SERIAL_OUTPUT
   CONSOLE.print(F("Device IP: "));

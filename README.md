@@ -272,21 +272,8 @@ to this:
 
 ## Known issues		
 
-1. It seems that both official Arduino Ethernet and UIPEthernet library doesn't like *octet-wise chops* and fails following **Autobahn**|Testsuite cases:
-   * Ping/Pongs
-     + 2.6
-     + 2.11
-   * Reserved Bits
-     + 3.4
-   * Opcodes
-     + 4.1.5
-     + 4.2.5
-   * Fragmentation
-     + 5.5
-     + 5.8
-     + 5.11
-2. ENC28j60 is slow and eats much more memory than W5100/W5500
-3. For now **ESP8266** works only with **WebSocketClient**
+1. ENC28j60 is slow, eats much more memory than W5100/W5500 and hangs on ``available()`` function
+2. For now **ESP8266** works only with **WebSocketClient**
 
 ## License
 
