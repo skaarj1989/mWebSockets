@@ -11,6 +11,8 @@
 
 #define MAGIC_STRING	"258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
 
+namespace net {
+
 SHA1 sha1;
 
 void generateSecKey(char output[]) {
@@ -37,6 +39,8 @@ void encodeSecKey(char output[], const char *key) {
 
 	sha1.clear();
 }
+
+};
 
 void printf(const __FlashStringHelper *fmt, ... ){
   char buffer[128];

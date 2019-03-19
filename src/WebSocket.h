@@ -3,6 +3,8 @@
 
 #include "defines.h"
 
+namespace net {
+
 class WebSocket {
 	friend class WebSocketServer;
 	
@@ -49,6 +51,8 @@ protected:
 	onCloseCallback *onClose_;
 	onMessageCallback *onMessage_;
 	onErrorCallback *onError_;
+};
+
 };
 
 #endif // __WEBSOCKET_DOT_H_INCLUDED_

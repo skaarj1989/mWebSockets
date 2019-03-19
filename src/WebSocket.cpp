@@ -1,6 +1,8 @@
 #include "WebSocket.h"
 #include "utility.h"
 
+namespace net {
+
 void generateMask(byte *output) {
 	randomSeed(analogRead(0));
 	
@@ -436,3 +438,5 @@ void WebSocket::_handleFrame() {
 void WebSocket::_triggerError(const WebSocketError code) {
 	if (onError_) onError_(code);
 }
+
+};

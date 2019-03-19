@@ -1,6 +1,8 @@
 #include "WebSocketClient.h"
 #include "utility.h"
 
+namespace net {
+
 WebSocketClient::WebSocketClient() {
 }
 
@@ -227,3 +229,5 @@ void WebSocketClient::setOnMessageCallback(onMessageCallback *callback) {
 void WebSocketClient::setOnErrorCallback(onErrorCallback *callback) {
 	onError_ = callback;
 }
+
+};

@@ -3,6 +3,8 @@
 
 #include "WebSocket.h"
 
+namespace net {
+
 class WebSocketClient : public WebSocket {
 public:
 	WebSocketClient();
@@ -17,6 +19,8 @@ public:
 	void setOnCloseCallback(onCloseCallback *callback);
 	void setOnMessageCallback(onMessageCallback *callback);
 	void setOnErrorCallback(onErrorCallback *callback);
+};
+
 };
 
 #endif // __WEBSOCKETCLIENT_DOT_H_INCLUDED_

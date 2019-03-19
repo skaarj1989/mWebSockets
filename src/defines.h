@@ -24,6 +24,8 @@
 #define VALID_SEC_KEY							0x04
 #define VALID_VERSION							0x08
 
+namespace net {
+
 enum WebSocketReadyState {
 	CONNECTING = 0,
 	OPEN,
@@ -143,5 +145,7 @@ typedef void onErrorCallback(const WebSocketError code);
 //
 
 typedef bool verifyClientCallback(const char *header, const char *value);
+
+};
 
 #endif // __WEBSOCKETS_DEFINES_DOT_H_INCLUDED_

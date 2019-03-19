@@ -3,6 +3,8 @@
 
 #include "WebSocket.h"
 
+namespace net {
+
 class WebSocketServer {
 public:
 	WebSocketServer(uint16_t port);
@@ -44,6 +46,8 @@ private:
 	onCloseCallback *onClose_;
 	onMessageCallback *onMessage_;
 	onErrorCallback *onError_;
+};
+
 };
 
 #endif // __WEBSOCKETSERVER_DOT_H_INCLUDED_

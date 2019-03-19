@@ -1,6 +1,8 @@
 #include "WebSocketServer.h"
 #include "utility.h"
 
+namespace net {
+
 WebSocketServer::WebSocketServer(uint16_t port)
 	: server_(port), verifyClient_(NULL),
 		onOpen_(NULL), onClose_(NULL), onMessage_(NULL), onError_(NULL)
@@ -398,3 +400,5 @@ void WebSocketServer::_heartbeat() {
 void WebSocketServer::_triggerError(const WebSocketError code) {
 	if (onError_) onError_(code);
 }
+
+};

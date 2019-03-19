@@ -4,8 +4,12 @@
 #include "platform.h"
 #include <Arduino.h>
 
+namespace net {
+	
 void generateSecKey(char output[]);
 void encodeSecKey(char output[], const char *key);
+
+};
 
 void printf(const __FlashStringHelper *fmt, ...);
 
