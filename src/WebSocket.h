@@ -12,15 +12,20 @@ public:
 	WebSocket();	// default constructor for client init
 	~WebSocket();
 	
-	void close(const WebSocketCloseCode code = NORMAL_CLOSURE, const char *reason = NULL, uint16_t length = 0, bool instant = false);
+	void close(const WebSocketCloseCode code = NORMAL_CLOSURE, bool instant = false, const char *reason = NULL, uint16_t length = 0);
 	bool terminate();
 	
 	void send(const WebSocketDataType dataType, const char *message, uint16_t length);
-	void send(const WebSocketDataType dataType, const char *message, uint16_t length, bool mask);
-	void ping();
+	void ping(const char *payload = NULL, uint16_t length = 0);
 	
 	const WebSocketReadyState &getReadyState() const;
 	bool isAlive();
+	
+	IPAddress getRemoteIP();
+	
+	void onClose(onCloseCallback &&callback) { onClose_ = callback; }
+	void onMessage(onMessageCallback &&callback) { onMessage_ = callback; }
+	void onError(onErrorCallback &&callback) { onError_ = callback; }
 	
 protected:
 	WebSocket(NetClient client); // private constructor for server init
@@ -28,10 +33,10 @@ protected:
 	bool _waitForResponse(uint16_t maxAttempts, uint8_t time = 1);
 	
 	int _read();
-	bool _read(uint8_t *buf, size_t size);
+	bool _read(uint8_t *buffer, size_t size);
 	
 	bool _readHeader(webSocketHeader_t &header);
-	void _readData(const webSocketHeader_t &header, char *payload);
+	bool _readData(const webSocketHeader_t &header, char *payload);
 	
 	void _send(uint8_t opcode, bool fin, bool mask, const char *data, uint16_t length);
 	
@@ -47,10 +52,9 @@ protected:
 	char dataBuffer_[BUFFER_MAX_SIZE];
 	bool maskEnabled_;
 	
-	onOpenCallback *onOpen_;
-	onCloseCallback *onClose_;
-	onMessageCallback *onMessage_;
-	onErrorCallback *onError_;
+	onCloseCallback onClose_;
+	onMessageCallback onMessage_;
+	onErrorCallback onError_;
 };
 
 };

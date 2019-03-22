@@ -3,7 +3,9 @@
 
 namespace net {
 
-WebSocketClient::WebSocketClient() {
+WebSocketClient::WebSocketClient()
+	: onOpen_(nullptr)
+{
 }
 
 WebSocketClient::~WebSocketClient() {
@@ -11,7 +13,7 @@ WebSocketClient::~WebSocketClient() {
 }
 
 bool WebSocketClient::open(const char *host, uint16_t port, const char *path) {
-	close(GOING_AWAY, NULL, 0, true);	// close if already open
+	close(GOING_AWAY, true); // close if already open
 	
 	if (!client_.connect(host, port)) {
 		__debugOutput(F("Error in connection establishment: net::ERR_CONNECTION_REFUSED\n"));
@@ -186,7 +188,7 @@ bool WebSocketClient::open(const char *host, uint16_t port, const char *path) {
 	}
 
 	if (!(flags & VALID_SEC_KEY)) {
-		__debugOutput(F("Error during WebSocket handshake: 'Sec-WebSocket-Accept' header is missing\n"));
+		__debugOutput(F("Error during WebSocket handshake: 'Sec-WebSocket-Accept' header missing or invalid\n"));
 		_triggerError(BAD_REQUEST);
 		return false && terminate();
 	}
@@ -200,34 +202,16 @@ bool WebSocketClient::open(const char *host, uint16_t port, const char *path) {
 void WebSocketClient::listen() {
 	if (!client_.connected()) {
 		if (readyState_ == WebSocketReadyState::OPEN) {
+			terminate();
+			
 			if (onClose_)
 				onClose_(*this, ABNORMAL_CLOSURE, NULL, 0);
-			
-			terminate();
 		}
 		
 		return;
 	}
 	
 	_handleFrame();
-}
-
-// ---
-
-void WebSocketClient::setOnOpenCallback(onOpenCallback *callback) {
-	onOpen_ = callback;
-}
-
-void WebSocketClient::setOnCloseCallback(onCloseCallback *callback) {
-	onClose_ = callback;
-}
-
-void WebSocketClient::setOnMessageCallback(onMessageCallback *callback) {
-	onMessage_ = callback;
-}
-
-void WebSocketClient::setOnErrorCallback(onErrorCallback *callback) {
-	onError_ = callback;
 }
 
 };

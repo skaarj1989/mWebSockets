@@ -1,3 +1,21 @@
+/*
+   1. Install docker (and set shared drives)
+   2. Run docker pull crossbario/autobahn-testsuite
+   3. Download: https://github.com/crossbario/autobahn-testsuite
+   4. Modify ./docker/config/ .json files
+      set server ip (this device), agent (name) and cases
+   5. Run with admin permissions:
+      docker run -it --rm -v %cd%\config:/config \
+      -v %cd%\reports:/reports crossbario/autobahn-testsuite \
+      -p 9001:9001 wstest -m fuzzingserver \
+      -s /config/fuzzingserver.json
+   6. Write to serial (for each case):
+      <192.168.46.9,9001,/runCase?case=1&agent=Mega2560>
+   7. Write to serial (to generate report):
+      <192.168.46.9,9001,/updateReports?agent=Mega2560>
+   8. See client-auto.js for automation
+*/
+
 #include <WebSocketClient.h>
 using namespace net;
 
@@ -7,6 +25,16 @@ using namespace net;
 # define _SERIAL Serial
 #endif
 
+#define BUFFER_SIZE 64
+char buffer[BUFFER_SIZE] = { '\0' };
+char tempBuffer[BUFFER_SIZE] = { '\0' };
+
+bool newData = false;
+
+char host[32] = { '\0' };
+char path[48] = { '\0' };
+int port = 3000;
+
 #if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
 const char *SSID = "SKYNET";
 const char *password = "***";
@@ -15,15 +43,11 @@ byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 //IPAddress ip(192, 168, 46, 179);
 #endif
 
-#define BUFFER_SIZE 64
-char message[BUFFER_SIZE] = { '\0' };
-bool newData = false;
-
 WebSocketClient client;
 
 void setup() {
   _SERIAL.begin(115200);
-  while (!_SERIAL);
+  while (!_SERIAL) ;
 
 #if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
   //_SERIAL.setDebugOutput(true);
@@ -54,23 +78,17 @@ void setup() {
   _SERIAL.println(Ethernet.localIP());
 #endif
 
-  client.onOpen([](WebSocket & ws) {
-    _SERIAL.println(F("Type message in following format: <text>"));
-    _SERIAL.println(F("----------------------------------------"));
-  });
-
-  client.onMessage([](WebSocket &ws, const WebSocketDataType dataType, const char *message, uint16_t length) {
-    _SERIAL.println(message);
+  client.onOpen([](WebSocket &ws) {
+    _SERIAL.println(F("Connected"));
   });
 
   client.onClose([](WebSocket &ws, const WebSocketCloseCode code, const char *reason, uint16_t length) {
-    _SERIAL.println(F("Disconnected"));
+    _SERIAL.println(F("Disconnected\n"));
   });
 
-  if (!client.open("192.168.46.9", 3000)) {
-    _SERIAL.println(F("Connection failed!"));
-    while (true) ;
-  }
+  client.onMessage([](WebSocket &ws, WebSocketDataType dataType, const char *message, uint16_t length) {
+    ws.send(dataType, message, length);
+  });
 }
 
 unsigned long previousTime = 0;
@@ -86,13 +104,13 @@ void loop() {
 
     if (recvInProgress == true) {
       if (c != '>') {
-        message[idx++] = c;
+        buffer[idx++] = c;
 
         if (idx >= BUFFER_SIZE)
           idx = BUFFER_SIZE - 1;
       }
       else {
-        message[idx] = '\0';
+        buffer[idx] = '\0';
         recvInProgress = false;
         idx = 0;
         newData = true;
@@ -103,16 +121,25 @@ void loop() {
   }
 
   if (newData == true) {
-    client.send(TEXT, message, strlen(message));
+    strcpy(tempBuffer, buffer);
+
+    char *ptr = strtok(tempBuffer, ",");
+    strcpy(host, ptr);
+
+    ptr = strtok(NULL, ",");
+    port = atoi(ptr);
+
+    ptr = strtok(NULL, ",");
+    strcpy(path, ptr);
+
+    _SERIAL.print(F("Performing test: ")); _SERIAL.println(path);
+
+    if (!client.open(host, port, path)) {
+      //_SERIAL.println("Connection failed!");
+    }
+
     newData = false;
   }
 
   client.listen();
-
-  unsigned long currentTime = millis();
-  if (currentTime - previousTime > 1000) {
-    previousTime = currentTime;
-
-    client.ping();
-  }
 }

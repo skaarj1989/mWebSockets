@@ -12,13 +12,11 @@ public:
 	
 	bool open(const char *host, uint16_t port = 3000, const char *path = "/");
 	void listen();
-
-	// ---
 	
-	void setOnOpenCallback(onOpenCallback *callback);
-	void setOnCloseCallback(onCloseCallback *callback);
-	void setOnMessageCallback(onMessageCallback *callback);
-	void setOnErrorCallback(onErrorCallback *callback);
+	void onOpen(onOpenCallback &&callback) { onOpen_ = callback; }
+	
+private:
+	onOpenCallback onOpen_;
 };
 
 };

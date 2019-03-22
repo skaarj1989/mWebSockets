@@ -4,60 +4,96 @@
 namespace net {
 
 WebSocketServer::WebSocketServer(uint16_t port)
-	: server_(port), verifyClient_(NULL),
-		onOpen_(NULL), onClose_(NULL), onMessage_(NULL), onError_(NULL)
+	: server_(port), verifyClient_(nullptr), onConnection_(nullptr), onError_(nullptr)
 {
 	for (byte i = 0; i < MAX_CONNECTIONS; i++)
-		sockets_[i] = NULL;
+		sockets_[i] = nullptr;
 }
 
 WebSocketServer::~WebSocketServer() {
 	shutdown();
 }
 
-void WebSocketServer::begin() {
+void WebSocketServer::begin(verifyClientCallback &&callback) {
+	verifyClient_ = callback;
 	server_.begin();
+
+#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
+	server_.setNoDelay(true);
+#endif
 }
 
 void WebSocketServer::shutdown() {
 	for (byte i = 0; i < MAX_CONNECTIONS; i++)
 		if (sockets_[i]) {
-			sockets_[i]->close(GOING_AWAY, NULL, 0, true);
-			sockets_[i] = NULL;
+			sockets_[i]->close(GOING_AWAY, true);
+			sockets_[i] = nullptr;
 		}
 }
 
+uint8_t WebSocketServer::countClients() {
+	byte count = 0;
+	for (byte i = 0; i < MAX_CONNECTIONS; i++)
+		if (sockets_[i] && sockets_[i]->isAlive())
+			count++;
+	
+	return count;
+}
+
 void WebSocketServer::listen() {
-	NetClient client = server_.available();
+#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
+	uint8_t i;
+	
+	if (server_.hasClient()) {
+		for (i = 0; i < MAX_CONNECTIONS; i++) {
+			if (!sockets_[i] || !sockets_[i]->isAlive()) {
+				SAFE_DELETE(sockets_[i]);
+				
+				// Found free room ...
+				
+				WiFiClient client = server_.available();
+				if (_handleRequest(client)) {
+					WebSocket *socket = new WebSocket(client);
+					sockets_[i] = socket;
+					
+					if (onConnection_) onConnection_(*socket);
+					
+					//__debugOutput(F("client placed in room = %d\n"), i);
+				}
+				break;
+			}
+		}
+		
+		if (i == MAX_CONNECTIONS) {
+			WiFiClient client = server_.available();
+			_rejectRequest(client, BAD_REQUEST);
+		}
+	}
+	
+	for (i = 0; i < MAX_CONNECTIONS; i++) {
+		if (sockets_[i] && sockets_[i]->client_.connected()) {
+			if (sockets_[i]->client_.available())
+				sockets_[i]->_handleFrame();
+		}
+	}
+#else
+	EthernetClient client = server_.available();
 
 	if (client) {
 		WebSocket *socket = _getWebSocket(client);
 		
-		if (!socket) {
-
-			// New client ...
-			
+		if (!socket) {			
 			for (byte i = 0; i < MAX_CONNECTIONS; i++) {
 				if (!sockets_[i] || sockets_[i]->getReadyState() == WebSocketReadyState::CLOSED) {
-					if (sockets_[i]) {
-						delete sockets_[i];
-						sockets_[i] = NULL;
-					}
+					SAFE_DELETE(sockets_[i]);
 					
 					// Found free room ...
 					
 					if (_handleRequest(client)) {
 						socket = new WebSocket(client);
 						sockets_[i] = socket;
-						
-						// Install callbacks:
-						
-						socket->onOpen_ = onOpen_;
-						socket->onClose_ = onClose_;
-						socket->onMessage_ = onMessage_;
-						socket->onError_ = onError_;
-						
-						if (onOpen_) socket->onOpen_(*socket);
+												
+						if (onConnection_) onConnection_(*socket);
 						
 						//__debugOutput(F("client placed in room = %d\n"), i);
 					}
@@ -74,8 +110,9 @@ void WebSocketServer::listen() {
 		
 		if (socket) socket->_handleFrame();
 	}
+#endif	
 	
-	_heartbeat();
+	//_heartbeat();
 }
 
 void WebSocketServer::broadcast(const WebSocketDataType dataType, const char *message, uint16_t length) {
@@ -86,36 +123,6 @@ void WebSocketServer::broadcast(const WebSocketDataType dataType, const char *me
 		
 		socket->send(dataType, message, length);
 	}
-}
-
-uint8_t WebSocketServer::countClients() {
-	byte count = 0;
-	
-	for (byte i = 0; i < MAX_CONNECTIONS; i++)
-		if (sockets_[i] && sockets_[i]->client_.connected())
-			count++;
-	
-	return count;
-}
-
-void WebSocketServer::setVerifyClientCallback(verifyClientCallback *callback) {
-	verifyClient_ = callback;
-}
-
-void WebSocketServer::setOnOpenCallback(onOpenCallback *callback) {
-	onOpen_ = callback;
-}
-
-void WebSocketServer::setOnCloseCallback(onCloseCallback *callback) {
-	onClose_ = callback;
-}
-
-void WebSocketServer::setOnMessageCallback(onMessageCallback *callback) {
-	onMessage_ = callback;
-}
-
-void WebSocketServer::setOnErrorCallback(onErrorCallback *callback) {
-	onError_ = callback;
 }
 
 //
@@ -129,7 +136,7 @@ WebSocket *WebSocketServer::_getWebSocket(NetClient client) {
 			return socket;
 	}
 	
-	return NULL;
+	return nullptr;
 }
 
 bool WebSocketServer::_handleRequest(NetClient &client) {
@@ -153,10 +160,11 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
 	
 	char buffer[132] = { '\0' };
 	char secKey[32] = { '\0' };
-	
+
+
 #if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
 	while(!client.available()) {
-		delay(10);
+		delay(10); //__debugOutput(F("."));
 	}
 #endif
 
@@ -288,9 +296,12 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
 					//
 					
 					else {
-						if (verifyClient_ && !verifyClient_(header, value)) {
-							_rejectRequest(client, CONNECTION_REFUSED);
-							return false;
+						if (verifyClient_) {
+							IPAddress ip = _REMOTE_IP(client);
+							if (!verifyClient_(ip, header, value)) {
+								_rejectRequest(client, CONNECTION_REFUSED);
+								return false;
+							}
 						}
 					}
 				}
@@ -373,28 +384,6 @@ void WebSocketServer::_rejectRequest(NetClient &client, const WebSocketError cod
 	
 	client.stop();
 	_triggerError(code);
-}
-
-void WebSocketServer::_heartbeat() {
-	static unsigned long previousTime = 0;
-	
-	unsigned long currentTime = millis();
-  if (currentTime - previousTime > 1000) {
-    previousTime = currentTime;
-
-		for (byte i = 0; i < MAX_CONNECTIONS; i++) {
-			WebSocket *socket = sockets_[i];
-			if (socket) {
-				if (!socket->isAlive()) {
-					delete socket;
-					sockets_[i] = NULL;
-				}
-				else {
-					//socket->ping();
-				}
-			}
-		}
-  }
 }
 
 void WebSocketServer::_triggerError(const WebSocketError code) {

@@ -31,12 +31,16 @@
 #if NETWORK_CONTROLLER == ETHERNET_CONTROLLER_W5100
 # include <Ethernet.h>
 # define MAX_CONNECTIONS	4
+# define _REMOTE_IP(client) client.remoteIP()
 #elif NETWORK_CONTROLLER == ETHERNET_CONTROLLER_W5500
 # include <Ethernet2.h>
 # define MAX_CONNECTIONS	8
+# define _REMOTE_IP(client) client.getRemoteIP()
 #elif NETWORK_CONTROLLER == ETHERNET_CONTROLLER_ENC28J60
+# include <IPAddress.h>
 # include <UIPEthernet.h>
 # define MAX_CONNECTIONS	4
+# define _REMOTE_IP(client) IPAddress()
 #elif NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
 # if PLATFORM_ARCH == PLATFORM_ARCHITECTURE_ESP8266
 #  include <ESP8266WiFi.h>
@@ -44,6 +48,7 @@
 # include <WiFiClient.h>
 # include <WiFiServer.h>
 # define MAX_CONNECTIONS	8
+# define _REMOTE_IP(client) client.remoteIP()
 #else
 # error "Network controller is required!"
 #endif

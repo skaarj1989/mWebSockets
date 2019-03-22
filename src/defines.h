@@ -11,6 +11,9 @@
 
 #include "platform.h"
 
+#define SAFE_DELETE(ptr) if(ptr!=nullptr){delete ptr; ptr = nullptr;}
+#define SAFE_DELETE_ARR(ptr) if(ptr!=nullptr){delete[] ptr; ptr = nullptr;}
+
 #if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
 # define NetClient WiFiClient
 # define NetServer WiFiServer
@@ -135,16 +138,17 @@ class WebSocket;
 // Shared callbacks:
 //
 
-typedef void onOpenCallback(WebSocket &ws);
-typedef void onCloseCallback(WebSocket &ws, const WebSocketCloseCode code, const char *reason, uint16_t length);
-typedef void onMessageCallback(WebSocket &ws, const WebSocketDataType dataType, const char *message, uint16_t length);
-typedef void onErrorCallback(const WebSocketError code);
+typedef void (*onOpenCallback)(WebSocket &ws);
+typedef void (*onCloseCallback)(WebSocket &ws, const WebSocketCloseCode code, const char *reason, uint16_t length);
+typedef void (*onMessageCallback)(WebSocket &ws, const WebSocketDataType dataType, const char *message, uint16_t length);
+typedef void (*onErrorCallback)(const WebSocketError code);
 
 //
 // Server-side callbacks:
 //
 
-typedef bool verifyClientCallback(const char *header, const char *value);
+typedef bool (*verifyClientCallback)(IPAddress ip, const char *header, const char *value);
+typedef void (*onConnectionCallback)(WebSocket &ws);
 
 };
 

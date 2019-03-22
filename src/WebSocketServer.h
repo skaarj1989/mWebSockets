@@ -10,29 +10,25 @@ public:
 	WebSocketServer(uint16_t port);
 	~WebSocketServer();
 	
-	void begin();
+	void begin(verifyClientCallback &&callback = nullptr);
 	void shutdown();
-	
-	void listen();
-	void broadcast(const WebSocketDataType dataType, const char *message, uint16_t length);
 	
 	uint8_t countClients();
 	
+	void broadcast(const WebSocketDataType dataType, const char *message, uint16_t length);
+	
+	void listen();
+
 	// ---
 	
-	void setVerifyClientCallback(verifyClientCallback *callback);
-	
-	void setOnOpenCallback(onOpenCallback *callback);
-	void setOnCloseCallback(onCloseCallback *callback);
-	void setOnMessageCallback(onMessageCallback *callback);
-	void setOnErrorCallback(onErrorCallback *callback);
+	void onConnection(onConnectionCallback &&callback) { onConnection_ = callback; }
+	void onError(onErrorCallback &&callback) { onError_ = callback; }
 	
 private:
 	WebSocket *_getWebSocket(NetClient client);
+	
 	bool _handleRequest(NetClient &client);
 	void _rejectRequest(NetClient &client, const WebSocketError code);
-	
-	void _heartbeat();
 	
 	void _triggerError(const WebSocketError code);
 	
@@ -40,12 +36,10 @@ private:
 	NetServer server_;
 	WebSocket *sockets_[MAX_CONNECTIONS];
 	
-	verifyClientCallback *verifyClient_;
+	verifyClientCallback verifyClient_;
+	onConnectionCallback onConnection_;
 
-	onOpenCallback *onOpen_;
-	onCloseCallback *onClose_;
-	onMessageCallback *onMessage_;
-	onErrorCallback *onError_;
+	onErrorCallback onError_;
 };
 
 };
