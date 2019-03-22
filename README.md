@@ -1,9 +1,13 @@
-# ArduinoWebSockets
+# μWebSockets
 [![Build Status](https://travis-ci.org/skaarj1989/ArduinoWebSockets.svg?branch=master)](https://travis-ci.org/skaarj1989/ArduinoWebSockets)
 ![GitHub issues](https://img.shields.io/github/issues/skaarj1989/ArduinoWebSockets.svg)
 ![GitHub](https://img.shields.io/github/license/skaarj1989/ArduinoWebSockets.svg)
 
-Simple to use implementation of WebSocket client and server for Arduino.
+Simple to use implementation of WebSocket client and server for microcontrollers.
+
+**List of supported IDEs:**
+- [Arduino](https://www.arduino.cc/en/Main/Software)
+- Visual Studio Code with [Platformio](https://platformio.org/)
 
 **List of supported MCUs:**
 - ATmega328P
@@ -49,7 +53,7 @@ Some tests will never pass just because of memory lack in ATmega family.
   * [arduino-base64](https://github.com/adamvr/arduino-base64)
   * CryptoLegacy from [arduinolibs](https://github.com/rweather/arduinolibs), you can grab it from [here](CryptoLegacy.zip)
   * [Ethernet "2"](https://github.com/adafruit/Ethernet2) for W5500
-    + Even though this library may be deprecated/archived it still works better with W5500 than official Arduino Ethernet library.
+    + This library is deprecated you can use official Arduino Ethernet library.
   * UIPEthernet [#1](https://github.com/ntruchsess/arduino_uip) or [#2](https://github.com/UIPEthernet/UIPEthernet) (the choice is yours) for ENC28j60
 
 ## Installation
@@ -113,25 +117,26 @@ Increase below value if you expect big data frames (or decrease for devices with
 
 ```cpp
 #include <WebSocketServer.h>
+using namespace net;
 
 WebSocketServer server(3000);
-
-void onOpen(WebSocket &ws) {
-  char message[] = "Hello from Arduino server!";
-  ws.send(message, strlen(message));
-}
-
-void onClose(WebSocket &ws, const WebSocketCloseCode code, const char *reason, uint16_t length) { /* ... */ }
-void onMessage(WebSocket &ws, const char *message, uint16_t length) { /* */ }
 
 void setup() {
   // Ethernet/WiFi initialization goes here ...
   // ...
 
-  server.setOnOpenCallback(onOpen);
-  server.setOnCloseCallback(onClose);
-  server.setOnMessageCallback(onMessage);
-  
+  server.onConnection([](WebSocket &ws) {
+    char message[] = "Hello from Arduino server!";
+    ws.send(message, strlen(message));
+    
+    ws.onClose([](WebSocket &ws, const WebSocketCloseCode code, const char *reason, uint16_t length) {
+      // ...
+    });
+    ws.onMessage([](WebSocket &ws, WebSocketDataType dataType, const char *message, uint16_t length) {
+      // ...
+    });
+  });
+ 
   server.begin();
 }
 
@@ -146,24 +151,24 @@ void loop() {
 
 ```cpp
 #include <WebSocketClient.h>
+using namespace net;
 
 WebSocketClient client;
-
-void onOpen(WebSocket &ws) {
-  char message[] = "Hello from Arduino client!";
-  ws.send(message, strlen(message));
-}
-
-void onClose(WebSocket &ws, const WebSocketCloseCode code, const char *reason, uint16_t length) { /* ... */ }
-void onMessage(WebSocket &ws, const char *message, uint16_t length) { /* */ }
 
 void setup() {
   // Ethernet/WiFi initialization goes here ...
   // ...
   
-  client.setOnOpenCallback(onOpen);
-  client.setOnCloseCallback(onClose);
-  client.setOnMessageCallback(onMessage);
+  client.onOpen([](WebSocket &ws) {
+    char message[] = "Hello from Arduino client!";
+    ws.send(message, strlen(message));
+  });
+  client.onClose([](WebSocket &ws, const WebSocketCloseCode code, const char *reason, uint16_t length) {
+    // ...
+  });
+  client.onMessage([](WebSocket &ws, WebSocketDataType dataType, const char *message, uint16_t length) {
+    // ...
+  });
   
   client.open("host", 3000);
 }
@@ -201,40 +206,40 @@ Following screenshots shows Rasperry Pi server, browser client and Arduino clien
 
 ###### *simple-client.ino example (without debug output)
 
-### Ethernet.h (W5100)
+### Ethernet.h (W5100 and W5500)
 
 | Board  | Program space | Dynamic memory |
 | :---: | :---: | :---: | 
-| Arduino Uno  | 24364 bytes (75%)  | 1012 bytes (49%) |
-| Arduino Mega2560  | 24660 bytes (9%) | 1048 bytes (12%) |
-| Arduino Pro Mini | 24364 bytes (79%) | 1012 bytes (49%) |
-| Arduino Zero | 28092 bytes (10%) | |
+| Arduino Uno  | 24538 bytes (76%)  | 1012 bytes (49%) |
+| Arduino Mega2560  | 24836 bytes (9%) | 1048 bytes (12%) |
+| Arduino Pro Mini | 24538 bytes (79%) | 1012 bytes (49%) |
+| Arduino Zero | 28308 bytes (10%) | |
 
 ### Ethernet2.h (W5500)
 
 | Board  | Program space | Dynamic memory |
 | :---: | :---: | :---: | 
-| Arduino Uno  | 21440 bytes (66%)  | 811 bytes (39%) |
-| Arduino Mega2560  | 21738 bytes (8%) | 811 bytes (9%) |
-| Arduino Pro Mini | 21440 bytes (69%) | 811 bytes (39%) |
-| Arduino Zero | 25780 bytes (9%) | |
+| Arduino Uno  | 21592 bytes (66%) | 811 bytes (39%) |
+| Arduino Mega2560  | 21900 bytes (8%) | 811 bytes (9%) |
+| Arduino Pro Mini | 21592 bytes (70%) | 811 bytes (39%) |
+| Arduino Zero | 25988 bytes (9%) | |
 
 ### UIPEthernet.h (ENC28j60)
 :warning: **This library is incompatibile with Arduino Zero!** :warning:
 
 | Board  | Program space | Dynamic memory |
 | :---: | :---: | :---: | 
-| Arduino Uno  | 29570 bytes (91%)  | 1659 bytes (81%) :warning: |
-| Arduino Mega2560  | 29978 bytes (11%) | 1659 bytes (20%) |
-| Arduino Pro Mini | 29570 bytes (96%) | 1659 bytes (81%) :warning: |
+| Arduino Uno  | 29762 bytes (92%) | 1659 bytes (81%) :warning: |
+| Arduino Mega2560  | 30172 bytes (11%) | 1659 bytes (20%) |
+| Arduino Pro Mini | 29762 bytes (96%) | 1659 bytes (81%) :warning: |
 
 ### WiFi
 
 | Board  | Program space | Dynamic memory |
 | :---: | :---: | :---: | 
-| Generic ESP8266  | 265108 bytes (53%)  | 33624 bytes (41%) |
-| WeMos D1 | 265108 bytes (25%) | 33624 bytes (41%) |
-| NodeMCU | 265108 bytes (25%) | 33624 bytes (41%) |
+| Generic ESP8266  | 265864 bytes (53%) | 33644 bytes (41%) |
+| WeMos D1 mini | 265864 bytes (25%) | 33644 bytes (41%) |
+| NodeMCU | 265864 bytes (25%) | 33624 33644 (41%) |
 
 ## Ethernet "2" library modification
 
@@ -276,7 +281,6 @@ to this:
 ## Known issues		
 
 1. ENC28j60 is slow, eats much more memory than W5100/W5500 and hangs on ``available()`` function
-2. For now **ESP8266** works only with **WebSocketClient**
 
 ## License
 
