@@ -1,9 +1,9 @@
 # μWebSockets
-[![Build Status](https://travis-ci.org/skaarj1989/ArduinoWebSockets.svg?branch=master)](https://travis-ci.org/skaarj1989/ArduinoWebSockets)
-![GitHub issues](https://img.shields.io/github/issues/skaarj1989/ArduinoWebSockets.svg)
-![GitHub](https://img.shields.io/github/license/skaarj1989/ArduinoWebSockets.svg)
+[![Build Status](https://travis-ci.org/skaarj1989/mWebSockets.svg?branch=master)](https://travis-ci.org/skaarj1989/mWebSockets)
+![GitHub issues](https://img.shields.io/github/issues/skaarj1989/mWebSockets.svg)
+![GitHub](https://img.shields.io/github/license/skaarj1989/mWebSockets.svg)
 
-Simple to use implementation of WebSocket client and server for microcontrollers.
+Simple to use implementation of WebSockets for microcontrollers.
 
 **List of supported IDEs:**
 - [Arduino](https://www.arduino.cc/en/Main/Software)
