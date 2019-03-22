@@ -1,0 +1,191 @@
+{
+   "agent": "AVR / W5500 / Ethernet",
+   "behavior": "OK",
+   "behaviorClose": "OK",
+   "case": 234,
+   "closedByMe": true,
+   "createStats": true,
+   "createWirelog": true,
+   "description": "Send close with valid close code 4000",
+   "droppedByMe": true,
+   "duration": 26,
+   "expectation": "Clean close with normal or echoed code",
+   "expected": {
+      "OK": []
+   },
+   "expectedClose": {
+      "closeCode": [
+         1000,
+         4000
+      ],
+      "closedByMe": true,
+      "requireClean": true
+   },
+   "failedByMe": false,
+   "httpRequest": "GET /runCase?case=234&agent=AVR%20/%20W5500%20/%20Ethernet HTTP/1.1\r\nHost: 192.168.46.9:9001\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: r0xaOeC30hkKBC9Kh2yIlw==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/0.8.0-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: GHmrm6zJxCvkcJAP1mw7HdO/hwA=\r\n\r\n",
+   "id": "7.7.12",
+   "isServer": true,
+   "localCloseCode": 4000,
+   "localCloseReason": null,
+   "received": [],
+   "remoteCloseCode": 4000,
+   "remoteCloseReason": null,
+   "reportCompressionRatio": false,
+   "reportTime": false,
+   "result": "Actual events match at least one expected.",
+   "resultClose": "Connection was properly closed",
+   "rxFrameStats": {
+      "8": 1
+   },
+   "rxOctetStats": {
+      "2": 1,
+      "4": 2,
+      "5": 1,
+      "6": 2,
+      "7": 1,
+      "8": 1,
+      "10": 1,
+      "51": 1,
+      "114": 1
+   },
+   "started": "2019-03-22T20:29:50.177Z",
+   "trafficStats": null,
+   "txFrameStats": {
+      "8": 1
+   },
+   "txOctetStats": {
+      "4": 1,
+      "206": 1
+   },
+   "wasClean": true,
+   "wasCloseHandshakeTimeout": false,
+   "wasNotCleanReason": null,
+   "wasOpenHandshakeTimeout": false,
+   "wasServerConnectionDropTimeout": false,
+   "wirelog": [
+      [
+         "RO",
+         [
+            114,
+            "474554202f72756e436173653f636173653d323334266167656e743d4156522532302f25323057353530302532302f25323045746865726e657420485454502f ..."
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "436f6e6e"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "65637469"
+         ]
+      ],
+      [
+         "RO",
+         [
+            8,
+            "6f6e3a2055706772"
+         ]
+      ],
+      [
+         "RO",
+         [
+            51,
+            "6164650d0a5365632d576562536f636b65742d4b65793a20723078614f65433330686b4b4243394b683279496c773d3d0d0a53"
+         ]
+      ],
+      [
+         "RO",
+         [
+            6,
+            "65632d576562"
+         ]
+      ],
+      [
+         "RO",
+         [
+            10,
+            "536f636b65742d566572"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "73696f6e3a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            7,
+            "2031330d0a0d0a"
+         ]
+      ],
+      [
+         "TO",
+         [
+            206,
+            "485454502f312e312031303120537769746368696e672050726f746f636f6c730d0a5365727665723a204175746f6261686e5465737453756974652f302e382e ..."
+         ],
+         false
+      ],
+      [
+         "TF",
+         [
+            2,
+            "0x0fa0"
+         ],
+         8,
+         true,
+         0,
+         null,
+         null,
+         null,
+         false
+      ],
+      [
+         "TO",
+         [
+            4,
+            "88020fa0"
+         ],
+         false
+      ],
+      [
+         "KL",
+         1
+      ],
+      [
+         "RO",
+         [
+            2,
+            "8882"
+         ]
+      ],
+      [
+         "RO",
+         [
+            6,
+            "683362066793"
+         ]
+      ],
+      [
+         "RF",
+         [
+            2,
+            "0x0fa0"
+         ],
+         8,
+         true,
+         0,
+         true,
+         "68336206"
+      ]
+   ]
+}

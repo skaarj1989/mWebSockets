@@ -1,0 +1,244 @@
+{
+   "agent": "AVR / W5500 / Ethernet \"2\"",
+   "behavior": "OK",
+   "behaviorClose": "OK",
+   "case": 214,
+   "closedByMe": true,
+   "createStats": true,
+   "createWirelog": true,
+   "description": "Send message fragment1 followed by close then fragment",
+   "droppedByMe": true,
+   "duration": 92,
+   "expectation": "Clean close with normal code.",
+   "expected": {
+      "OK": []
+   },
+   "expectedClose": {
+      "closeCode": [
+         1000
+      ],
+      "closedByMe": true,
+      "requireClean": true
+   },
+   "failedByMe": false,
+   "httpRequest": "GET /runCase?case=214&agent=AVR%20/%20W5500%20/%20Ethernet%20%222%22 HTTP/1.1\r\nHost: 192.168.46.9:9001\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: yAyQuEByS0fsT+Vwi0SItQ==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/0.8.0-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: 0FHkbxnjL9YS9xNOmJpryNP58UI=\r\n\r\n",
+   "id": "7.1.5",
+   "isServer": true,
+   "localCloseCode": 1000,
+   "localCloseReason": null,
+   "received": [],
+   "remoteCloseCode": 1000,
+   "remoteCloseReason": null,
+   "reportCompressionRatio": false,
+   "reportTime": false,
+   "result": "Actual events match at least one expected.",
+   "resultClose": "Connection was properly closed",
+   "rxFrameStats": {
+      "8": 1
+   },
+   "rxOctetStats": {
+      "1": 1,
+      "5": 1,
+      "6": 1,
+      "7": 3,
+      "8": 2,
+      "9": 1,
+      "20": 1,
+      "43": 1,
+      "106": 1
+   },
+   "started": "2019-03-22T20:28:30.989Z",
+   "trafficStats": null,
+   "txFrameStats": {
+      "0": 1,
+      "1": 1,
+      "8": 1
+   },
+   "txOctetStats": {
+      "4": 1,
+      "11": 2,
+      "206": 1
+   },
+   "wasClean": true,
+   "wasCloseHandshakeTimeout": false,
+   "wasNotCleanReason": null,
+   "wasOpenHandshakeTimeout": false,
+   "wasServerConnectionDropTimeout": false,
+   "wirelog": [
+      [
+         "RO",
+         [
+            106,
+            "474554202f72756e436173653f636173653d323134266167656e743d4156522532302f25323057353530302532302f25323045746865726e6574253230253232 ..."
+         ]
+      ],
+      [
+         "RO",
+         [
+            7,
+            "67726164653a20"
+         ]
+      ],
+      [
+         "RO",
+         [
+            20,
+            "776562736f636b65740d0a436f6e6e656374696f"
+         ]
+      ],
+      [
+         "RO",
+         [
+            7,
+            "6e3a2055706772"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "6164650d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            43,
+            "5365632d576562536f636b65742d4b65793a20794179517545427953306673542b56776930534974513d3d"
+         ]
+      ],
+      [
+         "RO",
+         [
+            8,
+            "0d0a5365632d5765"
+         ]
+      ],
+      [
+         "RO",
+         [
+            6,
+            "62536f636b65"
+         ]
+      ],
+      [
+         "RO",
+         [
+            8,
+            "742d56657273696f"
+         ]
+      ],
+      [
+         "RO",
+         [
+            9,
+            "6e3a2031330d0a0d0a"
+         ]
+      ],
+      [
+         "TO",
+         [
+            206,
+            "485454502f312e312031303120537769746368696e672050726f746f636f6c730d0a5365727665723a204175746f6261686e5465737453756974652f302e382e ..."
+         ],
+         false
+      ],
+      [
+         "TF",
+         [
+            9,
+            "fragment1"
+         ],
+         1,
+         false,
+         0,
+         null,
+         null,
+         null,
+         false
+      ],
+      [
+         "TO",
+         [
+            11,
+            "0109667261676d656e7431"
+         ],
+         false
+      ],
+      [
+         "TF",
+         [
+            2,
+            "0x03e8"
+         ],
+         8,
+         true,
+         0,
+         null,
+         null,
+         null,
+         false
+      ],
+      [
+         "TO",
+         [
+            4,
+            "880203e8"
+         ],
+         false
+      ],
+      [
+         "TF",
+         [
+            9,
+            "fragment2"
+         ],
+         0,
+         true,
+         0,
+         null,
+         null,
+         null,
+         false
+      ],
+      [
+         "TO",
+         [
+            11,
+            "8009667261676d656e7432"
+         ],
+         false
+      ],
+      [
+         "KL",
+         1
+      ],
+      [
+         "RO",
+         [
+            1,
+            "88"
+         ]
+      ],
+      [
+         "RO",
+         [
+            7,
+            "82f4137dc5f7fb"
+         ]
+      ],
+      [
+         "RF",
+         [
+            2,
+            "0x03e8"
+         ],
+         8,
+         true,
+         0,
+         true,
+         "f4137dc5"
+      ]
+   ]
+}
