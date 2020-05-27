@@ -15,7 +15,7 @@ Simple to use implementation of WebSockets for microcontrollers.
 - ARM Cortex M0
 - ESP8266
 
-The **Autobahn**|Testsuite reports for [server](https://skaarj1989.github.io/mWebSockets/autobahn-testsuite/servers/index.html) and [client](https://skaarj1989.github.io/mWebSockets/autobahn-testsuite/clients/index.html)
+The **Autobahn**|Testsuite reports for [server](https://skaarj1989.github.io/ArduinoWebSockets/autobahn-testsuite/servers/index.html) and [client](https://skaarj1989.github.io/ArduinoWebSockets/autobahn-testsuite/clients/index.html)
 
 Some tests will never pass just because of memory lack in ATmega family.
 
@@ -92,7 +92,7 @@ Uncomment these if you want additional informations in serial monitor:
 Increase below value if you expect big data frames (or decrease for devices with small amount of memory)
 
 ```cpp
-#define BUFFER_MAX_SIZE 256
+constexpr auto kBufferMaxSize = 256;
 ```
 
 ### Physical connection
@@ -128,15 +128,17 @@ void setup() {
   server.onConnection([](WebSocket &ws) {
     char message[] = "Hello from Arduino server!";
     ws.send(message, strlen(message));
-    
-    ws.onClose([](WebSocket &ws, const WebSocketCloseCode code, const char *reason, uint16_t length) {
+
+    ws.onClose([](WebSocket &ws, const WebSocket::CloseCode &code,
+                 const char *reason, uint16_t length) {
       // ...
     });
-    ws.onMessage([](WebSocket &ws, WebSocketDataType dataType, const char *message, uint16_t length) {
+    ws.onMessage([](WebSocket &ws, const WebSocket::DataType &dataType,
+                   const char *message, uint16_t length) {
       // ...
     });
   });
- 
+
   server.begin();
 }
 
@@ -158,18 +160,20 @@ WebSocketClient client;
 void setup() {
   // Ethernet/WiFi initialization goes here ...
   // ...
-  
+
   client.onOpen([](WebSocket &ws) {
     char message[] = "Hello from Arduino client!";
     ws.send(message, strlen(message));
   });
-  client.onClose([](WebSocket &ws, const WebSocketCloseCode code, const char *reason, uint16_t length) {
+  client.onClose([](WebSocket &ws, const WebSocket::CloseCode &code,
+                   const char *reason, uint16_t length) {
     // ...
   });
-  client.onMessage([](WebSocket &ws, WebSocketDataType dataType, const char *message, uint16_t length) {
+  client.onMessage([](WebSocket &ws, const WebSocket::DataType &dataType,
+                     const char *message, uint16_t length) {
     // ...
   });
-  
+
   client.open("host", 3000);
 }
 
