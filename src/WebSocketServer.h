@@ -1,47 +1,46 @@
-#ifndef __WEBSOCKETSERVER_DOT_H_INCLUDED_
-#define __WEBSOCKETSERVER_DOT_H_INCLUDED_
+#pragma once
 
 #include "WebSocket.h"
+#include "utility.h"
 
 namespace net {
 
 class WebSocketServer {
 public:
-	WebSocketServer(uint16_t port);
-	~WebSocketServer();
-	
-	void begin(verifyClientCallback &&callback = nullptr);
-	void shutdown();
-	
-	uint8_t countClients();
-	
-	void broadcast(const WebSocketDataType dataType, const char *message, uint16_t length);
-	
-	void listen();
+  using verifyClientCallback = bool (*)(
+    const IPAddress &ip, const char *header, const char *value);
+  using onConnectionCallback = void (*)(WebSocket &ws);
 
-	// ---
-	
-	void onConnection(onConnectionCallback &&callback) { onConnection_ = callback; }
-	void onError(onErrorCallback &&callback) { onError_ = callback; }
-	
-private:
-	WebSocket *_getWebSocket(NetClient client);
-	
-	bool _handleRequest(NetClient &client);
-	void _rejectRequest(NetClient &client, const WebSocketError code);
-	
-	void _triggerError(const WebSocketError code);
-	
-private:
-	NetServer server_;
-	WebSocket *sockets_[MAX_CONNECTIONS];
-	
-	verifyClientCallback verifyClient_;
-	onConnectionCallback onConnection_;
+public:
+  WebSocketServer(uint16_t port);
+  ~WebSocketServer();
 
-	onErrorCallback onError_;
+  void begin(const verifyClientCallback &callback = nullptr);
+  void shutdown();
+
+  void broadcast(
+    const WebSocket::DataType &dataType, const char *message, uint16_t length);
+
+  void listen();
+
+  uint8_t countClients();
+
+  void onConnection(const onConnectionCallback &callback);
+
+private:
+  WebSocket *_getWebSocket(NetClient &client) const;
+
+  bool _handleRequest(NetClient &client);
+  void _rejectRequest(NetClient &client, const WebSocketError &code);
+
+  void _cleanDeadConnections();
+
+private:
+  NetServer m_server;
+  WebSocket *m_sockets[MAX_CONNECTIONS]{};
+
+  verifyClientCallback _verifyClient{ nullptr };
+  onConnectionCallback _onConnection{ nullptr };
 };
 
-};
-
-#endif // __WEBSOCKETSERVER_DOT_H_INCLUDED_
+} // namespace net
