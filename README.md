@@ -8,6 +8,7 @@ Simple to use implementation of WebSockets for microcontrollers.
 **List of supported IDEs:**
 - [Arduino](https://www.arduino.cc/en/Main/Software)
 - Visual Studio Code with [Platformio](https://platformio.org/)
+- Microsoft Visual Studio with [Visual Micro](https://www.visualmicro.com/)
 
 **List of supported MCUs:**
 - ATmega328P
