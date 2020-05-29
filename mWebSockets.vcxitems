@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{dba58447-ad17-4fc4-b93e-f13189339a48}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="$(MSBuildThisFileDirectory)keywords.txt" />
+    <Text Include="$(MSBuildThisFileDirectory)library.properties" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\config.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\platform.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\utility.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\WebSocket.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\WebSocketClient.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\WebSocketServer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\utility.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\WebSocket.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\WebSocketClient.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\WebSocketServer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory).gitignore" />
+    <None Include="$(MSBuildThisFileDirectory).travis.yml" />
+    <None Include="$(MSBuildThisFileDirectory)LICENSE" />
+    <None Include="$(MSBuildThisFileDirectory)README.md" />
+  </ItemGroup>
+</Project>

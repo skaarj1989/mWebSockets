@@ -3,7 +3,7 @@
 #include <SHA1.h>
 
 void printf(const __FlashStringHelper *fmt, ...) {
-  char buffer[128]{};
+  char buffer[192]{};
   va_list args;
   va_start(args, fmt);
 
@@ -38,7 +38,7 @@ void generateSecKey(char output[]) {
 }
 
 void encodeSecKey(char output[], const char *key) {
-  constexpr auto kMagicString = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+  constexpr auto kMagicString{ "258EAFA5-E914-47DA-95CA-C5AB0DC85B11" };
 
   char buffer[64]{};
   strcpy(buffer, key);
@@ -55,7 +55,7 @@ void encodeSecKey(char output[], const char *key) {
 void generateMask(byte *output) {
   randomSeed(analogRead(0));
 
-  for (uint8_t i = 0; i < 4; i++)
+  for (byte i = 0; i < 4; i++)
     output[i] = random(0xFF);
 }
 

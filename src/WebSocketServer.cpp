@@ -99,7 +99,11 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
   // [7]
   //
 
-  char buffer[132]{};
+  // buffer large enought to hold longest header field
+  // Chrome: 'User-Agent' = ~126 characters
+  // Firefox: 'User-Agent' = ~90 characters
+  // Edge: 'User-Agent' = ~141 characters
+  char buffer[160]{};
   char secKey[32]{};
 
 #if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
@@ -117,7 +121,7 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
       buffer[lineBreakPos] = '\0';
 
 #ifdef _DUMP_HANDSHAKE
-      printf(F("[Line #%d] %s\n"), currentLine, buffer);
+      printf(F("[Line #%d, %d] %s\n"), currentLine, lineBreakPos, buffer);
 #endif
 
       //
@@ -189,13 +193,14 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
           //
 
           else if (strcmp_P(header, (PGM_P)F("Connection")) == 0) {
-            value = strtok(nullptr, " ");
-
-            if (strcmp_P(value, (PGM_P)F("Upgrade")) != 0) {
-              _rejectRequest(client, WebSocketError::UPGRADE_REQUIRED);
-              return false;
-            } else
-              flags |= kValidConnectionHeader;
+            // Firefox sends: "Connection: keep-alive, Upgrade"
+            // simple "includes" check:
+            while (value = strtok(nullptr, " ,")) {
+              if (strstr_P(value, (PGM_P)F("Upgrade")) != nullptr) {
+                flags != kValidConnectionHeader;
+                break;
+              }
+            }
           }
 
           //
@@ -204,9 +209,8 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
 
           else if (strcmp_P(header, (PGM_P)F("Sec-WebSocket-Key")) == 0) {
             value = strtok(nullptr, " ");
-
             strcpy(secKey, value);
-            flags |= kValidSecKey;
+            //flags |= kValidSecKey;
           }
 
           //
@@ -235,7 +239,6 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
 
           else {
             if (_verifyClient) {
-              // IPAddress ip = _REMOTE_IP(client);
               if (!_verifyClient(_REMOTE_IP(client), header, value)) {
                 _rejectRequest(client, WebSocketError::CONNECTION_REFUSED);
                 return false;
@@ -254,7 +257,7 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
             return false;
           }
 
-          if (!(flags & (kValidSecKey | kValidVersion))) {
+          if (!(flags & kValidVersion) || strlen(secKey) == 0) {
             _rejectRequest(client, WebSocketError::BAD_REQUEST);
             return false;
           }

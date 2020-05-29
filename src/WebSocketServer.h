@@ -12,6 +12,9 @@ public:
   using onConnectionCallback = void (*)(WebSocket &ws);
 
 public:
+  WebSocketServer(const WebSocketServer &) = delete;
+  WebSocketServer &operator=(const WebSocketServer &) = delete;
+
   WebSocketServer(uint16_t port);
   ~WebSocketServer();
 

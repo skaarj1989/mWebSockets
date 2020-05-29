@@ -33,4 +33,3 @@ void generateMask(byte *output);
 #else
 #  define __debugOutput(...)
 #endif
-

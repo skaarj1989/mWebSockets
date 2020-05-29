@@ -15,7 +15,7 @@ byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 // IPAddress ip(192, 168, 46, 179);
 #endif
 
-constexpr auto port = 3000;
+constexpr uint16_t port = 3000;
 WebSocketServer wss(port);
 
 void setup() {
@@ -78,7 +78,7 @@ void setup() {
     _SERIAL.print(F("New client: "));
     _SERIAL.println(ws.getRemoteIP());
 
-    char message[] = "Hello from Arduino server!";
+    const char message[]{ "Hello from Arduino server!" };
     ws.send(WebSocket::DataType::TEXT, message, strlen(message));
   });
 

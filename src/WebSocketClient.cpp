@@ -7,9 +7,6 @@
 
 namespace net {
 
-WebSocketClient::WebSocketClient() {}
-WebSocketClient::~WebSocketClient() {}
-
 bool WebSocketClient::open(const char *host, uint16_t port, const char *path) {
   close(GOING_AWAY, true); // close if already open
 
@@ -36,6 +33,7 @@ bool WebSocketClient::open(const char *host, uint16_t port, const char *path) {
     return false;
   }
 
+  if (_onOpen) _onOpen(*this);
   return true;
 }
 
@@ -73,7 +71,7 @@ void WebSocketClient::_sendRequest(
   // [7]
   //
 
-  char buffer[128]{};
+  char buffer[64]{};
 
   snprintf_P(buffer, sizeof(buffer), (PGM_P)F("GET %s HTTP/1.1"), path);
   m_client.println(buffer);
@@ -243,6 +241,16 @@ bool WebSocketClient::_readResponse() {
 
   m_readyState = ReadyState::OPEN;
   return true;
+}
+
+bool WebSocketClient::_waitForResponse(uint16_t maxAttempts, uint8_t time) {
+  uint16_t attempts = 0;
+  while (!m_client.available() && attempts < maxAttempts) {
+    attempts++;
+    delay(time);
+  }
+
+  return attempts < maxAttempts;
 }
 
 } // namespace net

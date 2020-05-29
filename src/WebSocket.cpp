@@ -1,4 +1,3 @@
-#include "utility.h"
 #include "WebSocket.h"
 
 namespace net {
@@ -43,11 +42,10 @@ void WebSocket::close(
   const CloseCode &code, bool instant, const char *reason, uint16_t length) {
   if (m_readyState != ReadyState::OPEN) return;
 
-  // #TODO: handle too big length (above 123 characters)
+  // #TODO handle too big length (above 123 characters)
 
   m_readyState = ReadyState::CLOSING;
-
-  char buffer[128] = { static_cast<char>((code >> 8) & 0xFF),
+  char buffer[128]{ static_cast<char>((code >> 8) & 0xFF),
     static_cast<char>(code & 0xFF) };
 
   if (length) memcpy(&buffer[2], reason, sizeof(char) * length);
@@ -104,18 +102,8 @@ WebSocket::WebSocket() : m_maskEnabled(true) {}
 WebSocket::WebSocket(const NetClient &client)
   : m_client(client), m_maskEnabled(false), m_readyState(ReadyState::OPEN) {}
 
-bool WebSocket::_waitForResponse(uint16_t maxAttempts, uint8_t time) {
-  uint16_t attempts = 0;
-  while (!m_client.available() && attempts < maxAttempts) {
-    attempts++;
-    delay(time);
-  }
-
-  return attempts < maxAttempts;
-}
-
 int WebSocket::_read() {
-  unsigned long timeout = millis() + kTimeoutInterval;
+  const uint32_t timeout = millis() + kTimeoutInterval;
   while (!m_client.available() && millis() < timeout) {
     delay(1);
   }
@@ -166,7 +154,7 @@ void WebSocket::_handleFrame() {
   }
 
   switch (header.opcode) {
-  case CONTINUATION_FRAME: {
+  case Opcode::CONTINUATION_FRAME: {
     if (m_tbcOpcode == -1) {
       close(PROTOCOL_ERROR, true);
       break;
@@ -192,8 +180,8 @@ void WebSocket::_handleFrame() {
 
     break;
   }
-  case TEXT_FRAME:
-  case BINARY_FRAME: {
+  case Opcode::TEXT_FRAME:
+  case Opcode::BINARY_FRAME: {
     if (m_currentOffset > 0) {
       close(PROTOCOL_ERROR, true);
       break;
@@ -216,7 +204,7 @@ void WebSocket::_handleFrame() {
 
     break;
   }
-  case CONNECTION_CLOSE_FRAME: {
+  case Opcode::CONNECTION_CLOSE_FRAME: {
     uint16_t code = 0;
     const char *reason = nullptr;
 
@@ -246,11 +234,11 @@ void WebSocket::_handleFrame() {
 
     break;
   }
-  case PING_FRAME: {
+  case Opcode::PING_FRAME: {
     _send(PONG_FRAME, true, m_maskEnabled, payload, header.length);
     break;
   }
-  case PONG_FRAME: {
+  case Opcode::PONG_FRAME: {
     break;
   }
   default: {
@@ -287,7 +275,6 @@ bool WebSocket::_readHeader(header_t &header) {
 
   byte temp[2]{};
   if (!_read(temp, 2)) return false;
-
   //__debugOutput(F("B[0] = %x, B[1] = %x\n"), temp[0], temp[1]);
 
   header.fin = temp[0] & 0x80;

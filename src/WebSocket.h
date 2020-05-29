@@ -4,10 +4,10 @@
 
 namespace net {
 
-constexpr auto kValidUpgradeHeader = 0x01;
-constexpr auto kValidConnectionHeader = 0x02;
-constexpr auto kValidSecKey = 0x04;
-constexpr auto kValidVersion = 0x08;
+constexpr uint8_t kValidUpgradeHeader = 0x01;
+constexpr uint8_t kValidConnectionHeader = 0x02;
+constexpr uint8_t kValidSecKey = 0x04;
+constexpr uint8_t kValidVersion = 0x08;
 
 enum class WebSocketError {
   CONNECTION_ERROR,
@@ -35,8 +35,8 @@ class WebSocket {
   struct header_t;
 
 public:
-  enum class ReadyState { CONNECTING = 0, OPEN, CLOSING, CLOSED };
-  enum class DataType { TEXT, BINARY };
+  enum class ReadyState : int8_t { CONNECTING = 0, OPEN, CLOSING, CLOSED };
+  enum class DataType : int8_t { TEXT, BINARY };
   enum Opcode {
     CONTINUATION_FRAME = 0x00,
 
@@ -103,6 +103,9 @@ public:
     const WebSocket::DataType &dataType, const char *message, uint16_t length);
 
 public:
+  WebSocket(const WebSocket &) = delete;
+  WebSocket &operator=(const WebSocket &) = delete;
+
   virtual ~WebSocket();
 
   // max reason length = 123 characters!
@@ -125,8 +128,6 @@ public:
 protected:
   WebSocket();                        // Initialization done by client
   WebSocket(const NetClient &client); // Called by server
-
-  bool _waitForResponse(uint16_t maxAttempts, uint8_t time = 1);
 
   int _read();
   bool _read(uint8_t *buffer, size_t size);

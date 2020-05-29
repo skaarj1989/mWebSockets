@@ -43,28 +43,28 @@
 </div>
 
 <script>
-	var chat = {
-		initialize: function() {
+	const chat = {
+		initialize: function(host) {
 			this.$textArea = $('#text-area');
 			this.$buttonSend = $('#button-send');
 			this.$inputMessage = $('#input-message');
 			
 			this.$buttonSend.on('click', () => {
-				let message = this.$inputMessage.val();
+				const message = this.$inputMessage.val();
 				if (message) {
 					chat.sendMessage(message);
 					this.$inputMessage.val('');
 				}
 			});
 			
-			this.$inputMessage.on('keypress', (e) => {
-				if (e.which == 13)
+			this.$inputMessage.on('keypress', (evt) => {
+				if (evt.which == 13)
 					this.$buttonSend.trigger('click');
 			});
 			
 			// ---
 		
-			this.ws = new WebSocket('ws://192.168.46.10:3000/');
+			this.ws = new WebSocket(host);
 			
 			this.ws.onopen = () => chat.addMessage('Connected');
 			this.ws.onmessage = (message) => chat.addMessage(message.data);
@@ -74,9 +74,9 @@
 		},
 		
 		addMessage: function(message) {
-			let $el = this.$textArea;
+			const $el = this.$textArea;
 		
-			$el.val($el.val() + `${message}\n`);
+			$el.val(`${$el.val()}${message}\n`);
 			$el.scrollTop($el[0].scrollHeight - $el.height());
 		},
 		
@@ -85,7 +85,7 @@
 		}
 	};
 	
-	$(document).ready(() => chat.initialize() );
+	$(document).ready(() => chat.initialize('ws://192.168.46.180:3000/') );
 </script>
 </body>
 </html>
