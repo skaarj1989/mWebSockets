@@ -16,6 +16,11 @@ Simple to use implementation of WebSockets for microcontrollers.
 - ARM Cortex M0
 - ESP8266
 
+**WebSocketServer compatible browsers:**
+- Chrome
+- Edge
+- Firefox
+
 The **Autobahn**|Testsuite reports for [server](https://skaarj1989.github.io/mWebSockets/autobahn-testsuite/servers/index.html) and [client](https://skaarj1989.github.io/mWebSockets/autobahn-testsuite/clients/index.html)
 
 Some tests will never pass just because of memory lack in ATmega family.
@@ -79,7 +84,7 @@ NETWORK_CONTROLLER_WIFI
 ```
 
 ``ETHERNET_CONTROLLER_W5100`` means official Arduino Ethernet library. It is possible to use this with both **W5100** and **W5500**.
-``ETHERNET_CONTROLLER_W5500`` stands for Ethernet "2" library.
+``ETHERNET_CONTROLLER_W5500`` stands for **Ethernet "2"** library.
 
 Uncomment these if you want additional informations in serial monitor:
 
@@ -127,7 +132,7 @@ void setup() {
   // ...
 
   server.onConnection([](WebSocket &ws) {
-    char message[] = "Hello from Arduino server!";
+    const char message[]{ "Hello from Arduino server!" };
     ws.send(message, strlen(message));
 
     ws.onClose([](WebSocket &ws, const WebSocket::CloseCode &code,
@@ -163,7 +168,7 @@ void setup() {
   // ...
 
   client.onOpen([](WebSocket &ws) {
-    char message[] = "Hello from Arduino client!";
+    const char message[]{ "Hello from Arduino client!" };
     ws.send(message, strlen(message));
   });
   client.onClose([](WebSocket &ws, const WebSocket::CloseCode &code,
@@ -175,7 +180,7 @@ void setup() {
     // ...
   });
 
-  client.open("host", 3000);
+  client.open("echo.websocket.org", 80);
 }
 
 void loop() {

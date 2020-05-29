@@ -34,6 +34,35 @@ void WebSocketServer::broadcast(
 void WebSocketServer::listen() {
   _cleanDeadConnections();
 
+#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
+  const auto end = &m_sockets[MAX_CONNECTIONS];
+
+  if (m_server.hasClient()) {
+    WiFiClient client;
+    WebSocket *ws = nullptr;
+
+    for (auto it = &m_sockets[0]; it != end; ++it) {
+      if (!(*it)) {
+        client = m_server.available();
+        if (_handleRequest(client)) {
+          *it = new WebSocket(client);
+          ws = *it;
+          if (_onConnection) _onConnection(*ws);
+        }
+        break;
+      }
+    }
+
+     // Server is full ...
+    if (!ws) _rejectRequest(client, WebSocketError::SERVICE_UNAVAILABLE);
+  }
+
+  for (auto it = &m_sockets[0]; it != end; ++it) {
+    if (*it && (*it)->m_client.connected()) {
+      if ((*it)->m_client.available()) (*it)->_handleFrame();
+    }
+  }
+#else
   EthernetClient client = m_server.available();
   if (client && client.available()) {
     WebSocket *ws = _getWebSocket(client);
@@ -57,6 +86,7 @@ void WebSocketServer::listen() {
 
     if (ws) ws->_handleFrame();
   }
+#endif
 }
 
 uint8_t WebSocketServer::countClients() {
@@ -121,7 +151,7 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
       buffer[lineBreakPos] = '\0';
 
 #ifdef _DUMP_HANDSHAKE
-      printf(F("[Line #%d, %d] %s\n"), currentLine, lineBreakPos, buffer);
+      printf(F("[Line #%d] %s\n"), currentLine, buffer);
 #endif
 
       //

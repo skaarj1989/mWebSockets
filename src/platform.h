@@ -16,6 +16,8 @@
 #  define PLATFORM_ARCH PLATFORM_ARCHITECTURE_ESP8266
 #elif defined(ARDUINO_SAMD_ZERO)
 #  define PLATFORM_ARCH PLATFORM_ARCHITECTURE_SAMD21
+#else
+#  error "Unsupported platform"
 #endif
 
 //

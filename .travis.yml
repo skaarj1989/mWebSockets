@@ -18,14 +18,14 @@ before_install:
   - sudo ln -s /usr/local/share/arduino/arduino /usr/local/bin/arduino
   
   - git clone --depth=50 --branch=master https://github.com/adamvr/arduino-base64 /usr/local/share/arduino/libraries/arduino-base64
-  - wget https://github.com/skaarj1989/ArduinoWebSockets/blob/master/CryptoLegacy.tar.gz
+  - wget https://github.com/skaarj1989/mWebSockets/blob/master/external/CryptoLegacy.tar.gz
   - sudo tar -zxvf CryptoLegacy.tar.gz
   - sudo mv CryptoLegacy /usr/local/share/arduino/libraries
   
   - pip install --user cpp-coveralls
   
 install:
-  - ln -s $PWD/src /usr/local/share/arduino/libraries/ArduinoWebSockets
+  - ln -s $PWD/src /usr/local/share/arduino/libraries/mWebSockets
   
 script:
   - arduino --verify --board ${BOARD} $PWD/examples/simple-server/simple-server.ino

@@ -8,8 +8,8 @@ using namespace net;
 #endif
 
 #if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
-const char *SSID = "SKYNET";
-const char *password = "***";
+constexpr char SSID[]{ "SKYNET" };
+constexpr char password[]{ "***" };
 #else
 byte mac[]{ 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 // IPAddress ip(192, 168, 46, 179);

@@ -2,41 +2,41 @@
 using namespace net;
 
 #if PLATFORM_ARCH == PLATFORM_ARCHITECTURE_SAMD21
-# define _SERIAL SerialUSB
-const char platform[] = "SAMD21%20/%20W5100";
+#  define _SERIAL SerialUSB
+constexpr char platform[]{ "SAMD21%20/%20W5100" };
 #else
-# define _SERIAL Serial
-# if PLATFORM_ARCH == PLATFORM_ARCHITECTURE_AVR
-const char platform[] = "AVR%20/%20W5100";
-# elif PLATFORM_ARCH == PLATFORM_ARCHITECTURE_ESP8266
-const char platform[] = "ESP8266";
-# endif
+#  define _SERIAL Serial
+#  if PLATFORM_ARCH == PLATFORM_ARCHITECTURE_AVR
+constexpr char platform[]{ "AVR%20/%20W5100" };
+#  elif PLATFORM_ARCH == PLATFORM_ARCHITECTURE_ESP8266
+constexpr char platform[]{ "ESP8266" };
+#  endif
 #endif
 
 #if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
-const char SSID[] = "SKYNET";
-const char password[] = "***";
+constexpr char SSID[]{ "SKYNET" };
+constexpr char password[]{ "***" };
 
-const char lib[] = "WiFi";
+constexpr char lib[]{ "WiFi" };
 #else
-byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-//IPAddress ip(192, 168, 46, 179);
+byte mac[]{ 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+// IPAddress ip(192, 168, 46, 179);
 
-# if NETWORK_CONTROLLER == ETHERNET_CONTROLLER_W5100
-const char lib[] = "Ethernet";
-# elif NETWORK_CONTROLLER == ETHERNET_CONTROLLER_W5500
-const char lib[] = "Ethernet%20%222%22";
-# elif NETWORK_CONTROLLER == ETHERNET_CONTROLLER_ENC28J60
-const char lib[] = "UIPEthernet";
-# endif
+#  if NETWORK_CONTROLLER == ETHERNET_CONTROLLER_W5100
+constexpr char lib[]{ "Ethernet" };
+#  elif NETWORK_CONTROLLER == ETHERNET_CONTROLLER_W5500
+constexpr char lib[]{ "Ethernet%20%222%22" };
+#  elif NETWORK_CONTROLLER == ETHERNET_CONTROLLER_ENC28J60
+constexpr char lib[]{ "UIPEthernet" };
+#  endif
 #endif
 
 WebSocketClient client;
 
-const char host[] = "192.168.46.9";
-const uint16_t port = 9001;
+constexpr char host[]{ "192.168.46.31" };
+constexpr uint16_t port = 9001;
 
-uint16_t cases[] = {
+const uint16_t cases[]{
   //
   // 1. Framing:
   //
@@ -78,7 +78,7 @@ uint16_t cases[] = {
   //
 
   /* - 6.1 Valid UTF-8 with zero payload fragments: */
-  65, //66, 67,
+  65, 66, 67,
   /* - 6.2 Valid UTF-8 unfragmented, fragmented on code-points and within code-points */
   68, 69, 70, 71,
   /* - 6.3 Invalid UTF-8 differently fragmented */
@@ -155,18 +155,19 @@ uint16_t cases[] = {
 };
 
 void nextTest() {
-  static size_t numCases = sizeof(cases) / sizeof(uint16_t);
+  static const size_t numCases = sizeof(cases) / sizeof(uint16_t);
   static int idx = 0;
 
-  static char path[80];
-  memset(path, '\0', sizeof(path));
+  static char path[80]{};
   
   if (idx != numCases) {
     uint16_t test = cases[idx++];
-    snprintf_P(path, sizeof(path), (PGM_P)F("/runCase?case=%d&agent=%s%s%s"), test, platform, "%20/%20", lib);
+    snprintf_P(path, sizeof(path), (PGM_P)F("/runCase?case=%d&agent=%s%s%s"),
+      test, platform, "%20/%20", lib);
+  } else {
+    snprintf_P(path, sizeof(path), (PGM_P)F("/updateReports?agent=%s%s%s"),
+      platform, "%20/%20", lib);
   }
-  else
-    snprintf_P(path, sizeof(path), (PGM_P)F("/updateReports?agent=%s%s%s"), platform, "%20/%20", lib);
 
   delay(100);
 
@@ -207,24 +208,15 @@ void setup() {
   _SERIAL.println(Ethernet.localIP());
 #endif
 
-/*
-  client.onOpen([](WebSocket &ws) {
-    _SERIAL.println(F("Connected"));
-  });
-*/
-  client.onMessage([](WebSocket &ws, WebSocketDataType dataType, const char *message, uint16_t length) {
-    ws.send(dataType, message, length);
-  });
+  client.onMessage(
+    [](WebSocket &ws, const WebSocket::DataType &dataType, const char *message,
+      uint16_t length) { ws.send(dataType, message, length); });
 
-  client.onClose([](WebSocket &ws, const WebSocketCloseCode code, const char *reason, uint16_t length) {
-    //_SERIAL.println(F("Disconnected\n"));
-    nextTest();
-  });
+  client.onClose([](WebSocket &ws, const WebSocket::CloseCode &code,
+                   const char *reason, uint16_t length) { nextTest(); });
 
   delay(2000);
   nextTest();
 }
 
-void loop() {
-  client.listen();
-}
+void loop() { client.listen(); }

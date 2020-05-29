@@ -1,6 +1,6 @@
 #include "utility.h"
-#include <Base64.h>
-#include <SHA1.h>
+#include "Base64.h"
+#include "SHA1.h"
 
 void printf(const __FlashStringHelper *fmt, ...) {
   char buffer[192]{};
@@ -38,7 +38,7 @@ void generateSecKey(char output[]) {
 }
 
 void encodeSecKey(char output[], const char *key) {
-  constexpr auto kMagicString{ "258EAFA5-E914-47DA-95CA-C5AB0DC85B11" };
+  constexpr char kMagicString[]{ "258EAFA5-E914-47DA-95CA-C5AB0DC85B11" };
 
   char buffer[64]{};
   strcpy(buffer, key);

@@ -8,8 +8,8 @@ using namespace net;
 #endif
 
 #if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
-const char SSID[] = "SKYNET";
-const char password[] = "***";
+constexpr char SSID[]{ "SKYNET" };
+constexpr char password[]{ "***" };
 #else
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 //IPAddress ip(192, 168, 46, 179);
@@ -54,20 +54,12 @@ void setup() {
 #endif
 
   server.onConnection([](WebSocket &ws) {
-    ws.onMessage([](WebSocket &ws, WebSocketDataType dataType, const char *message, uint16_t length) {
-      //_SERIAL.print(F("Received: ")); _SERIAL.println(message);
-      ws.send(dataType, message, length);
-    });
-/*
-    ws.onClose([](WebSocket &ws, WebSocketCloseCode code, const char *reason, uint16_t length) {
-      _SERIAL.println(F("Disconnected"));
-    });
-*/
+    ws.onMessage([](WebSocket &ws, const WebSocket::DataType &dataType,
+                   const char *message,
+                   uint16_t length) { ws.send(dataType, message, length); });
   });
 
   server.begin();
 }
 
-void loop() {
-  server.listen();
-}
+void loop() { server.listen(); }

@@ -1,10 +1,12 @@
 const WebSocket = require('ws');
+const FileSystem = require('fs');
+
 const wss = new WebSocket.Server({ host: '192.168.46.31', port: 3000 });
 
 wss.on('connection', (ws, req) => {
 	ws.remoteAddress = req.connection.remoteAddress.replace(/^.*:/, '');
 	console.log(`new client: ${ws.remoteAddress}`);
-	
+		
 	ws.on('message', (message) => {
 		console.log(`[${ws.remoteAddress}] > ${typeof message}:`, message);
 	});
@@ -16,7 +18,8 @@ wss.on('connection', (ws, req) => {
 	ws.on('error', (err) => console.log(`[${ws.remoteAddress}] error:`, err));
 	ws.on('ping', () => console.log(`[${ws.remoteAddress}] > ping`));
 	
-	ws.send('Hello from Node.js');
+	ws.send('Hello from Node.js!', { fin: true });
+	FileSystem.readFile('test.rar', (err, data) => ws.send(data) );
 	
 	setTimeout(() => { 
 		console.log(`disconnecting ${ws.remoteAddress} ...`);
@@ -24,7 +27,7 @@ wss.on('connection', (ws, req) => {
 	}, 60000);
 });
 
-wss.on('listening', () => {
-	let remote = wss.address();
+wss.on('listening', function() {
+	let remote = this.address();
 	console.log(`Server running at ${remote.address}:${remote.port}`);
 });
