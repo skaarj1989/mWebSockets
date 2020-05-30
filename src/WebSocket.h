@@ -116,7 +116,9 @@ public:
   const ReadyState &getReadyState() const;
   bool isAlive();
 
+ #if PLATFORM_ARCH != PLATFORM_ARCHITECTURE_ESP8266
   IPAddress getRemoteIP();
+ #endif
 
   void send(
     const WebSocket::DataType dataType, const char *message, uint16_t length);

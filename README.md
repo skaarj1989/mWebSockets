@@ -98,17 +98,19 @@ Uncomment these if you want additional informations in serial monitor:
 Increase below value if you expect big data frames (or decrease for devices with small amount of memory)
 
 ```cpp
-constexpr auto kBufferMaxSize = 256;
+constexpr uint16_t kBufferMaxSize = 256;
 ```
 
 ### Physical connection
 
-| W5100 Ethernet shield  | Arduino Uno / Mega2560 |  Arduino Pro Mini | Arduino Zero |
-| :---: | :---: | :---: | :---: |
-| (ICSP) MISO  | (ICSP) MISO  | PIN 12 | (ICSP) MISO |
-| (ICSP) MOSI  | (ICSP) MOSI  | PIN 11 | (ICSP) MOSI |
-| (ICSP) SCK  | (ICSP) SCK | PIN 13 | (ICSP) SCK |
-| (SS) PIN 10  | PIN 10 | PIN 10 | PIN 10 |
+If you have **WeMos D1** in size of **Arduino Uno** simply attaching shield does not work, you have to wire **ICSP** on **Ethernet Shield** to proper pins.
+
+| W5100 Ethernet shield  | Arduino Uno / Mega2560 |  Arduino Pro Mini | Arduino Zero | WeMos D1 |
+| :---: | :---: | :---: | :---: | :--- |
+| (ICSP) MISO  | (ICSP) MISO  | PIN 12 | (ICSP) MISO | D12 / MISO |
+| (ICSP) MOSI  | (ICSP) MOSI  | PIN 11 | (ICSP) MOSI | D11 / MOSI
+| (ICSP) SCK  | (ICSP) SCK | PIN 13 | (ICSP) SCK | D13 / SCK
+| (SS) PIN 10  | PIN 10 | PIN 10 | PIN 10 | D10 / SS
 
 | W5500 / ENC28j60  | Arduino Uno / Pro Mini | Arduino Mega2560 |
 | :---: | :---: | :---: | 
@@ -269,16 +271,16 @@ Following screenshots shows Rasperry Pi server, browser client and Arduino clien
 
 ## Fix for arduino-base64 with **ESP8266**
 
-Move files: ``Base64.h`` and ``Base64.cpp`` to ``src`` directory of ``ArduinoWebSockets`` library.
+Move files: ``Base64.h`` and ``Base64.cpp`` to ``src`` directory of ``mWebSockets`` library.
 In ``Base64.cpp`` change:
 
-```
+```cpp
 #include <avr/pgmspace.h>
 ```
 
 to this:
 
-```
+```cpp
 #include "platform.h"
 #include "Base64.h"
 #if PLATFORM_ARCH == PLATFORM_ARCHITECTURE_ESP8266

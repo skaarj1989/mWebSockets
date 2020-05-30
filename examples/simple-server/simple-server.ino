@@ -12,7 +12,7 @@ constexpr char SSID[]{ "SKYNET" };
 constexpr char password[]{ "***" };
 #else
 byte mac[]{ 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-// IPAddress ip(192, 168, 46, 179);
+IPAddress ip(192, 168, 46, 179);
 #endif
 
 constexpr uint16_t port = 3000;
@@ -47,7 +47,7 @@ void setup() {
   // Ethernet.init(53);
 #  endif
 
-  Ethernet.begin(mac); //, ip);
+  Ethernet.begin(mac, ip);
 
   _SERIAL.print(F("Server running at "));
   _SERIAL.print(Ethernet.localIP());

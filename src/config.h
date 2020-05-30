@@ -13,8 +13,8 @@
 //
 //
 
-constexpr auto kBufferMaxSize = 256;
-constexpr auto kTimeoutInterval = 5000;
+constexpr uint16_t kBufferMaxSize = 256;
+constexpr uint16_t kTimeoutInterval = 5000;
 
 // ETHERNET_CONTROLLER_W5100
 // ETHERNET_CONTROLLER_W5500

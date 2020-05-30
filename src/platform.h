@@ -34,6 +34,7 @@
 #if NETWORK_CONTROLLER == ETHERNET_CONTROLLER_W5100
 #  include <Ethernet.h>
 #  define MAX_CONNECTIONS 4
+// ESP8266 version of EthernetClient does not implement remoteIP()
 #  define _REMOTE_IP(client) client.remoteIP()
 #elif NETWORK_CONTROLLER == ETHERNET_CONTROLLER_W5500
 #  include <Ethernet2.h>

@@ -72,7 +72,9 @@ bool WebSocket::isAlive() {
   return m_client.connected() && m_readyState != ReadyState::CLOSED;
 }
 
+#if PLATFORM_ARCH != PLATFORM_ARCHITECTURE_ESP8266
 IPAddress WebSocket::getRemoteIP() { return _REMOTE_IP(m_client); }
+#endif
 
 void WebSocket::send(
   const WebSocket::DataType dataType, const char *message, uint16_t length) {
