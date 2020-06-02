@@ -23,12 +23,16 @@ constexpr bool isCloseCodeValid(const uint16_t code) {
 }
 
 struct WebSocket::header_t {
-  bool fin;
-  bool rsv1, rsv2, rsv3;
+  bool fin; ///< 0 = more frames of this message follow, 1 = final frame of this
+            ///< message
+  bool rsv1, ///< MUST be 0 unless negotiated otherwise
+    rsv2,    ///< MUST be 0 unless negotiated otherwise
+    rsv3;    ///< MUST be 0 unless negotiated otherwise
+  
   uint8_t opcode;
 
   bool mask;
-  byte maskingKey[4]{};
+  char maskingKey[4]{};
   uint32_t length;
 };
 
@@ -41,12 +45,13 @@ WebSocket::~WebSocket() { terminate(); }
 void WebSocket::close(
   const CloseCode &code, bool instant, const char *reason, uint16_t length) {
   if (m_readyState != ReadyState::OPEN) return;
-
-  // #TODO handle too big length (above 123 characters)
+  if (length > 123) return; // trigger error?
 
   m_readyState = ReadyState::CLOSING;
-  char buffer[128]{ static_cast<char>((code >> 8) & 0xFF),
-    static_cast<char>(code & 0xFF) };
+  char buffer[128]{
+    static_cast<char>((code >> 8) & 0xFF),
+    static_cast<char>(code & 0xFF)
+  };
 
   if (length) memcpy(&buffer[2], reason, sizeof(char) * length);
   _send(CONNECTION_CLOSE_FRAME, true, m_maskEnabled, buffer, 2 + length);
@@ -59,9 +64,10 @@ void WebSocket::close(
 
 void WebSocket::terminate() {
   m_client.stop();
+
   m_readyState = ReadyState::CLOSED;
   m_currentOffset = 0;
-  m_tbcOpcode = 1;
+  m_tbcOpcode = -1;
 }
 
 const WebSocket::ReadyState &WebSocket::getReadyState() const {
@@ -78,13 +84,21 @@ IPAddress WebSocket::getRemoteIP() { return _REMOTE_IP(m_client); }
 
 void WebSocket::send(
   const WebSocket::DataType dataType, const char *message, uint16_t length) {
-  if (m_readyState != WebSocket::ReadyState::OPEN) return;
+  if (m_readyState != WebSocket::ReadyState::OPEN) {
+    // #TODO trigger error ...
+    return;
+  }
+
   _send(dataType == WebSocket::DataType::TEXT ? TEXT_FRAME : BINARY_FRAME, true,
     m_maskEnabled, message, length);
 }
 
 void WebSocket::ping(const char *payload, uint16_t length) {
-  if (m_readyState != WebSocket::ReadyState::OPEN) return;
+  if (m_readyState != WebSocket::ReadyState::OPEN) {
+    // #TODO trigger error ...
+    return;
+  }
+
   _send(PING_FRAME, true, m_maskEnabled, payload, length);
 }
 
@@ -104,7 +118,7 @@ WebSocket::WebSocket() : m_maskEnabled(true) {}
 WebSocket::WebSocket(const NetClient &client)
   : m_client(client), m_maskEnabled(false), m_readyState(ReadyState::OPEN) {}
 
-int WebSocket::_read() {
+int32_t WebSocket::_read() {
   const uint32_t timeout = millis() + kTimeoutInterval;
   while (!m_client.available() && millis() < timeout) {
     delay(1);
@@ -118,8 +132,8 @@ int WebSocket::_read() {
   return m_client.read();
 }
 
-bool WebSocket::_read(uint8_t *buffer, size_t size) {
-  int16_t bite = -1;
+bool WebSocket::_read(char *buffer, size_t size) {
+  int32_t bite = -1;
   size_t counter = 0;
 
   do {
@@ -131,109 +145,92 @@ bool WebSocket::_read(uint8_t *buffer, size_t size) {
   return true;
 }
 
-void WebSocket::_handleFrame() {
+
+void WebSocket::_send(
+  uint8_t opcode, bool fin, bool mask, const char *data, uint16_t length) {
+  uint16_t bytesWritten = 0;
+  bytesWritten += m_client.write(opcode | (fin ? 0x80 : 0x00));
+
+  if (length <= 125) {
+    bytesWritten +=
+      m_client.write((mask ? 0x80 : 0x00) | static_cast<char>(length));
+  } else if (length <= 0xFFFF) {
+    bytesWritten += m_client.write((mask ? 0x80 : 0x00) | 126);
+    bytesWritten += m_client.write(static_cast<char>(length >> 8) & 0xFF);
+    bytesWritten += m_client.write(static_cast<char>(length & 0xFF));
+  } else
+    return; // too big ...
+
+#ifdef _DUMP_HEADER
+  printf(F("TX FRAME : OPCODE=%u, FIN=%s, RSV=0, PAYLOAD-LEN=%u, MASK="),
+    opcode, fin ? "True" : "False", length);
+#endif
+
+  if (mask) {
+    char maskingKey[4]{};
+    generateMask(maskingKey);
+
+#ifdef _DUMP_HEADER
+    printf(F("%x%x%x%x\n"), maskingKey[0], maskingKey[1], maskingKey[2],
+      maskingKey[3]);
+#endif
+
+    bytesWritten += m_client.write(maskingKey, 4);
+
+    for (uint16_t i = 0; i < length; ++i)
+      bytesWritten +=
+        m_client.write(static_cast<char>(data[i] ^ maskingKey[i % 4]));
+  } else {
+#ifdef _DUMP_HEADER
+    printf(F("None\n"));
+#endif
+
+    if (length) {
+      bytesWritten +=
+        m_client.write(reinterpret_cast<const char *>(data), length);
+    }
+  }
+
+#ifdef _DUMP_FRAME_DATA
+  if (length) printf(F("%s\n"), data);
+#endif
+
+#ifdef _DUMP_HEADER
+  printf(F("TX BYTES = %u\n"), bytesWritten);
+#endif
+}
+
+void WebSocket::_readFrame() {
   if (m_readyState == ReadyState::CLOSED) return;
 
   header_t header;
-  if (!_readHeader(header)) return;
+  if (!_readHeader(header)) {
+    __debugOutput(F("Failed to read header, terminating\n"));
+    return;
+  }
 
   char *payload = nullptr;
-  if (header.length) {
+  if (header.length > 0) {
     payload = new char[header.length + 1]{};
     if (!_readData(header, payload)) {
+      __debugOutput(F("Failed to read data, terminating\n"));
       SAFE_DELETE_ARRAY(payload);
       return;
     }
   }
 
-  // ---
-
-  if (m_readyState == ReadyState::CLOSING &&
-      header.opcode != CONNECTION_CLOSE_FRAME) {
-    __debugOutput(F("waiting for close frame!\n"));
-    SAFE_DELETE_ARRAY(payload);
-    return;
-  }
-
   switch (header.opcode) {
   case Opcode::CONTINUATION_FRAME: {
-    if (m_tbcOpcode == -1) {
-      close(PROTOCOL_ERROR, true);
-      break;
-    }
-
-    memcpy(&m_dataBuffer[m_currentOffset], payload, header.length);
-
-    if (header.fin) {
-      if (_onMessage) {
-        DataType dataType = m_tbcOpcode == WebSocket::Opcode::TEXT_FRAME
-                              ? DataType::TEXT
-                              : DataType::BINARY;
-        _onMessage(
-          *this, dataType, m_dataBuffer, m_currentOffset + header.length);
-      }
-
-      memset(m_dataBuffer, '\0', sizeof(char) * kBufferMaxSize);
-      m_currentOffset = 0;
-      m_tbcOpcode = -1;
-    } else {
-      m_currentOffset += header.length;
-    }
-
+    _handleContinuationFrame(header, payload);
     break;
   }
   case Opcode::TEXT_FRAME:
   case Opcode::BINARY_FRAME: {
-    if (m_currentOffset > 0) {
-      close(PROTOCOL_ERROR, true);
-      break;
-    }
-
-    if (header.fin) {
-      if (_onMessage) {
-        const auto dataType = header.opcode == Opcode::TEXT_FRAME
-                                ? DataType::TEXT
-                                : DataType::BINARY;
-
-        _onMessage(*this, dataType, payload, header.length);
-      }
-
-    } else {
-      memcpy(&m_dataBuffer[m_currentOffset], payload, header.length);
-      m_currentOffset += header.length;
-      m_tbcOpcode = header.opcode;
-    }
-
+    _handleDataFrame(header, payload);
     break;
   }
   case Opcode::CONNECTION_CLOSE_FRAME: {
-    uint16_t code = 0;
-    const char *reason = nullptr;
-
-    if (header.length) {
-      for (byte i = 0; i < 2; i++)
-        code = (code << 8) + (payload[i] & 0xFF);
-
-      if (!isCloseCodeValid(code)) {
-        close(PROTOCOL_ERROR, true);
-        break;
-      }
-
-      reason = (header.length) ? &(payload[2]) : nullptr;
-    }
-
-    __debugOutput(F("Received close frame: code = %u, reason = %s\n"), code,
-      header.length ? reason : " ");
-
-    if (m_readyState == ReadyState::OPEN) {
-      if (header.length)
-        close(static_cast<CloseCode>(code), true, reason, header.length - 2);
-      else
-        close(NORMAL_CLOSURE, true);
-    } else {
-      __debugOutput(F("this should never happen! wtf?\n"));
-    }
-
+    _handleCloseFrame(header, payload);
     break;
   }
   case Opcode::PING_FRAME: {
@@ -273,9 +270,9 @@ bool WebSocket::_readHeader(header_t &header) {
   // 	|                     Payload Data continued ...                |
   // 	+---------------------------------------------------------------+
 
-  int16_t bite = -1;
+  int32_t bite = -1;
 
-  byte temp[2]{};
+  char temp[2]{};
   if (!_read(temp, 2)) return false;
   //__debugOutput(F("B[0] = %x, B[1] = %x\n"), temp[0], temp[1]);
 
@@ -351,16 +348,15 @@ bool WebSocket::_readHeader(header_t &header) {
 }
 
 bool WebSocket::_readData(const header_t &header, char *payload) {
-  int16_t bite = -1;
+  int32_t bite = -1;
 
   if (header.mask) {
-    for (uint16_t i = 0; i < header.length; i++) {
+    for (auto i = 0; i < header.length; ++i) {
       if ((bite = _read()) == -1) return false;
-
       payload[i] = bite ^ header.maskingKey[i % 4];
     }
   } else {
-    if (!_read(reinterpret_cast<byte *>(payload), header.length)) {
+    if (!_read(payload, header.length)) {
       return false;
     }
   }
@@ -372,58 +368,98 @@ bool WebSocket::_readData(const header_t &header, char *payload) {
   return true;
 }
 
-void WebSocket::_send(
-  uint8_t opcode, bool fin, bool mask, const char *data, uint16_t length) {
-  uint16_t bytesWritten = 0;
-  bytesWritten += m_client.write(opcode | (fin ? 0x80 : 0x00));
+void WebSocket::_handleContinuationFrame(
+  const header_t &header, const char *payload) {
+  if (m_tbcOpcode == -1) {
+    close(PROTOCOL_ERROR, true);
+    return;
+  }
 
-  if (length <= 125) {
-    bytesWritten +=
-      m_client.write((mask ? 0x80 : 0x00) | static_cast<byte>(length));
-  } else if (length <= 0xFFFF) {
-    bytesWritten += m_client.write((mask ? 0x80 : 0x00) | 126);
-    bytesWritten += m_client.write(static_cast<uint8_t>(length >> 8) & 0xFF);
-    bytesWritten += m_client.write(static_cast<uint8_t>(length & 0xFF));
-  } else
-    return; // too big ...
+  memcpy(&m_dataBuffer[m_currentOffset], payload, header.length);
 
-#ifdef _DUMP_HEADER
-  printf(F("TX FRAME : OPCODE=%u, FIN=%s, RSV=0, PAYLOAD-LEN=%u, MASK="),
-    opcode, fin ? "True" : "False", length);
-#endif
+  if (header.fin) {
+    auto totalLength = m_currentOffset + header.length;
 
-  if (mask) {
-    byte maskingKey[4]{};
-    generateMask(maskingKey);
+    const auto dataType =
+      m_tbcOpcode == Opcode::TEXT_FRAME ? DataType::TEXT : DataType::BINARY;
 
-#ifdef _DUMP_HEADER
-    printf(F("%x%x%x%x\n"), maskingKey[0], maskingKey[1], maskingKey[2],
-      maskingKey[3]);
-#endif
+    if (dataType == DataType::TEXT) {
+      if (!isValidUTF8(m_dataBuffer, totalLength)) {
+        close(CloseCode::INVALID_FRAME_PAYLOAD_DATA, true);
+        return;
+      }
+    }
 
-    bytesWritten += m_client.write(maskingKey, 4);
+    if (_onMessage) {
+      _onMessage(*this, dataType, m_dataBuffer, totalLength);
+    }
 
-    for (uint16_t i = 0; i < length; i++)
-      bytesWritten +=
-        m_client.write(static_cast<byte>(data[i] ^ maskingKey[i % 4]));
+    memset(m_dataBuffer, '\0', sizeof(char) * kBufferMaxSize);
+    m_currentOffset = 0;
+    m_tbcOpcode = -1;
   } else {
-#ifdef _DUMP_HEADER
-    printf(F("None\n"));
-#endif
+    m_currentOffset += header.length;
+  }
+}
 
-    if (length) {
-      bytesWritten +=
-        m_client.write(reinterpret_cast<const byte *>(data), length);
+void WebSocket::_handleDataFrame(const header_t &header, const char *payload) {
+  if (m_currentOffset > 0) {
+    close(PROTOCOL_ERROR, true);
+    return;
+  }
+
+  if (header.fin) {
+    const auto dataType =
+      header.opcode == Opcode::TEXT_FRAME ? DataType::TEXT : DataType::BINARY;
+
+    if (dataType == DataType::TEXT) {
+      if (!isValidUTF8(payload, header.length)) {
+        close(CloseCode::INVALID_FRAME_PAYLOAD_DATA, true);
+        return;
+      }
+    }
+
+    if (_onMessage) {
+      _onMessage(*this, dataType, payload, header.length);
+    }
+  } else {
+    memcpy(&m_dataBuffer[m_currentOffset], payload, header.length);
+    m_currentOffset += header.length;
+    m_tbcOpcode = header.opcode;
+  }
+}
+
+void WebSocket::_handleCloseFrame(const header_t &header, const char *payload) {
+  uint16_t code = 0;
+  const char *reason = nullptr;
+  uint16_t reasonLength = 0;
+
+  if (header.length) {
+    reasonLength = header.length - 2;
+    for (byte i = 0; i < 2; ++i)
+      code = (code << 8) + (payload[i] & 0xFF);
+
+    if (!isCloseCodeValid(code)) {
+      close(PROTOCOL_ERROR, true);
+      return;
+    }
+
+    reason = (header.length) ? &(payload[2]) : nullptr;
+    if (!isValidUTF8(reason, reasonLength)) {
+      close(PROTOCOL_ERROR, true);
+      return;
     }
   }
 
-#ifdef _DUMP_FRAME_DATA
-  if (length) printf(F("%s\n"), data);
-#endif
+  __debugOutput(F("Received close frame: code = %u, reason = %s\n"), code,
+    header.length ? reason : " ");
 
-#ifdef _DUMP_HEADER
-  printf(F("TX BYTES = %u\n"), bytesWritten);
-#endif
+  if (m_readyState == ReadyState::OPEN) {
+    if (header.length)
+      close(code, true, reason, reasonLength);
+    else
+      close(NORMAL_CLOSURE, true);
+  }
 }
 
 } // namespace net

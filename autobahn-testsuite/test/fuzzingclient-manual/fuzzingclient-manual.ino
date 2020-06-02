@@ -20,34 +20,35 @@
 using namespace net;
 
 #if PLATFORM_ARCH == PLATFORM_ARCHITECTURE_SAMD21
-# define _SERIAL SerialUSB
+#  define _SERIAL SerialUSB
 #else
-# define _SERIAL Serial
+#  define _SERIAL Serial
 #endif
 
 #define BUFFER_SIZE 64
-char buffer[BUFFER_SIZE] = { '\0' };
-char tempBuffer[BUFFER_SIZE] = { '\0' };
+char buffer[BUFFER_SIZE]{};
+char tempBuffer[BUFFER_SIZE]{};
 
 bool newData = false;
 
-char host[32] = { '\0' };
-char path[48] = { '\0' };
-int port = 3000;
+char host[32]{};
+char path[48]{};
+uint16_t port = 3000;
 
 #if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
-const char *SSID = "SKYNET";
-const char *password = "***";
+const char SSID[]{ "SKYNET" };
+const char password[]{ "***" };
 #else
-byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-//IPAddress ip(192, 168, 46, 179);
+byte mac[]{ 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+// IPAddress ip(192, 168, 46, 179);
 #endif
 
 WebSocketClient client;
 
 void setup() {
   _SERIAL.begin(115200);
-  while (!_SERIAL) ;
+  while (!_SERIAL)
+    ;
 
 #if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
   //_SERIAL.setDebugOutput(true);
@@ -56,7 +57,8 @@ void setup() {
   WiFi.mode(WIFI_STA);
   WiFi.begin(SSID, password);
   while (WiFi.status() != WL_CONNECTED) {
-    delay(500); _SERIAL.print(F("."));
+    delay(500);
+    _SERIAL.print(F("."));
   }
 
   _SERIAL.println(F(" connected"));
@@ -68,9 +70,9 @@ void setup() {
 #else
   _SERIAL.println(F("Initializing ... "));
 
-# if NETWORK_CONTROLLER == ETHERNET_CONTROLLER_W5100
-  //Ethernet.init(53);
-# endif
+#  if NETWORK_CONTROLLER == ETHERNET_CONTROLLER_W5100
+  // Ethernet.init(53);
+#  endif
 
   Ethernet.begin(mac); //, ip);
 
@@ -78,20 +80,16 @@ void setup() {
   _SERIAL.println(Ethernet.localIP());
 #endif
 
-  client.onOpen([](WebSocket &ws) {
-    _SERIAL.println(F("Connected"));
-  });
+  client.onOpen([](WebSocket &ws) { _SERIAL.println(F("Connected")); });
 
-  client.onClose([](WebSocket &ws, const WebSocketCloseCode code, const char *reason, uint16_t length) {
-    _SERIAL.println(F("Disconnected\n"));
-  });
+  client.onClose(
+    [](WebSocket &ws, const WebSocket::CloseCode &code, const char *reason,
+      uint16_t length) { _SERIAL.println(F("Disconnected\n")); });
 
-  client.onMessage([](WebSocket &ws, WebSocketDataType dataType, const char *message, uint16_t length) {
-    ws.send(dataType, message, length);
-  });
+  client.onMessage(
+    [](WebSocket &ws, const WebSocket::DataType &dataType, const char *message,
+      uint16_t length) { ws.send(dataType, message, length); });
 }
-
-unsigned long previousTime = 0;
 
 void loop() {
   static bool recvInProgress = false;
@@ -106,17 +104,14 @@ void loop() {
       if (c != '>') {
         buffer[idx++] = c;
 
-        if (idx >= BUFFER_SIZE)
-          idx = BUFFER_SIZE - 1;
-      }
-      else {
+        if (idx >= BUFFER_SIZE) idx = BUFFER_SIZE - 1;
+      } else {
         buffer[idx] = '\0';
         recvInProgress = false;
         idx = 0;
         newData = true;
       }
-    }
-    else if (c == '<')
+    } else if (c == '<')
       recvInProgress = true;
   }
 
@@ -126,13 +121,14 @@ void loop() {
     char *ptr = strtok(tempBuffer, ",");
     strcpy(host, ptr);
 
-    ptr = strtok(NULL, ",");
+    ptr = strtok(nullptr, ",");
     port = atoi(ptr);
 
-    ptr = strtok(NULL, ",");
+    ptr = strtok(nullptr, ",");
     strcpy(path, ptr);
 
-    _SERIAL.print(F("Performing test: ")); _SERIAL.println(path);
+    _SERIAL.print(F("Performing test: "));
+    _SERIAL.println(path);
 
     if (!client.open(host, port, path)) {
       //_SERIAL.println("Connection failed!");

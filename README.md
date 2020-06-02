@@ -155,6 +155,26 @@ void loop() {
 }
 ```
 
+#### Verify clients
+
+```cpp
+void setup() {
+  // ...
+
+  // verifyClient callback is called for every header during handshake
+  // (except for those required by protocol, like "Connection", "Upgrade" etc.)
+  server.begin([](const IPAddress &ip, const char *header, const char *value) {
+    // verify ip ...
+    
+    // verify "Origin" header:
+    if (strcmp_P(header, (PGM_P)F("Origin")) == 0)
+      if (strcmp_P(value, (PGM_P)F("file://")) == 0) return false;
+
+    return true;
+  });
+}
+```
+
 ##### Node.js server examples [here](node.js)
 
 ### Client

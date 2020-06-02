@@ -11,7 +11,7 @@ using namespace net;
 constexpr char SSID[]{ "SKYNET" };
 constexpr char password[]{ "***" };
 #else
-byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+byte mac[]{ 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 //IPAddress ip(192, 168, 46, 179);
 #endif
 
@@ -62,4 +62,6 @@ void setup() {
   server.begin();
 }
 
-void loop() { server.listen(); }
+void loop() {
+  server.listen();
+}

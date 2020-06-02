@@ -15,19 +15,32 @@ public:
   WebSocketServer(const WebSocketServer &) = delete;
   WebSocketServer &operator=(const WebSocketServer &) = delete;
 
-  WebSocketServer(uint16_t port);
+  /** Initializes server on given port. */
+  WebSocketServer(uint16_t port = 3000);
   ~WebSocketServer();
 
+  /**
+   * Startup server.
+   * @param callback Function called for every header during hadshake (except
+   * for those required by protocol, like "Connection", "Upgrade" etc.)
+   */
   void begin(const verifyClientCallback &callback = nullptr);
+  /** Disconnects all clients. */
   void shutdown();
 
+  /** Sends message to all connected clients. */
   void broadcast(
     const WebSocket::DataType &dataType, const char *message, uint16_t length);
 
   void listen();
 
+  /** @return Amount of connected clients. */
   uint8_t countClients();
 
+  /**
+   * @param callback Function that will be called for every successfully
+   * connected client.
+   */
   void onConnection(const onConnectionCallback &callback);
 
 private:

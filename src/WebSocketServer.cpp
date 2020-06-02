@@ -18,6 +18,10 @@ void WebSocketServer::shutdown() {
       SAFE_DELETE(*it);
     }
   }
+
+  // Here I shoud call somethig like m_server.close() but unfortunately
+  // EthernetServer does not implement anything like that
+  // #TODO server state enum?
 }
 
 void WebSocketServer::broadcast(
@@ -84,7 +88,7 @@ void WebSocketServer::listen() {
       if (!ws) _rejectRequest(client, WebSocketError::SERVICE_UNAVAILABLE);
     }
 
-    if (ws) ws->_handleFrame();
+    if (ws) ws->_readFrame();
   }
 #endif
 }
@@ -113,7 +117,7 @@ WebSocket *WebSocketServer::_getWebSocket(NetClient &client) const {
 bool WebSocketServer::_handleRequest(NetClient &client) {
   uint8_t flags = 0x0;
 
-  int16_t bite = -1;
+  int32_t bite = -1;
   byte currentLine = 0;
   byte counter = 0;
 
@@ -146,7 +150,7 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
   while ((bite = client.read()) != -1) {
     buffer[counter++] = bite;
 
-    if (static_cast<char>(bite) == '\n') {
+    if (bite == '\n') {
       uint8_t lineBreakPos = strcspn(buffer, "\r\n");
       buffer[lineBreakPos] = '\0';
 
@@ -160,7 +164,7 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
 
       if (currentLine == 0) {
         char *pch = strtok(buffer, " ");
-        for (byte i = 0; pch != nullptr; i++) {
+        for (byte i = 0; pch != nullptr; ++i) {
           switch (i) {
           case 0: {
             if (strcmp_P(pch, (PGM_P)F("GET")) != 0) {
@@ -240,7 +244,6 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
           else if (strcmp_P(header, (PGM_P)F("Sec-WebSocket-Key")) == 0) {
             value = strtok(nullptr, " ");
             strcpy(secKey, value);
-            //flags |= kValidSecKey;
           }
 
           //
@@ -269,6 +272,8 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
 
           else {
             if (_verifyClient) {
+              value = strtok(nullptr, " ");
+
               if (!_verifyClient(_REMOTE_IP(client), header, value)) {
                 _rejectRequest(client, WebSocketError::CONNECTION_REFUSED);
                 return false;
@@ -361,6 +366,7 @@ void WebSocketServer::_cleanDeadConnections() {
   const auto end = &m_sockets[MAX_CONNECTIONS];
   for (auto it = &m_sockets[0]; it != end; ++it) {
     if (*it && !(*it)->isAlive()) {
+      __debugOutput(F("dealing with dead connection ...\n"));
       delete *it;
       *it = nullptr;
     }

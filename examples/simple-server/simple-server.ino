@@ -12,7 +12,7 @@ constexpr char SSID[]{ "SKYNET" };
 constexpr char password[]{ "***" };
 #else
 byte mac[]{ 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-IPAddress ip(192, 168, 46, 179);
+IPAddress ip(192, 168, 46, 180);
 #endif
 
 constexpr uint16_t port = 3000;
@@ -84,5 +84,7 @@ void setup() {
 
   wss.begin();
 }
+
+uint32_t previousTime = 0;
 
 void loop() { wss.listen(); }
