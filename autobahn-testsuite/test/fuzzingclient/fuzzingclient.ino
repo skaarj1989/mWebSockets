@@ -7,7 +7,7 @@ constexpr char platform[]{ "SAMD21%20/%20W5100" };
 #else
 #  define _SERIAL Serial
 #  if PLATFORM_ARCH == PLATFORM_ARCHITECTURE_AVR
-constexpr char platform[]{ "AVR%20/%20W5100" };
+constexpr char platform[]{ "AVR%20/%20W5500" };
 #  elif PLATFORM_ARCH == PLATFORM_ARCHITECTURE_ESP8266
 constexpr char platform[]{ "ESP8266" };
 #  endif
@@ -20,7 +20,7 @@ constexpr char password[]{ "***" };
 constexpr char lib[]{ "WiFi" };
 #else
 byte mac[]{ 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-// IPAddress ip(192, 168, 46, 179);
+IPAddress ip(192, 168, 46, 180);
 
 #  if NETWORK_CONTROLLER == ETHERNET_CONTROLLER_W5100
 constexpr char lib[]{ "Ethernet" };
@@ -202,7 +202,7 @@ void setup() {
   //Ethernet.init(53);
 # endif
 
-  Ethernet.begin(mac); //, ip);
+  Ethernet.begin(mac, ip);
 
   _SERIAL.print(F("Device IP: "));
   _SERIAL.println(Ethernet.localIP());

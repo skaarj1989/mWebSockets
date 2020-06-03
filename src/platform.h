@@ -59,7 +59,7 @@
 
 #if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
 using NetClient = WiFiClient;
-using NetServer = WifiServer;
+using NetServer = WiFiServer;
 #else
 using NetClient = EthernetClient;
 using NetServer = EthernetServer;

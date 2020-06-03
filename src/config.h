@@ -1,6 +1,5 @@
 #pragma once
 
-/*
 /// Enables __debugOutput function
 #define _DEBUG
 /// Handshake request/response on Serial output
@@ -9,7 +8,6 @@
 #define _DUMP_HEADER
 /// Frame data on Serial output
 #define _DUMP_FRAME_DATA
-*/
 
 //
 //

@@ -63,7 +63,7 @@ void WebSocketServer::listen() {
 
   for (auto it = &m_sockets[0]; it != end; ++it) {
     if (*it && (*it)->m_client.connected()) {
-      if ((*it)->m_client.available()) (*it)->_handleFrame();
+      if ((*it)->m_client.available()) (*it)->_readFrame();
     }
   }
 #else
