@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Send a text message with payload which is valid UTF-8 in one fragment.<br><br>Payload: 0x68656c6c6ff0a4ada2776f726c64",
    "droppedByMe": false,
-   "duration": 115,
+   "duration": 140,
    "expectation": "The message is echo'ed back to us.",
    "expected": {
       "OK": [
@@ -27,8 +27,8 @@
       "requireClean": true
    },
    "failedByMe": false,
-   "httpRequest": "GET / HTTP/1.1\r\nUser-Agent: AutobahnTestSuite/0.8.0-0.10.9\r\nHost: 192.168.46.126:9001\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nSec-WebSocket-Key: lZ9ktrUC8rdyjfbr4BSQuA==\r\nSec-WebSocket-Version: 13\r\n\r\n",
-   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: 6sEi8MK1wqpbjLRF1dZsL+8ZYbg=\r\n\r\n",
+   "httpRequest": "GET / HTTP/1.1\r\nUser-Agent: AutobahnTestSuite/0.8.0-0.10.9\r\nHost: 192.168.46.182:9001\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nSec-WebSocket-Key: 9vYkRhm6s2eqAQYeBNDEDQ==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: fmtWTuaP5UeXMIt0zsEByXOd8uk=\r\n\r\n",
    "id": "6.5.4",
    "isServer": false,
    "localCloseCode": 1000,
@@ -51,16 +51,13 @@
       "8": 1
    },
    "rxOctetStats": {
-      "1": 7,
-      "2": 6,
-      "3": 7,
-      "4": 4,
-      "5": 1,
-      "6": 3,
-      "16": 1,
-      "54": 1
+      "1": 2,
+      "3": 1,
+      "15": 1,
+      "32": 1,
+      "97": 1
    },
-   "started": "2019-03-22T21:12:47.841Z",
+   "started": "2020-06-03T17:02:18.196Z",
    "trafficStats": null,
    "txFrameStats": {
       "1": 1,
@@ -88,197 +85,15 @@
       [
          "RO",
          [
-            3,
-            "485454"
+            32,
+            "485454502f312e312031303120537769746368696e672050726f746f636f6c73"
          ]
       ],
       [
          "RO",
          [
-            5,
-            "502f312e31"
-         ]
-      ],
-      [
-         "RO",
-         [
-            4,
-            "20313031"
-         ]
-      ],
-      [
-         "RO",
-         [
-            4,
-            "20537769"
-         ]
-      ],
-      [
-         "RO",
-         [
-            1,
-            "74"
-         ]
-      ],
-      [
-         "RO",
-         [
-            3,
-            "636869"
-         ]
-      ],
-      [
-         "RO",
-         [
-            4,
-            "6e672050"
-         ]
-      ],
-      [
-         "RO",
-         [
-            1,
-            "72"
-         ]
-      ],
-      [
-         "RO",
-         [
-            2,
-            "6f74"
-         ]
-      ],
-      [
-         "RO",
-         [
-            1,
-            "6f"
-         ]
-      ],
-      [
-         "RO",
-         [
-            2,
-            "636f"
-         ]
-      ],
-      [
-         "RO",
-         [
-            1,
-            "6c"
-         ]
-      ],
-      [
-         "RO",
-         [
-            1,
-            "73"
-         ]
-      ],
-      [
-         "RO",
-         [
-            3,
-            "0d0a55"
-         ]
-      ],
-      [
-         "RO",
-         [
-            2,
-            "7067"
-         ]
-      ],
-      [
-         "RO",
-         [
-            3,
-            "726164"
-         ]
-      ],
-      [
-         "RO",
-         [
-            3,
-            "653a20"
-         ]
-      ],
-      [
-         "RO",
-         [
-            1,
-            "77"
-         ]
-      ],
-      [
-         "RO",
-         [
-            3,
-            "656273"
-         ]
-      ],
-      [
-         "RO",
-         [
-            2,
-            "6f63"
-         ]
-      ],
-      [
-         "RO",
-         [
-            2,
-            "6b65"
-         ]
-      ],
-      [
-         "RO",
-         [
-            3,
-            "740d0a"
-         ]
-      ],
-      [
-         "RO",
-         [
-            6,
-            "436f6e6e6563"
-         ]
-      ],
-      [
-         "RO",
-         [
-            6,
-            "74696f6e3a20"
-         ]
-      ],
-      [
-         "RO",
-         [
-            2,
-            "5570"
-         ]
-      ],
-      [
-         "RO",
-         [
-            1,
-            "67"
-         ]
-      ],
-      [
-         "RO",
-         [
-            6,
-            "726164650d0a"
-         ]
-      ],
-      [
-         "RO",
-         [
-            54,
-            "5365632d576562536f636b65742d4163636570743a2036734569384d4b31777170626a4c524631645a734c2b385a5962673d0d0a0d0a"
+            97,
+            "0d0a557067726164653a20776562736f636b65740d0a436f6e6e656374696f6e3a20557067726164650d0a5365632d576562536f636b65742d4163636570743a ..."
          ]
       ],
       [
@@ -290,7 +105,7 @@
          1,
          true,
          0,
-         "445202a0",
+         "d65ac573",
          null,
          null,
          false
@@ -299,7 +114,7 @@
          "TO",
          [
             20,
-            "818e445202a02c376ecc2ba2a60de6256dd22836"
+            "818ed65ac573be3fa91fb9aa61de742daa01ba3e"
          ],
          false
       ],
@@ -310,8 +125,15 @@
       [
          "RO",
          [
-            16,
-            "810e68656c6c6ff0a4ada2776f726c64"
+            1,
+            "81"
+         ]
+      ],
+      [
+         "RO",
+         [
+            15,
+            "0e68656c6c6ff0a4ada2776f726c64"
          ]
       ],
       [
@@ -335,7 +157,7 @@
          8,
          true,
          0,
-         "cddff84c",
+         "b09e9b10",
          null,
          null,
          false
@@ -344,15 +166,22 @@
          "TO",
          [
             8,
-            "8882cddff84cce37"
+            "8882b09e9b10b376"
          ],
          false
       ],
       [
          "RO",
          [
-            4,
-            "880203e8"
+            1,
+            "88"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "0203e8"
          ]
       ],
       [

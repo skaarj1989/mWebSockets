@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Send close with valid close code 1009",
    "droppedByMe": false,
-   "duration": 8,
+   "duration": 7,
    "expectation": "Clean close with normal or echoed code",
    "expected": {
       "OK": []
@@ -22,8 +22,8 @@
       "requireClean": true
    },
    "failedByMe": false,
-   "httpRequest": "GET / HTTP/1.1\r\nUser-Agent: AutobahnTestSuite/0.8.0-0.10.9\r\nHost: 192.168.46.143:9001\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nSec-WebSocket-Key: EmOvtC5w1hNkvMXIKQrMsA==\r\nSec-WebSocket-Version: 13\r\n\r\n",
-   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: x9TXHjnN/sn24mRUahkAjI71rpg=\r\n\r\n",
+   "httpRequest": "GET / HTTP/1.1\r\nUser-Agent: AutobahnTestSuite/0.8.0-0.10.9\r\nHost: 192.168.46.183:9001\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nSec-WebSocket-Key: TuQZhfiEN7J3Zvxh1UFh9Q==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: 4gjcClC6MpY7ugW1TXXAcVY4kio=\r\n\r\n",
    "id": "7.7.7",
    "isServer": false,
    "localCloseCode": 1009,
@@ -39,11 +39,12 @@
       "8": 1
    },
    "rxOctetStats": {
-      "4": 2,
+      "4": 1,
+      "20": 1,
       "32": 1,
-      "93": 1
+      "77": 1
    },
-   "started": "2019-03-22T21:13:20.582Z",
+   "started": "2020-06-03T17:02:59.401Z",
    "trafficStats": null,
    "txFrameStats": {
       "8": 1
@@ -76,15 +77,15 @@
       [
          "RO",
          [
-            93,
-            "0d0a557067726164653a20776562736f636b65740d0a436f6e6e656374696f6e3a20557067726164650d0a5365632d576562536f636b65742d4163636570743a ..."
+            20,
+            "0d0a557067726164653a20776562736f636b6574"
          ]
       ],
       [
          "RO",
          [
-            4,
-            "0d0a0d0a"
+            77,
+            "0d0a436f6e6e656374696f6e3a20557067726164650d0a5365632d576562536f636b65742d4163636570743a2034676a63436c43364d70593775675731545858 ..."
          ]
       ],
       [
@@ -96,7 +97,7 @@
          8,
          true,
          0,
-         "438d04e5",
+         "ae95caf3",
          null,
          null,
          false
@@ -105,7 +106,7 @@
          "TO",
          [
             8,
-            "8882438d04e5407c"
+            "8882ae95caf3ad64"
          ],
          false
       ],

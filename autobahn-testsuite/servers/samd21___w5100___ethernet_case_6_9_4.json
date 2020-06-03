@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Send a text message with payload which is valid UTF-8 in one fragment.<br><br>Payload: 0xf48fbfbf",
    "droppedByMe": false,
-   "duration": 20,
+   "duration": 15,
    "expectation": "The message is echo'ed back to us.",
    "expected": {
       "OK": [
@@ -27,8 +27,8 @@
       "requireClean": true
    },
    "failedByMe": false,
-   "httpRequest": "GET / HTTP/1.1\r\nUser-Agent: AutobahnTestSuite/0.8.0-0.10.9\r\nHost: 192.168.46.143:9001\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nSec-WebSocket-Key: mbajAk9Aph9XwvMTArJC4Q==\r\nSec-WebSocket-Version: 13\r\n\r\n",
-   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: hzrg9t8dtEuAMsZ+8LDfFOSkpOc=\r\n\r\n",
+   "httpRequest": "GET / HTTP/1.1\r\nUser-Agent: AutobahnTestSuite/0.8.0-0.10.9\r\nHost: 192.168.46.183:9001\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nSec-WebSocket-Key: sJeQ2XK/fCHy2E8rJ0lEzw==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: GBBDLA7i7KYhiMscefqylmEX6qk=\r\n\r\n",
    "id": "6.9.4",
    "isServer": false,
    "localCloseCode": 1000,
@@ -51,12 +51,17 @@
       "8": 1
    },
    "rxOctetStats": {
+      "1": 2,
+      "2": 3,
+      "3": 1,
       "4": 1,
-      "6": 1,
-      "21": 1,
-      "54": 2
+      "5": 1,
+      "18": 1,
+      "19": 1,
+      "32": 1,
+      "50": 1
    },
-   "started": "2019-03-22T21:13:17.398Z",
+   "started": "2020-06-03T17:02:56.138Z",
    "trafficStats": null,
    "txFrameStats": {
       "1": 1,
@@ -84,22 +89,57 @@
       [
          "RO",
          [
-            54,
-            "485454502f312e312031303120537769746368696e672050726f746f636f6c730d0a557067726164653a20776562736f636b65740d0a"
+            32,
+            "485454502f312e312031303120537769746368696e672050726f746f636f6c73"
          ]
       ],
       [
          "RO",
          [
-            21,
-            "436f6e6e656374696f6e3a20557067726164650d0a"
+            2,
+            "0d0a"
          ]
       ],
       [
          "RO",
          [
-            54,
-            "5365632d576562536f636b65742d4163636570743a20687a726739743864744575414d735a2b384c4466464f536b704f633d0d0a0d0a"
+            18,
+            "557067726164653a20776562736f636b6574"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "0d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            19,
+            "436f6e6e656374696f6e3a2055706772616465"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "0d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            50,
+            "5365632d576562536f636b65742d4163636570743a20474242444c413769374b5968694d7363656671796c6d455836716b3d"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "0d0a0d0a"
          ]
       ],
       [
@@ -111,7 +151,7 @@
          1,
          true,
          0,
-         "f8820925",
+         "45987a31",
          null,
          null,
          false
@@ -120,7 +160,7 @@
          "TO",
          [
             10,
-            "8184f88209250c0db69a"
+            "818445987a31b117c58e"
          ],
          false
       ],
@@ -131,8 +171,15 @@
       [
          "RO",
          [
-            6,
-            "8104f48fbfbf"
+            1,
+            "81"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "04f48fbfbf"
          ]
       ],
       [
@@ -156,7 +203,7 @@
          8,
          true,
          0,
-         "12674895",
+         "3028c1b6",
          null,
          null,
          false
@@ -165,15 +212,22 @@
          "TO",
          [
             8,
-            "888212674895118f"
+            "88823028c1b633c0"
          ],
          false
       ],
       [
          "RO",
          [
-            4,
-            "880203e8"
+            1,
+            "88"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "0203e8"
          ]
       ],
       [

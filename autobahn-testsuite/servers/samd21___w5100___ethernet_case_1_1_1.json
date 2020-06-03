@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Send text message with payload 0.",
    "droppedByMe": false,
-   "duration": 20,
+   "duration": 6,
    "expectation": "Receive echo'ed text message (with empty payload). Clean close with normal code.",
    "expected": {
       "OK": [
@@ -27,8 +27,8 @@
       "requireClean": true
    },
    "failedByMe": false,
-   "httpRequest": "GET / HTTP/1.1\r\nUser-Agent: AutobahnTestSuite/0.8.0-0.10.9\r\nHost: 192.168.46.143:9001\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nSec-WebSocket-Key: rxKhZ1P/XZHdMhfe0j1pbw==\r\nSec-WebSocket-Version: 13\r\n\r\n",
-   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: +PevLpfqCucQZjQwhHctnAYfdpE=\r\n\r\n",
+   "httpRequest": "GET / HTTP/1.1\r\nUser-Agent: AutobahnTestSuite/0.8.0-0.10.9\r\nHost: 192.168.46.183:9001\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nSec-WebSocket-Key: 6xkTA4dhnmvDToxEQqYFyg==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: Ot34qaChG0LyyouYYkoqLoYmasY=\r\n\r\n",
    "id": "1.1.1",
    "isServer": false,
    "localCloseCode": 1000,
@@ -51,13 +51,16 @@
       "8": 1
    },
    "rxOctetStats": {
-      "1": 2,
+      "1": 1,
+      "2": 3,
+      "3": 1,
       "4": 1,
-      "34": 1,
-      "41": 1,
-      "54": 1
+      "18": 1,
+      "21": 1,
+      "32": 1,
+      "50": 1
    },
-   "started": "2019-03-22T21:13:11.229Z",
+   "started": "2020-06-03T17:02:44.236Z",
    "trafficStats": null,
    "txFrameStats": {
       "1": 1,
@@ -85,22 +88,50 @@
       [
          "RO",
          [
-            34,
-            "485454502f312e312031303120537769746368696e672050726f746f636f6c730d0a"
+            32,
+            "485454502f312e312031303120537769746368696e672050726f746f636f6c73"
          ]
       ],
       [
          "RO",
          [
-            41,
-            "557067726164653a20776562736f636b65740d0a436f6e6e656374696f6e3a20557067726164650d0a"
+            2,
+            "0d0a"
          ]
       ],
       [
          "RO",
          [
-            54,
-            "5365632d576562536f636b65742d4163636570743a202b5065764c706671437563515a6a5177684863746e4159666470453d0d0a0d0a"
+            18,
+            "557067726164653a20776562736f636b6574"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "0d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            21,
+            "436f6e6e656374696f6e3a20557067726164650d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            50,
+            "5365632d576562536f636b65742d4163636570743a204f7433347161436847304c79796f7559596b6f714c6f596d6173593d"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "0d0a0d0a"
          ]
       ],
       [
@@ -112,7 +143,7 @@
          1,
          true,
          0,
-         "a99df6be",
+         "0f7d9fda",
          null,
          null,
          false
@@ -121,7 +152,7 @@
          "TO",
          [
             6,
-            "8180a99df6be"
+            "81800f7d9fda"
          ],
          false
       ],
@@ -132,15 +163,8 @@
       [
          "RO",
          [
-            1,
-            "81"
-         ]
-      ],
-      [
-         "RO",
-         [
-            1,
-            "00"
+            2,
+            "8100"
          ]
       ],
       [
@@ -164,7 +188,7 @@
          8,
          true,
          0,
-         "a5dbd64d",
+         "e24f4329",
          null,
          null,
          false
@@ -173,15 +197,22 @@
          "TO",
          [
             8,
-            "8882a5dbd64da633"
+            "8882e24f4329e1a7"
          ],
          false
       ],
       [
          "RO",
          [
-            4,
-            "880203e8"
+            1,
+            "88"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "0203e8"
          ]
       ],
       [

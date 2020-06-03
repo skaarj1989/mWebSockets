@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Send small text message, then send again with <b>RSV = 2</b>, then send Ping.",
    "droppedByMe": false,
-   "duration": 8,
+   "duration": 4,
    "expectation": "Echo for first message is received, but then connection is failed immediately, since RSV must be 0, when no extension defining RSV meaning has been negotiated. The Pong is not received.",
    "expected": {
       "NON-STRICT": [],
@@ -28,8 +28,8 @@
       "requireClean": false
    },
    "failedByMe": false,
-   "httpRequest": "GET / HTTP/1.1\r\nUser-Agent: AutobahnTestSuite/0.8.0-0.10.9\r\nHost: 192.168.46.143:9001\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nSec-WebSocket-Key: GQtAOUb5wWO8dlRzImwcTg==\r\nSec-WebSocket-Version: 13\r\n\r\n",
-   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: pHWP9jRKDhCvsyb5Eo7isb6tpMA=\r\n\r\n",
+   "httpRequest": "GET / HTTP/1.1\r\nUser-Agent: AutobahnTestSuite/0.8.0-0.10.9\r\nHost: 192.168.46.183:9001\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nSec-WebSocket-Key: LS6wgi6deqX183Pr2CjyPA==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: CRmzE0CTD6ygUxxVTjS3Yjt7mbg=\r\n\r\n",
    "id": "3.2",
    "isServer": false,
    "localCloseCode": 1000,
@@ -52,15 +52,16 @@
       "8": 1
    },
    "rxOctetStats": {
-      "1": 1,
-      "2": 2,
-      "3": 1,
-      "15": 1,
+      "1": 2,
+      "2": 5,
+      "4": 1,
+      "13": 1,
+      "18": 1,
+      "19": 1,
       "32": 1,
-      "41": 1,
-      "52": 1
+      "50": 1
    },
-   "started": "2019-03-22T21:13:12.327Z",
+   "started": "2020-06-03T17:02:44.754Z",
    "trafficStats": null,
    "txFrameStats": {
       "1": 2,
@@ -104,15 +105,43 @@
       [
          "RO",
          [
-            41,
-            "557067726164653a20776562736f636b65740d0a436f6e6e656374696f6e3a20557067726164650d0a"
+            18,
+            "557067726164653a20776562736f636b6574"
          ]
       ],
       [
          "RO",
          [
-            52,
-            "5365632d576562536f636b65742d4163636570743a2070485750396a524b4468437673796235456f376973623674704d413d0d0a"
+            2,
+            "0d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            19,
+            "436f6e6e656374696f6e3a2055706772616465"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "0d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            50,
+            "5365632d576562536f636b65742d4163636570743a2043526d7a453043544436796755787856546a5333596a74376d62673d"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "0d0a"
          ]
       ],
       [
@@ -131,7 +160,7 @@
          1,
          true,
          0,
-         "983b7b29",
+         "960a3367",
          null,
          null,
          false
@@ -140,7 +169,7 @@
          "TO",
          [
             19,
-            "818d983b7b29d05e1745f7175b5ef749174db9"
+            "818d960a3367de6f5f0bf9261310f9785f03b7"
          ],
          false
       ],
@@ -153,7 +182,7 @@
          1,
          true,
          2,
-         "b4a464d0",
+         "4c7b1e85",
          null,
          null,
          false
@@ -162,7 +191,7 @@
          "TO",
          [
             19,
-            "a18db4a464d0fcc108bcdb8844a7dbd608b495"
+            "a18d4c7b1e85041e72e923573ef2230972e16d"
          ],
          false
       ],
@@ -175,7 +204,7 @@
          9,
          true,
          0,
-         "1753adea",
+         "460c07f6",
          null,
          null,
          false
@@ -184,7 +213,7 @@
          "TO",
          [
             6,
-            "89801753adea"
+            "8980460c07f6"
          ],
          false
       ],
@@ -202,8 +231,15 @@
       [
          "RO",
          [
-            15,
-            "0d48656c6c6f2c20776f726c642188"
+            1,
+            "0d"
+         ]
+      ],
+      [
+         "RO",
+         [
+            13,
+            "48656c6c6f2c20776f726c6421"
          ]
       ],
       [
@@ -221,8 +257,8 @@
       [
          "RO",
          [
-            3,
-            "0203ea"
+            4,
+            "880203ea"
          ]
       ],
       [
@@ -246,7 +282,7 @@
          8,
          true,
          0,
-         "0e9063d2",
+         "5f9b6df7",
          null,
          null,
          false
@@ -255,7 +291,7 @@
          "TO",
          [
             8,
-            "88820e9063d20d78"
+            "88825f9b6df75c73"
          ],
          false
       ]

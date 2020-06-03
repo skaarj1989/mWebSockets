@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Send Ping fragmented into 2 fragments.",
    "droppedByMe": false,
-   "duration": 6,
+   "duration": 3,
    "expectation": "Connection is failed immediately, since control message MUST NOT be fragmented.",
    "expected": {
       "OK": []
@@ -21,8 +21,8 @@
       "requireClean": false
    },
    "failedByMe": false,
-   "httpRequest": "GET / HTTP/1.1\r\nUser-Agent: AutobahnTestSuite/0.8.0-0.10.9\r\nHost: 192.168.46.143:9001\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nSec-WebSocket-Key: nr84lOnpuFwM4yI+C5caaw==\r\nSec-WebSocket-Version: 13\r\n\r\n",
-   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: Sfrt3h3bTlDLJpbZI5e+5fsIIG4=\r\n\r\n",
+   "httpRequest": "GET / HTTP/1.1\r\nUser-Agent: AutobahnTestSuite/0.8.0-0.10.9\r\nHost: 192.168.46.183:9001\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nSec-WebSocket-Key: N/p7qZ6VCQQDJP4XfqBZCA==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: E91iEMwzbhzgzpbANs0gIBGmJ88=\r\n\r\n",
    "id": "5.1",
    "isServer": false,
    "localCloseCode": 1000,
@@ -38,12 +38,14 @@
       "8": 1
    },
    "rxOctetStats": {
-      "4": 2,
-      "23": 1,
-      "50": 1,
-      "52": 1
+      "2": 4,
+      "4": 1,
+      "18": 1,
+      "21": 1,
+      "32": 1,
+      "50": 1
    },
-   "started": "2019-03-22T21:13:12.884Z",
+   "started": "2020-06-03T17:02:45.035Z",
    "trafficStats": null,
    "txFrameStats": {
       "0": 1,
@@ -72,22 +74,43 @@
       [
          "RO",
          [
-            52,
-            "485454502f312e312031303120537769746368696e672050726f746f636f6c730d0a557067726164653a20776562736f636b6574"
+            32,
+            "485454502f312e312031303120537769746368696e672050726f746f636f6c73"
          ]
       ],
       [
          "RO",
          [
-            23,
-            "0d0a436f6e6e656374696f6e3a20557067726164650d0a"
+            2,
+            "0d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            18,
+            "557067726164653a20776562736f636b6574"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "0d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            21,
+            "436f6e6e656374696f6e3a20557067726164650d0a"
          ]
       ],
       [
          "RO",
          [
             50,
-            "5365632d576562536f636b65742d4163636570743a205366727433683362546c444c4a70625a4935652b356673494947343d"
+            "5365632d576562536f636b65742d4163636570743a2045393169454d777a62687a677a7062414e7330674942476d4a38383d"
          ]
       ],
       [
@@ -106,7 +129,7 @@
          9,
          false,
          0,
-         "c2dcf515",
+         "ba753f15",
          null,
          null,
          false
@@ -115,7 +138,7 @@
          "TO",
          [
             15,
-            "0989c2dcf515a4ae9472afb99b61f3"
+            "0989ba753f15dc075e72d71051618b"
          ],
          false
       ],
@@ -128,7 +151,7 @@
          0,
          true,
          0,
-         "74ebaaa3",
+         "7c2a76f6",
          null,
          null,
          false
@@ -137,7 +160,7 @@
          "TO",
          [
             15,
-            "808974ebaaa31299cbc4198ec4d746"
+            "80897c2a76f61a581791114f18824e"
          ],
          false
       ],
@@ -148,8 +171,15 @@
       [
          "RO",
          [
-            4,
-            "880203ea"
+            2,
+            "8802"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "03ea"
          ]
       ],
       [
@@ -173,7 +203,7 @@
          8,
          true,
          0,
-         "babcd724",
+         "c10518ad",
          null,
          null,
          false
@@ -182,7 +212,7 @@
          "TO",
          [
             8,
-            "8882babcd724b954"
+            "8882c10518adc2ed"
          ],
          false
       ]
