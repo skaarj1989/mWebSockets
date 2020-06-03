@@ -26,7 +26,7 @@ void generateSecKey(char output[]);
 void encodeSecKey(char output[], const char *key);
 void generateMask(char *output);
 
-bool isValidUTF8(byte *str, size_t length);
+bool isValidUTF8(const byte *str, size_t length);
 
 } // namespace net
 

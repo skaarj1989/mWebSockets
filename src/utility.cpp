@@ -60,8 +60,8 @@ void generateMask(char *output) {
 }
 
 // https://github.com/websockets/utf-8-validate/blob/master/src/validation.c
-bool isValidUTF8(byte *s, size_t length) {
-  uint8_t *end = s + length;
+bool isValidUTF8(const byte *s, size_t length) {
+  const uint8_t *end = s + length;
 
   //
   // This code has been taken from utf8_check.c which was developed by

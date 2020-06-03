@@ -229,9 +229,9 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
           else if (strcmp_P(header, (PGM_P)F("Connection")) == 0) {
             // Firefox sends: "Connection: keep-alive, Upgrade"
             // simple "includes" check:
-            while (value = strtok(nullptr, " ,")) {
+            while ((value = strtok(nullptr, " ,"))) {
               if (strstr_P(value, (PGM_P)F("Upgrade")) != nullptr) {
-                flags != kValidConnectionHeader;
+                flags |= kValidConnectionHeader;
                 break;
               }
             }

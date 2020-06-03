@@ -186,7 +186,7 @@ protected:
 
 protected:
   NetClient m_client;
-  ReadyState m_readyState{ ReadyState::CLOSED };
+  ReadyState m_readyState;
 
   bool m_maskEnabled;
 

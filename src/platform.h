@@ -58,9 +58,9 @@
 #endif
 
 #if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
-#  define NetClient WiFiClient
-#  define NetServer WiFiServer
+using NetClient = WiFiClient;
+using NetServer = WifiServer;
 #else
-#  define NetClient EthernetClient
-#  define NetServer EthernetServer
+using NetClient = EthernetClient;
+using NetServer = EthernetServer;
 #endif

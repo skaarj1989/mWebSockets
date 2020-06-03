@@ -114,9 +114,10 @@ void WebSocket::onMessage(const onMessageCallback &callback) {
 //
 //
 
-WebSocket::WebSocket() : m_maskEnabled(true) {}
+WebSocket::WebSocket()
+  : m_readyState(ReadyState::CLOSED), m_maskEnabled(true) {}
 WebSocket::WebSocket(const NetClient &client)
-  : m_client(client), m_maskEnabled(false), m_readyState(ReadyState::OPEN) {}
+  : m_client(client), m_readyState(ReadyState::OPEN), m_maskEnabled(false) {}
 
 int32_t WebSocket::_read() {
   const uint32_t timeout = millis() + kTimeoutInterval;
@@ -125,6 +126,7 @@ int32_t WebSocket::_read() {
   }
 
   if (millis() > timeout) {
+    __debugOutput(F("holly shit! timeout!\n"));
     close(PROTOCOL_ERROR, true);
     return -1;
   }
@@ -351,7 +353,7 @@ bool WebSocket::_readData(const header_t &header, char *payload) {
   int32_t bite = -1;
 
   if (header.mask) {
-    for (auto i = 0; i < header.length; ++i) {
+    for (uint32_t i = 0; i < header.length; ++i) {
       if ((bite = _read()) == -1) return false;
       payload[i] = bite ^ header.maskingKey[i % 4];
     }
@@ -384,7 +386,7 @@ void WebSocket::_handleContinuationFrame(
       m_tbcOpcode == Opcode::TEXT_FRAME ? DataType::TEXT : DataType::BINARY;
 
     if (dataType == DataType::TEXT) {
-      if (!isValidUTF8(m_dataBuffer, totalLength)) {
+      if (!isValidUTF8(reinterpret_cast<byte *>(m_dataBuffer), totalLength)) {
         close(CloseCode::INVALID_FRAME_PAYLOAD_DATA, true);
         return;
       }
@@ -413,7 +415,7 @@ void WebSocket::_handleDataFrame(const header_t &header, const char *payload) {
       header.opcode == Opcode::TEXT_FRAME ? DataType::TEXT : DataType::BINARY;
 
     if (dataType == DataType::TEXT) {
-      if (!isValidUTF8(payload, header.length)) {
+      if (!isValidUTF8(reinterpret_cast<const byte *>(payload), header.length)) {
         close(CloseCode::INVALID_FRAME_PAYLOAD_DATA, true);
         return;
       }
@@ -445,7 +447,7 @@ void WebSocket::_handleCloseFrame(const header_t &header, const char *payload) {
     }
 
     reason = (header.length) ? &(payload[2]) : nullptr;
-    if (!isValidUTF8(reason, reasonLength)) {
+    if (!isValidUTF8(reinterpret_cast<const byte *>(reason), reasonLength)) {
       close(PROTOCOL_ERROR, true);
       return;
     }
@@ -456,7 +458,7 @@ void WebSocket::_handleCloseFrame(const header_t &header, const char *payload) {
 
   if (m_readyState == ReadyState::OPEN) {
     if (header.length)
-      close(code, true, reason, reasonLength);
+      close(static_cast<CloseCode>(code), true, reason, reasonLength);
     else
       close(NORMAL_CLOSURE, true);
   }
