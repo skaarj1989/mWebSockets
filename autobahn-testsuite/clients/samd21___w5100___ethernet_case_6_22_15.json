@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Send a text message with payload which is valid UTF-8 in one fragment.<br><br>Payload: 0xf1bfbfbe",
    "droppedByMe": true,
-   "duration": 35,
+   "duration": 17,
    "expectation": "The message is echo'ed back to us.",
    "expected": {
       "OK": [
@@ -27,8 +27,8 @@
       "requireClean": true
    },
    "failedByMe": false,
-   "httpRequest": "GET /runCase?case=183&agent=SAMD21%20/%20W5100%20/%20Ethernet HTTP/1.1\r\nHost: 192.168.46.9:9001\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: tIA75ZnyRzCLPfqTPHtuhg==\r\nSec-WebSocket-Version: 13\r\n\r\n",
-   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/0.8.0-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: KQs5YZDnxRMHMj/AZMFpGBTzPVk=\r\n\r\n",
+   "httpRequest": "GET /runCase?case=183&agent=SAMD21%20/%20W5100%20/%20Ethernet HTTP/1.1\r\nHost: 192.168.46.31:9001\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: iK+w7JoZ8Rt2WQl+RTu0Pg==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/0.8.0-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: uTXpz0blhkGH3ECni/0sQ/WZL5E=\r\n\r\n",
    "id": "6.22.15",
    "isServer": true,
    "localCloseCode": 1000,
@@ -51,13 +51,16 @@
       "8": 1
    },
    "rxOctetStats": {
-      "1": 1,
-      "7": 1,
-      "10": 1,
-      "74": 1,
-      "138": 1
+      "1": 5,
+      "2": 5,
+      "4": 1,
+      "5": 1,
+      "27": 1,
+      "43": 1,
+      "67": 1,
+      "70": 1
    },
-   "started": "2019-03-22T20:35:52.904Z",
+   "started": "2020-06-03T11:22:09.575Z",
    "trafficStats": null,
    "txFrameStats": {
       "1": 1,
@@ -77,15 +80,50 @@
       [
          "RO",
          [
-            138,
+            70,
             "474554202f72756e436173653f636173653d313833266167656e743d53414d4432312532302f25323057353130302532302f25323045746865726e6574204854 ..."
          ]
       ],
       [
          "RO",
          [
-            74,
-            "5365632d576562536f636b65742d4b65793a2074494137355a6e79527a434c506671545048747568673d3d0d0a5365632d576562536f636b65742d5665727369 ..."
+            67,
+            "0d0a486f73743a203139322e3136382e34362e33313a393030310d0a557067726164653a20776562736f636b65740d0a436f6e6e656374696f6e3a2055706772 ..."
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "0d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            43,
+            "5365632d576562536f636b65742d4b65793a20694b2b77374a6f5a3852743257516c2b5254753050673d3d"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "0d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            27,
+            "5365632d576562536f636b65742d56657273696f6e3a2031330d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "0d0a"
          ]
       ],
       [
@@ -125,8 +163,29 @@
       [
          "RO",
          [
-            10,
-            "8184c692cab6372d7508"
+            2,
+            "8184"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "25a7c96fd4"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "18"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "76d1"
          ]
       ],
       [
@@ -139,7 +198,7 @@
          true,
          0,
          true,
-         "c692cab6"
+         "25a7c96f"
       ],
       [
          "TF",
@@ -173,8 +232,29 @@
       [
          "RO",
          [
-            7,
-            "8270aad01f7342"
+            1,
+            "82"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "0da281e9"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "0e"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "4a"
          ]
       ],
       [
@@ -187,7 +267,7 @@
          true,
          0,
          true,
-         "70aad01f"
+         "0da281e9"
       ]
    ]
 }

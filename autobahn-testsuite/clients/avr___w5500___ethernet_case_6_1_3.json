@@ -1,0 +1,690 @@
+{
+   "agent": "AVR / W5500 / Ethernet",
+   "behavior": "OK",
+   "behaviorClose": "OK",
+   "case": 67,
+   "closedByMe": true,
+   "createStats": true,
+   "createWirelog": true,
+   "description": "Send fragmented text message, 3 fragments, first and last of length 0, middle non-empty.",
+   "droppedByMe": true,
+   "duration": 33,
+   "expectation": "A message is echo'ed back to us (with payload = payload of middle fragment).",
+   "expected": {
+      "OK": [
+         [
+            "message",
+            "middle frame payload",
+            false
+         ]
+      ]
+   },
+   "expectedClose": {
+      "closeCode": [
+         1000
+      ],
+      "closedByMe": true,
+      "requireClean": true
+   },
+   "failedByMe": false,
+   "httpRequest": "GET /runCase?case=67&agent=AVR%20/%20W5500%20/%20Ethernet HTTP/1.1\r\nHost: 192.168.46.31:9001\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: agY3LHAJKuZBzRk8u/m7xg==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/0.8.0-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: cmBp3Mthpkdgp5Cen0D2AIRDsaY=\r\n\r\n",
+   "id": "6.1.3",
+   "isServer": true,
+   "localCloseCode": 1000,
+   "localCloseReason": null,
+   "received": [
+      [
+         "message",
+         "middle frame payload",
+         false
+      ]
+   ],
+   "remoteCloseCode": 1000,
+   "remoteCloseReason": null,
+   "reportCompressionRatio": false,
+   "reportTime": false,
+   "result": "Actual events match at least one expected.",
+   "resultClose": "Connection was properly closed",
+   "rxFrameStats": {
+      "1": 1,
+      "8": 1
+   },
+   "rxOctetStats": {
+      "1": 41,
+      "2": 18,
+      "3": 3,
+      "5": 3,
+      "6": 1,
+      "24": 1,
+      "46": 1,
+      "66": 1
+   },
+   "started": "2020-06-03T10:54:44.296Z",
+   "trafficStats": null,
+   "txFrameStats": {
+      "0": 2,
+      "1": 1,
+      "8": 1
+   },
+   "txOctetStats": {
+      "2": 2,
+      "4": 1,
+      "22": 1,
+      "206": 1
+   },
+   "wasClean": true,
+   "wasCloseHandshakeTimeout": false,
+   "wasNotCleanReason": null,
+   "wasOpenHandshakeTimeout": false,
+   "wasServerConnectionDropTimeout": false,
+   "wirelog": [
+      [
+         "RO",
+         [
+            66,
+            "474554202f72756e436173653f636173653d3637266167656e743d4156522532302f25323057353530302532302f25323045746865726e657420485454502f31 ..."
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "0d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            24,
+            "486f73743a203139322e3136382e34362e33313a39303031"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "0d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "5570"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "67"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "72"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "6164"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "65"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "3a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "20"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "77"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "65"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "62"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "73"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "6f"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "63"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "6b65"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "74"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "0d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "43"
+         ]
+      ],
+      [
+         "RO",
+         [
+            6,
+            "6f6e6e656374"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "696f6e"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "3a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "2055706772"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "6164"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "65"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "0d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            46,
+            "5365632d576562536f636b65742d4b65793a20616759334c48414a4b755a427a526b38752f6d3778673d3d0d0a53"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "65"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "63"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "2d57"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "65"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "62"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "536f"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "63"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "6b"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "65"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "74"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "2d56"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "65"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "72"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "73"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "69"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "6f"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "6e3a20"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "31"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "330d"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "0d0a"
+         ]
+      ],
+      [
+         "TO",
+         [
+            206,
+            "485454502f312e312031303120537769746368696e672050726f746f636f6c730d0a5365727665723a204175746f6261686e5465737453756974652f302e382e ..."
+         ],
+         false
+      ],
+      [
+         "TF",
+         [
+            0,
+            ""
+         ],
+         1,
+         false,
+         0,
+         null,
+         null,
+         null,
+         false
+      ],
+      [
+         "TO",
+         [
+            2,
+            "0100"
+         ],
+         false
+      ],
+      [
+         "TF",
+         [
+            20,
+            "middle frame payload"
+         ],
+         0,
+         false,
+         0,
+         null,
+         null,
+         null,
+         false
+      ],
+      [
+         "TO",
+         [
+            22,
+            "00146d6964646c65206672616d65207061796c6f6164"
+         ],
+         false
+      ],
+      [
+         "TF",
+         [
+            0,
+            ""
+         ],
+         0,
+         true,
+         0,
+         null,
+         null,
+         null,
+         false
+      ],
+      [
+         "TO",
+         [
+            2,
+            "8000"
+         ],
+         false
+      ],
+      [
+         "TI",
+         1
+      ],
+      [
+         "RO",
+         [
+            2,
+            "8194"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "38074bac55"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "6e"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "2fc8"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "54"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "626bca"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "4a66"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "26"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "c9"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "18"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "772a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "d5"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "54"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "68"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "2a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "c8"
+         ]
+      ],
+      [
+         "RF",
+         [
+            20,
+            "middle frame payload"
+         ],
+         1,
+         true,
+         0,
+         true,
+         "38074bac"
+      ],
+      [
+         "TF",
+         [
+            2,
+            "0x03e8"
+         ],
+         8,
+         true,
+         0,
+         null,
+         null,
+         null,
+         false
+      ],
+      [
+         "TO",
+         [
+            4,
+            "880203e8"
+         ],
+         false
+      ],
+      [
+         "RO",
+         [
+            2,
+            "8882"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "9a324e8599"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "da"
+         ]
+      ],
+      [
+         "RF",
+         [
+            2,
+            "0x03e8"
+         ],
+         8,
+         true,
+         0,
+         true,
+         "9a324e85"
+      ]
+   ]
+}

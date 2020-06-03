@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Send a text message with payload which is valid UTF-8 in one fragment.<br><br>Payload: 0x68656c6c6fc2a2776f726c64",
    "droppedByMe": true,
-   "duration": 27,
+   "duration": 17,
    "expectation": "The message is echo'ed back to us.",
    "expected": {
       "OK": [
@@ -27,8 +27,8 @@
       "requireClean": true
    },
    "failedByMe": false,
-   "httpRequest": "GET /runCase?case=79&agent=SAMD21%20/%20W5100%20/%20Ethernet HTTP/1.1\r\nHost: 192.168.46.9:9001\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: XhiqhEolJSaaf6BXh3UlLA==\r\nSec-WebSocket-Version: 13\r\n\r\n",
-   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/0.8.0-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: SPk/EMT9wkwvxUl0DNGC3PT4wcU=\r\n\r\n",
+   "httpRequest": "GET /runCase?case=79&agent=SAMD21%20/%20W5100%20/%20Ethernet HTTP/1.1\r\nHost: 192.168.46.31:9001\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: 67eAIisqvMImb2qVszlGIA==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/0.8.0-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: 5c+8LC7LpXAW2ACXpZxtIslFxgg=\r\n\r\n",
    "id": "6.5.2",
    "isServer": true,
    "localCloseCode": 1000,
@@ -51,16 +51,19 @@
       "8": 1
    },
    "rxOctetStats": {
-      "2": 3,
-      "4": 1,
-      "7": 1,
-      "9": 1,
+      "1": 3,
+      "2": 4,
+      "3": 2,
+      "5": 1,
+      "6": 1,
+      "19": 1,
+      "20": 1,
+      "26": 1,
       "29": 1,
       "45": 1,
-      "66": 1,
       "71": 1
    },
-   "started": "2019-03-22T20:35:48.545Z",
+   "started": "2020-06-03T11:21:56.632Z",
    "trafficStats": null,
    "txFrameStats": {
       "1": 1,
@@ -87,15 +90,36 @@
       [
          "RO",
          [
-            66,
-            "486f73743a203139322e3136382e34362e393a393030310d0a557067726164653a20776562736f636b65740d0a436f6e6e656374696f6e3a2055706772616465 ..."
+            26,
+            "486f73743a203139322e3136382e34362e33313a393030310d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            20,
+            "557067726164653a20776562736f636b65740d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            19,
+            "436f6e6e656374696f6e3a2055706772616465"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "0d0a"
          ]
       ],
       [
          "RO",
          [
             45,
-            "5365632d576562536f636b65742d4b65793a205868697168456f6c4a536161663642586833556c4c413d3d0d0a"
+            "5365632d576562536f636b65742d4b65793a203637654149697371764d496d62327156737a6c4749413d3d0d0a"
          ]
       ],
       [
@@ -149,15 +173,43 @@
       [
          "RO",
          [
-            9,
-            "70aad01f18cfbc731f"
+            6,
+            "b1c68742d9a3"
          ]
       ],
       [
          "RO",
          [
-            7,
-            "6872681fd8bc7b"
+            2,
+            "eb2e"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "de"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "042535"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "de"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "b4eb26"
          ]
       ],
       [
@@ -170,7 +222,7 @@
          true,
          0,
          true,
-         "70aad01f"
+         "b1c68742"
       ],
       [
          "TF",
@@ -204,15 +256,15 @@
       [
          "RO",
          [
-            4,
-            "1395d2e7"
+            5,
+            "2528e0b826"
          ]
       ],
       [
          "RO",
          [
-            2,
-            "107d"
+            1,
+            "c0"
          ]
       ],
       [
@@ -225,7 +277,7 @@
          true,
          0,
          true,
-         "1395d2e7"
+         "2528e0b8"
       ]
    ]
 }

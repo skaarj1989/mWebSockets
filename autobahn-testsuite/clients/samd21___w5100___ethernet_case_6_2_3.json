@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Send a valid UTF-8 text message in fragments of 1 octet, resulting in frames ending on positions which are not code point ends.<br><br>MESSAGE:<br>Hello-\u00b5@\u00df\u00f6\u00e4\u00fc\u00e0\u00e1-UTF-8!!<br>48656c6c6f2dc2b540c39fc3b6c3a4c3bcc3a0c3a12d5554462d382121",
    "droppedByMe": true,
-   "duration": 52,
+   "duration": 47,
    "expectation": "The message is echo'ed back to us.",
    "expected": {
       "OK": [
@@ -27,8 +27,8 @@
       "requireClean": true
    },
    "failedByMe": false,
-   "httpRequest": "GET /runCase?case=70&agent=SAMD21%20/%20W5100%20/%20Ethernet HTTP/1.1\r\nHost: 192.168.46.9:9001\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: cCq51cX3qAKzsgS2iUbPZg==\r\nSec-WebSocket-Version: 13\r\n\r\n",
-   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/0.8.0-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: udD9T3X9WYslYRN1+6PFLIxCjRo=\r\n\r\n",
+   "httpRequest": "GET /runCase?case=70&agent=SAMD21%20/%20W5100%20/%20Ethernet HTTP/1.1\r\nHost: 192.168.46.31:9001\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: xFku3MceU+yezhIikgaUnQ==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/0.8.0-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: 63OwfgVRfuhxr/Sz86LH2zcTOmg=\r\n\r\n",
    "id": "6.2.3",
    "isServer": true,
    "localCloseCode": 1000,
@@ -51,15 +51,18 @@
       "8": 1
    },
    "rxOctetStats": {
-      "1": 1,
-      "2": 3,
+      "1": 5,
+      "2": 1,
+      "4": 1,
+      "6": 2,
       "7": 1,
-      "31": 1,
-      "39": 1,
-      "74": 1,
-      "96": 1
+      "15": 1,
+      "29": 1,
+      "41": 1,
+      "45": 1,
+      "95": 1
    },
-   "started": "2019-03-22T20:35:48.091Z",
+   "started": "2020-06-03T11:21:47.487Z",
    "trafficStats": null,
    "txFrameStats": {
       "0": 29,
@@ -81,22 +84,15 @@
       [
          "RO",
          [
-            96,
+            95,
             "474554202f72756e436173653f636173653d3730266167656e743d53414d4432312532302f25323057353130302532302f25323045746865726e657420485454 ..."
          ]
       ],
       [
          "RO",
          [
-            39,
-            "557067726164653a20776562736f636b65740d0a436f6e6e656374696f6e3a2055706772616465"
-         ]
-      ],
-      [
-         "RO",
-         [
-            74,
-            "0d0a5365632d576562536f636b65742d4b65793a20634371353163583371414b7a73675332695562505a673d3d0d0a5365632d576562536f636b65742d566572 ..."
+            41,
+            "0d0a557067726164653a20776562736f636b65740d0a436f6e6e656374696f6e3a2055706772616465"
          ]
       ],
       [
@@ -104,6 +100,20 @@
          [
             2,
             "0d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            45,
+            "5365632d576562536f636b65742d4b65793a2078466b75334d6365552b79657a6849696b6761556e513d3d0d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            29,
+            "5365632d576562536f636b65742d56657273696f6e3a2031330d0a0d0a"
          ]
       ],
       [
@@ -781,22 +791,50 @@
       [
          "RO",
          [
-            2,
-            "819d"
+            1,
+            "81"
          ]
       ],
       [
          "RO",
          [
-            31,
-            "5178ecb0191d80dc3e552e0511bb7373e7bb4873edbb4c73f055b9e41755d4"
+            1,
+            "9d"
          ]
       ],
       [
          "RO",
          [
-            2,
-            "9170"
+            4,
+            "5bde0eab"
+         ]
+      ],
+      [
+         "RO",
+         [
+            6,
+            "13bb62c734f3"
+         ]
+      ],
+      [
+         "RO",
+         [
+            7,
+            "cc1e1b1d9168ed"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "1d"
+         ]
+      ],
+      [
+         "RO",
+         [
+            15,
+            "aa68e71dae68faf35bff1df3368a7a"
          ]
       ],
       [
@@ -809,7 +847,7 @@
          true,
          0,
          true,
-         "5178ecb0"
+         "5bde0eab"
       ],
       [
          "TF",
@@ -843,8 +881,15 @@
       [
          "RO",
          [
-            7,
-            "823401d32f37e9"
+            1,
+            "82"
+         ]
+      ],
+      [
+         "RO",
+         [
+            6,
+            "9889bb2e9b61"
          ]
       ],
       [
@@ -857,7 +902,7 @@
          true,
          0,
          true,
-         "3401d32f"
+         "9889bb2e"
       ]
    ]
 }

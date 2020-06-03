@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Send small text message, then send frame with reserved non-control <b>Opcode = 7</b> and non-empty payload, then send Ping.",
    "droppedByMe": true,
-   "duration": 49,
+   "duration": 21,
    "expectation": "Echo for first message is received, but then connection is failed immediately, since reserved opcode frame is used. A Pong is not received.",
    "expected": {
       "NON-STRICT": [],
@@ -28,8 +28,8 @@
       "requireClean": false
    },
    "failedByMe": false,
-   "httpRequest": "GET /runCase?case=39&agent=SAMD21%20/%20W5100%20/%20Ethernet HTTP/1.1\r\nHost: 192.168.46.9:9001\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: r43q6N5kbXGvYp2O8yON1A==\r\nSec-WebSocket-Version: 13\r\n\r\n",
-   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/0.8.0-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: S2cUcxke7GUglbiVz3v8dmKxF4k=\r\n\r\n",
+   "httpRequest": "GET /runCase?case=39&agent=SAMD21%20/%20W5100%20/%20Ethernet HTTP/1.1\r\nHost: 192.168.46.31:9001\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: dp2iHJ9G70BcpSWfwmoKBQ==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/0.8.0-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: xkwyDMn+6HkdykiZXIMZogC6ELg=\r\n\r\n",
    "id": "4.1.5",
    "isServer": true,
    "localCloseCode": 1000,
@@ -52,16 +52,16 @@
       "8": 1
    },
    "rxOctetStats": {
-      "2": 1,
-      "6": 1,
-      "8": 1,
-      "11": 1,
-      "27": 1,
-      "41": 1,
+      "1": 2,
+      "2": 2,
+      "5": 1,
+      "8": 2,
+      "18": 1,
+      "28": 1,
       "69": 1,
-      "74": 1
+      "97": 1
    },
-   "started": "2019-03-22T20:35:41.682Z",
+   "started": "2020-06-03T11:21:41.556Z",
    "trafficStats": null,
    "txFrameStats": {
       "1": 1,
@@ -90,22 +90,22 @@
       [
          "RO",
          [
-            27,
-            "0d0a486f73743a203139322e3136382e34362e393a393030310d0a"
+            28,
+            "0d0a486f73743a203139322e3136382e34362e33313a393030310d0a"
          ]
       ],
       [
          "RO",
          [
-            41,
-            "557067726164653a20776562736f636b65740d0a436f6e6e656374696f6e3a20557067726164650d0a"
+            18,
+            "557067726164653a20776562736f636b6574"
          ]
       ],
       [
          "RO",
          [
-            74,
-            "5365632d576562536f636b65742d4b65793a2072343371364e356b625847765970324f38794f4e31413d3d0d0a5365632d576562536f636b65742d5665727369 ..."
+            97,
+            "0d0a436f6e6e656374696f6e3a20557067726164650d0a5365632d576562536f636b65742d4b65793a2064703269484a39473730426370535766776d6f4b4251 ..."
          ]
       ],
       [
@@ -379,38 +379,12 @@
          true
       ],
       [
-         "RO",
-         [
-            11,
-            "818daf0e0332e76b6f5ec0"
-         ]
-      ],
-      [
          "TO",
          [
             1,
             "6c"
          ],
          true
-      ],
-      [
-         "RO",
-         [
-            8,
-            "222345c07c6f568e"
-         ]
-      ],
-      [
-         "RF",
-         [
-            13,
-            "Hello, world!"
-         ],
-         1,
-         true,
-         0,
-         true,
-         "af0e0332"
       ],
       [
          "TO",
@@ -448,14 +422,61 @@
          "RO",
          [
             2,
-            "8882"
+            "818d"
          ]
       ],
       [
          "RO",
          [
-            6,
-            "af0e0332ace4"
+            8,
+            "82bc60efcad90c83"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "ed"
+         ]
+      ],
+      [
+         "RO",
+         [
+            8,
+            "904098edce0c8ba3"
+         ]
+      ],
+      [
+         "RF",
+         [
+            13,
+            "Hello, world!"
+         ],
+         1,
+         true,
+         0,
+         true,
+         "82bc60ef"
+      ],
+      [
+         "RO",
+         [
+            1,
+            "88"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "82373a7089"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "34d0"
          ]
       ],
       [
@@ -468,7 +489,7 @@
          true,
          0,
          true,
-         "af0e0332"
+         "373a7089"
       ],
       [
          "TF",

@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Send a text message with payload which is valid UTF-8 in one fragment.<br><br>Payload: 0xf48fbfbf",
    "droppedByMe": true,
-   "duration": 28,
+   "duration": 16,
    "expectation": "The message is echo'ed back to us.",
    "expected": {
       "OK": [
@@ -27,8 +27,8 @@
       "requireClean": true
    },
    "failedByMe": false,
-   "httpRequest": "GET /runCase?case=202&agent=SAMD21%20/%20W5100%20/%20Ethernet HTTP/1.1\r\nHost: 192.168.46.9:9001\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: nHvcGGOSa5aWrrkvclLiGw==\r\nSec-WebSocket-Version: 13\r\n\r\n",
-   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/0.8.0-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: Zj60U3GPZUr/Fe/4ye16h2Kdyx8=\r\n\r\n",
+   "httpRequest": "GET /runCase?case=202&agent=SAMD21%20/%20W5100%20/%20Ethernet HTTP/1.1\r\nHost: 192.168.46.31:9001\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: jSLpoDVnXloEnKKgG8g9BA==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/0.8.0-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: hsup/VWMAIDp1wi/YCAhYTOnwkw=\r\n\r\n",
    "id": "6.22.34",
    "isServer": true,
    "localCloseCode": 1000,
@@ -52,14 +52,16 @@
    },
    "rxOctetStats": {
       "1": 1,
-      "2": 1,
-      "7": 1,
-      "8": 1,
-      "31": 1,
-      "66": 1,
-      "115": 1
+      "2": 3,
+      "4": 2,
+      "5": 1,
+      "26": 1,
+      "27": 1,
+      "41": 1,
+      "45": 1,
+      "72": 1
    },
-   "started": "2019-03-22T20:35:55.705Z",
+   "started": "2020-06-03T11:22:12.023Z",
    "trafficStats": null,
    "txFrameStats": {
       "1": 1,
@@ -79,22 +81,43 @@
       [
          "RO",
          [
-            115,
+            72,
             "474554202f72756e436173653f636173653d323032266167656e743d53414d4432312532302f25323057353130302532302f25323045746865726e6574204854 ..."
          ]
       ],
       [
          "RO",
          [
-            66,
-            "0d0a436f6e6e656374696f6e3a20557067726164650d0a5365632d576562536f636b65742d4b65793a206e48766347474f536135615772726b76636c4c694777 ..."
+            26,
+            "486f73743a203139322e3136382e34362e33313a393030310d0a"
          ]
       ],
       [
          "RO",
          [
-            31,
-            "0d0a5365632d576562536f636b65742d56657273696f6e3a2031330d0a0d0a"
+            41,
+            "557067726164653a20776562736f636b65740d0a436f6e6e656374696f6e3a20557067726164650d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            45,
+            "5365632d576562536f636b65742d4b65793a206a534c706f44566e586c6f456e4b4b674738673942413d3d0d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            27,
+            "5365632d576562536f636b65742d56657273696f6e3a2031330d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "0d0a"
          ]
       ],
       [
@@ -141,8 +164,15 @@
       [
          "RO",
          [
-            8,
-            "d6eb3dad22648212"
+            4,
+            "ebb78022"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "1f383f9d"
          ]
       ],
       [
@@ -155,7 +185,7 @@
          true,
          0,
          true,
-         "d6eb3dad"
+         "ebb78022"
       ],
       [
          "TF",
@@ -182,15 +212,22 @@
       [
          "RO",
          [
-            1,
-            "88"
+            2,
+            "8882"
          ]
       ],
       [
          "RO",
          [
-            7,
-            "82154f6ec016a7"
+            5,
+            "61d15e2862"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "39"
          ]
       ],
       [
@@ -203,7 +240,7 @@
          true,
          0,
          true,
-         "154f6ec0"
+         "61d15e28"
       ]
    ]
 }

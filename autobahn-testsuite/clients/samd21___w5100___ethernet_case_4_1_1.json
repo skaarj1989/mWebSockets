@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Send frame with reserved non-control <b>Opcode = 3</b>.",
    "droppedByMe": true,
-   "duration": 21,
+   "duration": 11,
    "expectation": "The connection is failed immediately.",
    "expected": {
       "OK": []
@@ -21,8 +21,8 @@
       "requireClean": false
    },
    "failedByMe": false,
-   "httpRequest": "GET /runCase?case=35&agent=SAMD21%20/%20W5100%20/%20Ethernet HTTP/1.1\r\nHost: 192.168.46.9:9001\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: r43q6N5kbXGvYp2O8yON1A==\r\nSec-WebSocket-Version: 13\r\n\r\n",
-   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/0.8.0-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: S2cUcxke7GUglbiVz3v8dmKxF4k=\r\n\r\n",
+   "httpRequest": "GET /runCase?case=35&agent=SAMD21%20/%20W5100%20/%20Ethernet HTTP/1.1\r\nHost: 192.168.46.31:9001\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: Ywv6gQSz/uT1Wvxczs6HXg==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/0.8.0-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: a6tC4QIeRwP21JGVfCIc6Y1VC2E=\r\n\r\n",
    "id": "4.1.1",
    "isServer": true,
    "localCloseCode": 1000,
@@ -38,12 +38,16 @@
       "8": 1
    },
    "rxOctetStats": {
-      "2": 1,
-      "6": 1,
-      "74": 1,
-      "137": 1
+      "2": 2,
+      "8": 1,
+      "18": 1,
+      "21": 1,
+      "26": 1,
+      "31": 1,
+      "43": 1,
+      "69": 1
    },
-   "started": "2019-03-22T20:35:41.132Z",
+   "started": "2020-06-03T11:21:41.058Z",
    "trafficStats": null,
    "txFrameStats": {
       "3": 1,
@@ -63,15 +67,57 @@
       [
          "RO",
          [
-            137,
+            69,
             "474554202f72756e436173653f636173653d3335266167656e743d53414d4432312532302f25323057353130302532302f25323045746865726e657420485454 ..."
          ]
       ],
       [
          "RO",
          [
-            74,
-            "5365632d576562536f636b65742d4b65793a2072343371364e356b625847765970324f38794f4e31413d3d0d0a5365632d576562536f636b65742d5665727369 ..."
+            2,
+            "0d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            26,
+            "486f73743a203139322e3136382e34362e33313a393030310d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            18,
+            "557067726164653a20776562736f636b6574"
+         ]
+      ],
+      [
+         "RO",
+         [
+            21,
+            "0d0a436f6e6e656374696f6e3a2055706772616465"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "0d0a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            43,
+            "5365632d576562536f636b65742d4b65793a20597776366751537a2f755431577678637a73364858673d3d"
+         ]
+      ],
+      [
+         "RO",
+         [
+            31,
+            "0d0a5365632d576562536f636b65742d56657273696f6e3a2031330d0a0d0a"
          ]
       ],
       [
@@ -111,15 +157,8 @@
       [
          "RO",
          [
-            2,
-            "8882"
-         ]
-      ],
-      [
-         "RO",
-         [
-            6,
-            "e8fdcc7eeb17"
+            8,
+            "8882fdc98ff2fe23"
          ]
       ],
       [
@@ -132,7 +171,7 @@
          true,
          0,
          true,
-         "e8fdcc7e"
+         "fdc98ff2"
       ],
       [
          "TF",

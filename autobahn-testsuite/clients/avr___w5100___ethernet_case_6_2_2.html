@@ -202,7 +202,7 @@ pre.wirelog_tcp_closed_by_peer {color: #fff; margin: 0; background-color: #000; 
       <center><a href="http://autobahn.ws/testsuite" title="Autobahn WebSocket Testsuite"><img src="http://autobahn.ws/static/img/ws_protocol_test_report.png"          border="0" width="820" height="46" alt="Autobahn WebSocket Testsuite Report"></img></a></center>
       <center><a href="http://autobahn.ws"           title="Autobahn WebSocket">          <img src="http://autobahn.ws/static/img/ws_protocol_test_report_autobahn.png" border="0" width="300" height="68" alt="Autobahn WebSocket">                 </img></a></center>
       <br/>
-      <p class="case case_ok">AVR / W5100 / Ethernet - <span style="font-size: 1.3em;"><b>Case 6.2.2</b></span> : Pass - <span style="font-size: 0.9em;"><b>43</b> ms @ 2019-03-22T20:32:50.914Z</a></p>
+      <p class="case case_ok">AVR / W5100 / Ethernet - <span style="font-size: 1.3em;"><b>Case 6.2.2</b></span> : Pass - <span style="font-size: 0.9em;"><b>37</b> ms @ 2020-06-03T10:51:44.439Z</a></p>
       <p class="case_text_block case_desc"><b>Case Description</b><br/><br/>Send a valid UTF-8 text message in two fragments, fragmented on UTF-8 code point boundary.<br><br>MESSAGE FRAGMENT 1:<br>Hello-µ@ßöä<br>48656c6c6f2dc2b540c39fc3b6c3a4<br><br>MESSAGE FRAGMENT 2:<br>üàá-UTF-8!!<br>c3bcc3a0c3a12d5554462d382121</p>
       <p class="case_text_block case_expect"><b>Case Expectation</b><br/><br/>The message is echo'ed back to us.</p>
 
@@ -215,17 +215,17 @@ pre.wirelog_tcp_closed_by_peer {color: #fff; margin: 0; background-color: #000; 
       <br/><hr/>
       <h2>Opening Handshake</h2>
       <pre class="http_dump">GET /runCase?case=69&agent=AVR%20/%20W5100%20/%20Ethernet HTTP/1.1
-Host: 192.168.46.9:9001
+Host: 192.168.46.31:9001
 Upgrade: websocket
 Connection: Upgrade
-Sec-WebSocket-Key: WnGP+nSD0FHCBx+J40AGVg==
+Sec-WebSocket-Key: sgBpFRZqsNmO3d3acvQfug==
 Sec-WebSocket-Version: 13</pre>
       <pre class="http_dump">HTTP/1.1 101 Switching Protocols
 Server: AutobahnTestSuite/0.8.0-0.10.9
 X-Powered-By: AutobahnPython/0.10.9
 Upgrade: WebSocket
 Connection: Upgrade
-Sec-WebSocket-Accept: 8LvIwCph2bZeIeC7DHBlPTG4vvc=</pre>
+Sec-WebSocket-Accept: utSoMZ6KOvtW6sRnQ5sR9t2ZcTk=</pre>
       <br/><hr/>
       <h2>Closing Behavior</h2>
       <table>
@@ -248,17 +248,17 @@ Sec-WebSocket-Accept: 8LvIwCph2bZeIeC7DHBlPTG4vvc=</pre>
       <h3>Octets Received by Chop Size</h3>
       <table>
          <tr class="stats_header"><td>Chop Size</td><td>Count</td><td>Octets</td></tr>
-         <tr class="stats_row"><td>1</td><td>3</td><td>3</td></tr>
-         <tr class="stats_row"><td>4</td><td>1</td><td>4</td></tr>
+         <tr class="stats_row"><td>1</td><td>40</td><td>40</td></tr>
+         <tr class="stats_row"><td>2</td><td>11</td><td>22</td></tr>
+         <tr class="stats_row"><td>3</td><td>4</td><td>12</td></tr>
+         <tr class="stats_row"><td>4</td><td>2</td><td>8</td></tr>
+         <tr class="stats_row"><td>5</td><td>2</td><td>10</td></tr>
          <tr class="stats_row"><td>6</td><td>1</td><td>6</td></tr>
-         <tr class="stats_row"><td>7</td><td>2</td><td>14</td></tr>
-         <tr class="stats_row"><td>10</td><td>1</td><td>10</td></tr>
-         <tr class="stats_row"><td>11</td><td>2</td><td>22</td></tr>
-         <tr class="stats_row"><td>12</td><td>2</td><td>24</td></tr>
-         <tr class="stats_row"><td>20</td><td>1</td><td>20</td></tr>
+         <tr class="stats_row"><td>16</td><td>1</td><td>16</td></tr>
+         <tr class="stats_row"><td>24</td><td>1</td><td>24</td></tr>
          <tr class="stats_row"><td>46</td><td>1</td><td>46</td></tr>
-         <tr class="stats_row"><td>102</td><td>1</td><td>102</td></tr>
-         <tr class="stats_total"><td>Total</td><td>15</td><td>251</td></tr>
+         <tr class="stats_row"><td>68</td><td>1</td><td>68</td></tr>
+         <tr class="stats_total"><td>Total</td><td>64</td><td>252</td></tr>
       </table>
       <h3>Octets Transmitted by Chop Size</h3>
       <table>
@@ -289,37 +289,86 @@ Sec-WebSocket-Accept: 8LvIwCph2bZeIeC7DHBlPTG4vvc=</pre>
       <div id="wirelog">
          <pre class="wirelog_rx_octets">000 RX OCTETS: 474554202f72756e436173653f636173653d3639266167656e743d4156522532302f25323057353130302532302f25323045</pre>
          <pre class="wirelog_rx_octets">               746865726e657420485454502f31 ...</pre>
-         <pre class="wirelog_rx_octets">001 RX OCTETS: 776562736f636b65740d0a436f6e6e656374696f</pre>
-         <pre class="wirelog_rx_octets">002 RX OCTETS: 6e3a20557067726164650d0a</pre>
-         <pre class="wirelog_rx_octets">003 RX OCTETS: 5365632d576562536f636b65742d4b65793a20576e47502b6e53443046484342782b4a3430414756673d3d0d0a53</pre>
-         <pre class="wirelog_rx_octets">004 RX OCTETS: 65632d576562536f636b65</pre>
-         <pre class="wirelog_rx_octets">005 RX OCTETS: 742d5665727369</pre>
-         <pre class="wirelog_rx_octets">006 RX OCTETS: 6f6e3a2031330d0a0d0a</pre>
-         <pre class="wirelog_tx_octets">007 TX OCTETS: 485454502f312e312031303120537769746368696e672050726f746f636f6c730d0a5365727665723a204175746f6261686e</pre>
+         <pre class="wirelog_rx_octets">001 RX OCTETS: 486f73743a203139322e3136382e34362e33313a39303031</pre>
+         <pre class="wirelog_rx_octets">002 RX OCTETS: 0d0a557067</pre>
+         <pre class="wirelog_rx_octets">003 RX OCTETS: 72</pre>
+         <pre class="wirelog_rx_octets">004 RX OCTETS: 61</pre>
+         <pre class="wirelog_rx_octets">005 RX OCTETS: 64</pre>
+         <pre class="wirelog_rx_octets">006 RX OCTETS: 65</pre>
+         <pre class="wirelog_rx_octets">007 RX OCTETS: 3a</pre>
+         <pre class="wirelog_rx_octets">008 RX OCTETS: 20776562736f636b65740d0a436f6e6e</pre>
+         <pre class="wirelog_rx_octets">009 RX OCTETS: 65</pre>
+         <pre class="wirelog_rx_octets">010 RX OCTETS: 63</pre>
+         <pre class="wirelog_rx_octets">011 RX OCTETS: 74</pre>
+         <pre class="wirelog_rx_octets">012 RX OCTETS: 69</pre>
+         <pre class="wirelog_rx_octets">013 RX OCTETS: 6f</pre>
+         <pre class="wirelog_rx_octets">014 RX OCTETS: 6e3a</pre>
+         <pre class="wirelog_rx_octets">015 RX OCTETS: 20557067</pre>
+         <pre class="wirelog_rx_octets">016 RX OCTETS: 7261</pre>
+         <pre class="wirelog_rx_octets">017 RX OCTETS: 6465</pre>
+         <pre class="wirelog_rx_octets">018 RX OCTETS: 0d0a</pre>
+         <pre class="wirelog_rx_octets">019 RX OCTETS: 5365632d576562536f636b65742d4b65793a207367427046525a71734e6d4f336433616376516675673d3d0d0a53</pre>
+         <pre class="wirelog_rx_octets">020 RX OCTETS: 65</pre>
+         <pre class="wirelog_rx_octets">021 RX OCTETS: 63</pre>
+         <pre class="wirelog_rx_octets">022 RX OCTETS: 2d</pre>
+         <pre class="wirelog_rx_octets">023 RX OCTETS: 57</pre>
+         <pre class="wirelog_rx_octets">024 RX OCTETS: 65</pre>
+         <pre class="wirelog_rx_octets">025 RX OCTETS: 62</pre>
+         <pre class="wirelog_rx_octets">026 RX OCTETS: 536f636b</pre>
+         <pre class="wirelog_rx_octets">027 RX OCTETS: 65</pre>
+         <pre class="wirelog_rx_octets">028 RX OCTETS: 74</pre>
+         <pre class="wirelog_rx_octets">029 RX OCTETS: 2d</pre>
+         <pre class="wirelog_rx_octets">030 RX OCTETS: 56</pre>
+         <pre class="wirelog_rx_octets">031 RX OCTETS: 65</pre>
+         <pre class="wirelog_rx_octets">032 RX OCTETS: 72</pre>
+         <pre class="wirelog_rx_octets">033 RX OCTETS: 73</pre>
+         <pre class="wirelog_rx_octets">034 RX OCTETS: 69</pre>
+         <pre class="wirelog_rx_octets">035 RX OCTETS: 6f</pre>
+         <pre class="wirelog_rx_octets">036 RX OCTETS: 6e3a</pre>
+         <pre class="wirelog_rx_octets">037 RX OCTETS: 20</pre>
+         <pre class="wirelog_rx_octets">038 RX OCTETS: 31</pre>
+         <pre class="wirelog_rx_octets">039 RX OCTETS: 33</pre>
+         <pre class="wirelog_rx_octets">040 RX OCTETS: 0d</pre>
+         <pre class="wirelog_rx_octets">041 RX OCTETS: 0a</pre>
+         <pre class="wirelog_rx_octets">042 RX OCTETS: 0d0a</pre>
+         <pre class="wirelog_tx_octets">043 TX OCTETS: 485454502f312e312031303120537769746368696e672050726f746f636f6c730d0a5365727665723a204175746f6261686e</pre>
          <pre class="wirelog_tx_octets">               5465737453756974652f302e382e ...</pre>
-         <pre class="wirelog_tx_frame">008 TX FRAME : OPCODE=1, FIN=False, RSV=0, PAYLOAD-LEN=15, MASK=None, PAYLOAD-REPEAT-LEN=None, CHOPSIZE=None, SYNC=False</pre>
+         <pre class="wirelog_tx_frame">044 TX FRAME : OPCODE=1, FIN=False, RSV=0, PAYLOAD-LEN=15, MASK=None, PAYLOAD-REPEAT-LEN=None, CHOPSIZE=None, SYNC=False</pre>
          <pre class="wirelog_tx_frame">               Hello-µ@ßöä</pre>
-         <pre class="wirelog_tx_octets">009 TX OCTETS: 010f48656c6c6f2dc2b540c39fc3b6c3a4</pre>
-         <pre class="wirelog_tx_frame">010 TX FRAME : OPCODE=0, FIN=True, RSV=0, PAYLOAD-LEN=14, MASK=None, PAYLOAD-REPEAT-LEN=None, CHOPSIZE=None, SYNC=False</pre>
+         <pre class="wirelog_tx_octets">045 TX OCTETS: 010f48656c6c6f2dc2b540c39fc3b6c3a4</pre>
+         <pre class="wirelog_tx_frame">046 TX FRAME : OPCODE=0, FIN=True, RSV=0, PAYLOAD-LEN=14, MASK=None, PAYLOAD-REPEAT-LEN=None, CHOPSIZE=None, SYNC=False</pre>
          <pre class="wirelog_tx_frame">               üàá-UTF-8!!</pre>
-         <pre class="wirelog_tx_octets">011 TX OCTETS: 800ec3bcc3a0c3a12d5554462d382121</pre>
-         <pre class="wirelog_kill_after">012 CLOSE CONNECTION AFTER 1.000000 sec</pre>
-         <pre class="wirelog_rx_octets">013 RX OCTETS: 81</pre>
-         <pre class="wirelog_rx_octets">014 RX OCTETS: 9d5a718ffa1214</pre>
-         <pre class="wirelog_rx_octets">015 RX OCTETS: e396355c</pre>
-         <pre class="wirelog_rx_octets">016 RX OCTETS: 4d4f1ab21039ecb22b39e6</pre>
-         <pre class="wirelog_rx_octets">017 RX OCTETS: b22f39fb5cdaae1c5cb7db7b</pre>
-         <pre class="wirelog_rx_frame">018 RX FRAME : OPCODE=1, FIN=True, RSV=0, PAYLOAD-LEN=29, MASKED=True, MASK=3561373138666661</pre>
+         <pre class="wirelog_tx_octets">047 TX OCTETS: 800ec3bcc3a0c3a12d5554462d382121</pre>
+         <pre class="wirelog_kill_after">048 CLOSE CONNECTION AFTER 1.000000 sec</pre>
+         <pre class="wirelog_rx_octets">049 RX OCTETS: 819d</pre>
+         <pre class="wirelog_rx_octets">050 RX OCTETS: f5f3b77bbd</pre>
+         <pre class="wirelog_rx_octets">051 RX OCTETS: 96</pre>
+         <pre class="wirelog_rx_octets">052 RX OCTETS: db</pre>
+         <pre class="wirelog_rx_octets">053 RX OCTETS: 17</pre>
+         <pre class="wirelog_rx_octets">054 RX OCTETS: 9a</pre>
+         <pre class="wirelog_rx_octets">055 RX OCTETS: de75ce</pre>
+         <pre class="wirelog_rx_octets">056 RX OCTETS: b5</pre>
+         <pre class="wirelog_rx_octets">057 RX OCTETS: 3028b8</pre>
+         <pre class="wirelog_rx_octets">058 RX OCTETS: 4330</pre>
+         <pre class="wirelog_rx_octets">059 RX OCTETS: 13</pre>
+         <pre class="wirelog_rx_octets">060 RX OCTETS: b84930</pre>
+         <pre class="wirelog_rx_octets">061 RX OCTETS: 17</pre>
+         <pre class="wirelog_rx_octets">062 RX OCTETS: b8</pre>
+         <pre class="wirelog_rx_octets">063 RX OCTETS: 54dee2</pre>
+         <pre class="wirelog_rx_octets">064 RX OCTETS: 2f</pre>
+         <pre class="wirelog_rx_octets">065 RX OCTETS: b3de</pre>
+         <pre class="wirelog_rx_octets">066 RX OCTETS: 8f5a</pre>
+         <pre class="wirelog_rx_octets">067 RX OCTETS: d4</pre>
+         <pre class="wirelog_rx_frame">068 RX FRAME : OPCODE=1, FIN=True, RSV=0, PAYLOAD-LEN=29, MASKED=True, MASK=6635663362373762</pre>
          <pre class="wirelog_rx_frame">               Hello-µ@ßöäüàá-UTF-8!!</pre>
-         <pre class="wirelog_tx_frame">019 TX FRAME : OPCODE=8, FIN=True, RSV=0, PAYLOAD-LEN=2, MASK=None, PAYLOAD-REPEAT-LEN=None, CHOPSIZE=None, SYNC=False</pre>
+         <pre class="wirelog_tx_frame">069 TX FRAME : OPCODE=8, FIN=True, RSV=0, PAYLOAD-LEN=2, MASK=None, PAYLOAD-REPEAT-LEN=None, CHOPSIZE=None, SYNC=False</pre>
          <pre class="wirelog_tx_frame">               0x03e8</pre>
-         <pre class="wirelog_tx_octets">020 TX OCTETS: 880203e8</pre>
-         <pre class="wirelog_rx_octets">021 RX OCTETS: 88</pre>
-         <pre class="wirelog_rx_octets">022 RX OCTETS: 82e47e5594e7</pre>
-         <pre class="wirelog_rx_octets">023 RX OCTETS: 96</pre>
-         <pre class="wirelog_rx_frame">024 RX FRAME : OPCODE=8, FIN=True, RSV=0, PAYLOAD-LEN=2, MASKED=True, MASK=6534376535353934</pre>
+         <pre class="wirelog_tx_octets">070 TX OCTETS: 880203e8</pre>
+         <pre class="wirelog_rx_octets">071 RX OCTETS: 8882</pre>
+         <pre class="wirelog_rx_octets">072 RX OCTETS: 581fbad45bf7</pre>
+         <pre class="wirelog_rx_frame">073 RX FRAME : OPCODE=8, FIN=True, RSV=0, PAYLOAD-LEN=2, MASKED=True, MASK=3538316662616434</pre>
          <pre class="wirelog_rx_frame">               0x03e8</pre>
-         <pre class="wirelog_tcp_closed_by_me">025 TCP DROPPED BY ME</pre>
+         <pre class="wirelog_tcp_closed_by_me">074 TCP DROPPED BY ME</pre>
       </div>
       <br/><hr/>
    </body>

@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Same as Case 5.19, but send all frames with SYNC = True.\n   Note, this does not change the octets sent in any way, only how the stream\n   is chopped up on the wire.",
    "droppedByMe": true,
-   "duration": 1063,
+   "duration": 1022,
    "expectation": "Same as Case 5.19. Implementations must be agnostic to how\n   octet stream is chopped up on wire (must be TCP clean).",
    "expected": {
       "OK": [
@@ -35,8 +35,8 @@
       "requireClean": true
    },
    "failedByMe": false,
-   "httpRequest": "GET /runCase?case=64&agent=SAMD21%20/%20W5100%20/%20Ethernet HTTP/1.1\r\nHost: 192.168.46.9:9001\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: PKypPSAoFo5uuaTorpvV2w==\r\nSec-WebSocket-Version: 13\r\n\r\n",
-   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/0.8.0-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: nVvQvZ75XoiQffeNVdfuMpE+/Kg=\r\n\r\n",
+   "httpRequest": "GET /runCase?case=64&agent=SAMD21%20/%20W5100%20/%20Ethernet HTTP/1.1\r\nHost: 192.168.46.31:9001\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: Ywv6gQSz/uT1Wvxczs6HXg==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/0.8.0-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: a6tC4QIeRwP21JGVfCIc6Y1VC2E=\r\n\r\n",
    "id": "5.20",
    "isServer": true,
    "localCloseCode": 1000,
@@ -68,17 +68,16 @@
       "10": 2
    },
    "rxOctetStats": {
-      "1": 2,
-      "2": 2,
-      "3": 1,
-      "8": 2,
-      "9": 3,
-      "12": 2,
-      "13": 1,
-      "31": 1,
-      "180": 1
+      "1": 3,
+      "2": 9,
+      "3": 3,
+      "4": 7,
+      "5": 3,
+      "7": 1,
+      "9": 1,
+      "212": 1
    },
-   "started": "2019-03-22T20:35:46.429Z",
+   "started": "2020-06-03T11:21:45.708Z",
    "trafficStats": null,
    "txFrameStats": {
       "0": 4,
@@ -100,15 +99,8 @@
       [
          "RO",
          [
-            180,
+            212,
             "474554202f72756e436173653f636173653d3634266167656e743d53414d4432312532302f25323057353130302532302f25323045746865726e657420485454 ..."
-         ]
-      ],
-      [
-         "RO",
-         [
-            31,
-            "0d0a5365632d576562536f636b65742d56657273696f6e3a2031330d0a0d0a"
          ]
       ],
       [
@@ -200,15 +192,15 @@
       [
          "RO",
          [
-            12,
-            "2a9a9aeb5af5f48c47ffbada"
+            4,
+            "b1c68742"
          ]
       ],
       [
          "RO",
          [
-            1,
-            "0b"
+            9,
+            "c1a9e925dca3a77390"
          ]
       ],
       [
@@ -221,7 +213,7 @@
          true,
          0,
          true,
-         "2a9a9aeb"
+         "b1c68742"
       ],
       [
          "CTE",
@@ -322,15 +314,43 @@
       [
          "RO",
          [
-            2,
-            "8a89"
+            1,
+            "8a"
          ]
       ],
       [
          "RO",
          [
-            13,
-            "53b271c123dd1fa63ed751f372"
+            1,
+            "89"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "10dc867a60"
+         ]
+      ],
+      [
+         "RO",
+         [
+            5,
+            "b3e81d7db9"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "a648"
+         ]
+      ],
+      [
+         "RO",
+         [
+            1,
+            "31"
          ]
       ],
       [
@@ -343,55 +363,111 @@
          true,
          0,
          true,
-         "53b271c1"
+         "10dc867a"
       ],
       [
          "RO",
          [
-            1,
-            "81"
+            2,
+            "81ad"
          ]
       ],
       [
          "RO",
          [
-            12,
-            "ad759df10913ef906e18f89f"
+            4,
+            "ae0ed39f"
          ]
       ],
       [
          "RO",
          [
-            9,
-            "7d44fb836812f09467"
+            5,
+            "c87cb2f8c3"
          ]
       ],
       [
          "RO",
          [
-            8,
-            "01af977b14fa9c6c"
+            2,
+            "6bbd"
          ]
       ],
       [
          "RO",
          [
-            9,
-            "1be9c26f07fc966410"
+            2,
+            "eb9f"
          ]
       ],
       [
          "RO",
          [
-            9,
-            "f3853d13ef906e18f8"
+            2,
+            "68a1"
          ]
       ],
       [
          "RO",
          [
             3,
-            "9f7d40"
+            "fec963"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "b6f1da3c"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "b5ed"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "cf69be"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "fac07ae0"
+         ]
+      ],
+      [
+         "RO",
+         [
+            3,
+            "f9dc6f"
+         ]
+      ],
+      [
+         "RO",
+         [
+            7,
+            "b4f2cb60a7abc8"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "7cb2f8c3"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "6bbdeb9b"
          ]
       ],
       [
@@ -404,7 +480,7 @@
          true,
          0,
          true,
-         "759df109"
+         "ae0ed39f"
       ],
       [
          "TF",
@@ -431,8 +507,22 @@
       [
          "RO",
          [
-            8,
-            "88829ac1a7749929"
+            2,
+            "8882"
+         ]
+      ],
+      [
+         "RO",
+         [
+            4,
+            "85f5fc4a"
+         ]
+      ],
+      [
+         "RO",
+         [
+            2,
+            "861d"
          ]
       ],
       [
@@ -445,7 +535,7 @@
          true,
          0,
          true,
-         "9ac1a774"
+         "85f5fc4a"
       ]
    ]
 }

@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Same as Case 5.19, but send all frames with SYNC = True.\n   Note, this does not change the octets sent in any way, only how the stream\n   is chopped up on the wire.",
    "droppedByMe": true,
-   "duration": 1217,
+   "duration": 1150,
    "expectation": "Same as Case 5.19. Implementations must be agnostic to how\n   octet stream is chopped up on wire (must be TCP clean).",
    "expected": {
       "OK": [
@@ -35,8 +35,8 @@
       "requireClean": true
    },
    "failedByMe": false,
-   "httpRequest": "GET /runCase?case=64&agent=ESP8266%20/%20WiFi HTTP/1.1\r\nHost: 192.168.46.9:9001\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: etj9QepxVt7PihAJeAzXDQ==\r\nSec-WebSocket-Version: 13\r\n\r\n",
-   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/0.8.0-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: dmvyDslbSX6+eEjS25Ab1NPHa4Y=\r\n\r\n",
+   "httpRequest": "GET /runCase?case=64&agent=ESP8266%20/%20WiFi HTTP/1.1\r\nHost: 192.168.46.31:9001\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: xVtsp0WhROwKEjC6HWDcgw==\r\nSec-WebSocket-Version: 13\r\n\r\n",
+   "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/0.8.0-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: YY5lirfvwzZW11x1zIh/dh82jZU=\r\n\r\n",
    "id": "5.20",
    "isServer": true,
    "localCloseCode": 1000,
@@ -73,9 +73,9 @@
       "14": 1,
       "54": 1,
       "65": 1,
-      "142": 1
+      "143": 1
    },
-   "started": "2019-03-22T20:39:11.085Z",
+   "started": "2020-06-03T11:08:53.422Z",
    "trafficStats": null,
    "txFrameStats": {
       "0": 4,
@@ -104,8 +104,8 @@
       [
          "RO",
          [
-            142,
-            "0d0a486f73743a203139322e3136382e34362e393a393030310d0a557067726164653a20776562736f636b65740d0a436f6e6e656374696f6e3a205570677261 ..."
+            143,
+            "0d0a486f73743a203139322e3136382e34362e33313a393030310d0a557067726164653a20776562736f636b65740d0a436f6e6e656374696f6e3a2055706772 ..."
          ]
       ],
       [
@@ -320,7 +320,7 @@
          "RO",
          [
             65,
-            "897ad8fd410ab7932617bddd735b81adc55b6ca7a3290dc0a83e02d3f43d1ec6a23609c9b1690ad5a43c01c2ab2f5fc1b73a0bcaa0351893a3290dc0a83e02d3 ..."
+            "897ad8fd410ab7932617bddd735b81ad7ad8fd411caa9c2617bd93354bbe8f201db5982f0eea9b331bbf902414acce2708b99a2c1fb689751caa9c2617bd9335 ..."
          ]
       ],
       [
@@ -345,7 +345,7 @@
          true,
          0,
          true,
-         "c55b6ca7"
+         "7ad8fd41"
       ],
       [
          "TF",
