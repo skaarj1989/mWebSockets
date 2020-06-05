@@ -72,7 +72,6 @@ void WebSocketClient::onError(const onErrorCallback &callback) {
 //
 void WebSocketClient::_sendRequest(
   const char *host, uint16_t port, const char *path) {
-
   char buffer[128]{};
 
   snprintf_P(buffer, sizeof(buffer), (PGM_P)F("GET %s HTTP/1.1"), path);
