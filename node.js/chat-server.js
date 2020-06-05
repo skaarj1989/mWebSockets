@@ -30,7 +30,7 @@ const chat = {
 			});
 		});
 		
-		const interval = setInterval(() => {
+		setInterval(() => {
 			wss.clients.forEach((ws) => {
 				if (ws.isAlive === false)
 					return ws.terminate();

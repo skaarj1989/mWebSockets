@@ -24,7 +24,7 @@ wss.on('connection', (ws, req) => {
 	ws.send('Hello from Node.js');
 });
 
-const interval = setInterval(() => {
+setInterval(() => {
   wss.clients.forEach((ws) => {
     if (ws.isAlive === false) {
 			console.log(`[${ws.remoteAddress}] dead`);

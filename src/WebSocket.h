@@ -10,6 +10,8 @@ constexpr uint8_t kValidSecKey = 0x04;
 constexpr uint8_t kValidVersion = 0x08;
 
 enum class WebSocketError {
+  NO_ERROR,
+
   CONNECTION_ERROR,
   CONNECTION_REFUSED,
 

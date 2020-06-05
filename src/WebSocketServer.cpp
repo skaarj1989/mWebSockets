@@ -114,6 +114,17 @@ WebSocket *WebSocketServer::_getWebSocket(NetClient &client) const {
   return nullptr;
 }
 
+//
+// Read client request:
+//
+// [1] GET /chat HTTP/1.1
+// [2] Host: example.com:8000
+// [3] Upgrade: websocket
+// [4] Connection: Upgrade
+// [5] Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
+// [6] Sec-WebSocket-Version: 13
+// [7]
+//
 bool WebSocketServer::_handleRequest(NetClient &client) {
   uint8_t flags = 0x0;
 
@@ -121,24 +132,12 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
   byte currentLine = 0;
   byte counter = 0;
 
-  //
-  // Read client request:
-  //
-  // [1] GET /chat HTTP/1.1
-  // [2] Host: example.com:8000
-  // [3] Upgrade: websocket
-  // [4] Connection: Upgrade
-  // [5] Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
-  // [6] Sec-WebSocket-Version: 13
-  // [7]
-  //
-
-  // buffer large enought to hold longest header field
-  // Chrome: 'User-Agent' = ~126 characters
-  // Firefox: 'User-Agent' = ~90 characters
-  // Edge: 'User-Agent' = ~141 characters
+  // Large enought to hold longest header field
+  //  Chrome: 'User-Agent' = ~126 characters
+  //  Firefox: 'User-Agent' = ~90 characters
+  //  Edge: 'User-Agent' = ~141 characters
   char buffer[160]{};
-  char secKey[32]{};
+  char secKey[32]{}; // Holds client Sec-WebSocket-Key
 
 #if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
   while (!client.available()) {
@@ -154,6 +153,8 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
       uint8_t lineBreakPos = strcspn(buffer, "\r\n");
       buffer[lineBreakPos] = '\0';
 
+      char *rest = buffer;
+
 #ifdef _DUMP_HANDSHAKE
       printf(F("[Line #%d] %s\n"), currentLine, buffer);
 #endif
@@ -163,63 +164,34 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
       //
 
       if (currentLine == 0) {
-        char *pch = strtok(buffer, " ");
-        for (byte i = 0; pch != nullptr; ++i) {
-          switch (i) {
-          case 0: {
-            if (strcmp_P(pch, (PGM_P)F("GET")) != 0) {
-              _rejectRequest(client, WebSocketError::BAD_REQUEST);
-              return false;
-            }
-
-            break;
-          }
-          case 1: {
-            break; // path doesn't matter ...
-          }
-          case 2: {
-            if (strcmp_P(pch, (PGM_P)F("HTTP/1.1")) != 0) {
-              _rejectRequest(client, WebSocketError::BAD_REQUEST);
-              return false;
-            }
-
-            break;
-          }
-          default: {
-            _rejectRequest(client, WebSocketError::BAD_REQUEST);
-            return false;
-          }
-          }
-
-          pch = strtok(nullptr, " ");
+        if (!_isValidGET(rest)) {
+          _rejectRequest(client, WebSocketError::BAD_REQUEST);
+          return false;
         }
       } else {
         if (lineBreakPos > 0) {
-          char *header = strtok(buffer, ":");
+          char *header = strtok_r(rest, ":", &rest);
           char *value = nullptr;
 
           //
           // [2] Host header:
           //
 
-          if (strcmp_P(header, (PGM_P)F("Host")) == 0) {
-            value = strtok(nullptr, " ");
-
-            // #TODO ... or not
-          }
+          // #TODO ... or not
+          if (strcmp_P(header, (PGM_P)F("Host")) == 0) {}
 
           //
           // [3] Upgrade header:
           //
 
           else if (strcmp_P(header, (PGM_P)F("Upgrade")) == 0) {
-            value = strtok(nullptr, " ");
-
-            if (strcasecmp_P(value, (PGM_P)F("websocket")) != 0) {
+            value = strtok_r(rest, " ", &rest);
+            if (!value || !_isValidUpgrade(value)) {
               _rejectRequest(client, WebSocketError::BAD_REQUEST);
               return false;
-            } else
-              flags |= kValidUpgradeHeader;
+            }
+
+            flags |= kValidUpgradeHeader;              
           }
 
           //
@@ -227,14 +199,8 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
           //
 
           else if (strcmp_P(header, (PGM_P)F("Connection")) == 0) {
-            // Firefox sends: "Connection: keep-alive, Upgrade"
-            // simple "includes" check:
-            while ((value = strtok(nullptr, " ,"))) {
-              if (strstr_P(value, (PGM_P)F("Upgrade")) != nullptr) {
-                flags |= kValidConnectionHeader;
-                break;
-              }
-            }
+            value = strtok_r(rest, " ", &rest);
+            if (!value || _isValidConnection(value)) flags |= kValidConnectionHeader;
           }
 
           //
@@ -242,8 +208,8 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
           //
 
           else if (strcmp_P(header, (PGM_P)F("Sec-WebSocket-Key")) == 0) {
-            value = strtok(nullptr, " ");
-            strcpy(secKey, value);
+            value = strtok_r(rest, " ", &rest);
+            if (value != nullptr) strcpy(secKey, value);
           }
 
           //
@@ -251,19 +217,13 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
           //
 
           else if (strcmp_P(header, (PGM_P)F("Sec-WebSocket-Version")) == 0) {
-            value = strtok(nullptr, " ");
-            uint8_t version = atoi(value);
-
-            switch (version) {
-            case 13: {
-              flags |= kValidVersion;
-              break;
-            }
-            default: {
+            value = strtok_r(rest, " ", &rest);
+            if (!value || !_isValidVersion(atoi(value))) {
               _rejectRequest(client, WebSocketError::BAD_REQUEST);
               return false;
             }
-            }
+
+            flags |= kValidVersion;
           }
 
           //
@@ -272,8 +232,7 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
 
           else {
             if (_verifyClient) {
-              value = strtok(nullptr, " ");
-
+              value = strtok_r(rest, " ", &rest);
               if (!_verifyClient(_REMOTE_IP(client), header, value)) {
                 _rejectRequest(client, WebSocketError::CONNECTION_REFUSED);
                 return false;
@@ -287,39 +246,13 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
         //
 
         else {
-          if (!(flags & (kValidUpgradeHeader | kValidConnectionHeader))) {
-            _rejectRequest(client, WebSocketError::UPGRADE_REQUIRED);
+          WebSocketError errorCode = _validateHandshake(flags, secKey);
+          if (errorCode != WebSocketError::NO_ERROR) {
+            _rejectRequest(client, errorCode);
             return false;
           }
 
-          if (!(flags & kValidVersion) || strlen(secKey) == 0) {
-            _rejectRequest(client, WebSocketError::BAD_REQUEST);
-            return false;
-          }
-
-          //
-          // Send response:
-          //
-          // [1] HTTP/1.1 101 Switching Protocols
-          // [2] Upgrade: websocket
-          // [3] Connection: Upgrade
-          // [4] Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=
-          // [5]
-          //
-
-          char acceptKey[32]{};
-          encodeSecKey(acceptKey, secKey);
-
-          char secWebSocketAccept[64]{};
-          strcpy_P(secWebSocketAccept, (PGM_P)F("Sec-WebSocket-Accept: "));
-          strcat(secWebSocketAccept, acceptKey);
-
-          client.println(F("HTTP/1.1 101 Switching Protocols"));
-          client.println(F("Upgrade: websocket"));
-          client.println(F("Connection: Upgrade"));
-          client.println(secWebSocketAccept);
-          client.println();
-
+          _acceptRequest(client, secKey);
           return true;
         }
       }
@@ -332,6 +265,79 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
 
   _rejectRequest(client, WebSocketError::BAD_REQUEST);
   return false;
+}
+
+bool WebSocketServer::_isValidGET(char *line) {
+  char *rest = line;
+
+  for (byte i = 0; rest != nullptr; ++i) {
+    char *pch = strtok_r(rest, " ", &rest);
+
+    switch (i) {
+    case 0: {
+      if (strcmp_P(pch, (PGM_P)F("GET")) != 0) {
+        return false;
+      }
+
+      break;
+    }
+    case 1: {
+      break; // path doesn't matter ...
+    }
+    case 2: {
+      if (strcmp_P(pch, (PGM_P)F("HTTP/1.1")) != 0) {
+        return false;
+      }
+
+      break;
+    }
+    default:
+      return false;
+    }
+  }
+
+  return true;
+}
+
+bool WebSocketServer::_isValidUpgrade(const char *value) {
+  return strcasecmp_P(value, (PGM_P)F("websocket")) == 0;
+}
+
+bool WebSocketServer::_isValidConnection(char *value) {
+  char *rest = value;
+  char *item = nullptr;
+
+  // Firefox sends: "Connection: keep-alive, Upgrade"
+  // simple "includes" check:
+  while ((item = strtok_r(rest, " ,", &rest))) {
+    if (strstr_P(item, (PGM_P)F("Upgrade")) != nullptr) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+bool WebSocketServer::_isValidVersion(uint8_t version) {
+  switch (version) {
+  case 8:
+  case 13:
+    return true;
+
+  default:
+    return false;
+  }
+}
+
+WebSocketError WebSocketServer::_validateHandshake(
+  uint8_t flags, const char *secKey) {
+  if (!(flags & (kValidUpgradeHeader | kValidConnectionHeader)))
+    return WebSocketError::UPGRADE_REQUIRED;
+
+  if (!(flags & kValidVersion) || strlen(secKey) == 0)
+    return WebSocketError::BAD_REQUEST;
+
+  return WebSocketError::NO_ERROR;
 }
 
 void WebSocketServer::_rejectRequest(
@@ -360,6 +366,30 @@ void WebSocketServer::_rejectRequest(
   }
 
   client.stop();
+}
+
+//
+// Send response:
+//
+// [1] HTTP/1.1 101 Switching Protocols
+// [2] Upgrade: websocket
+// [3] Connection: Upgrade
+// [4] Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=
+// [5]
+//
+void WebSocketServer::_acceptRequest(NetClient &client, const char *secKey) {
+  char acceptKey[32]{};
+  encodeSecKey(acceptKey, secKey);
+
+  char secWebSocketAccept[64]{};
+  strcpy_P(secWebSocketAccept, (PGM_P)F("Sec-WebSocket-Accept: "));
+  strcat(secWebSocketAccept, acceptKey);
+
+  client.println(F("HTTP/1.1 101 Switching Protocols"));
+  client.println(F("Upgrade: websocket"));
+  client.println(F("Connection: Upgrade"));
+  client.println(secWebSocketAccept);
+  client.println();
 }
 
 void WebSocketServer::_cleanDeadConnections() {

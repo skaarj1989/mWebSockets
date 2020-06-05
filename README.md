@@ -1,5 +1,6 @@
 # μWebSockets
 [![Build Status](https://travis-ci.org/skaarj1989/mWebSockets.svg?branch=master)](https://travis-ci.org/skaarj1989/mWebSockets)
+[![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/skaarj1989/mWebSockets)](https://www.codefactor.io/repository/github/skaarj1989/mwebsockets/overview/master)
 ![GitHub issues](https://img.shields.io/github/issues/skaarj1989/mWebSockets.svg)
 ![GitHub](https://img.shields.io/github/license/skaarj1989/mWebSockets.svg)
 
@@ -236,42 +237,42 @@ Following screenshots shows Rasperry Pi server, browser client and Arduino clien
 
 ## Approx memory usage
 
-###### *simple-client.ino example (without debug output)
+###### *simple-client.ino example (without debug output, 128 bytes data buffer)
 
 ### Ethernet.h (W5100 and W5500)
 
 | Board  | Program space | Dynamic memory |
 | :---: | :---: | :---: | 
-| Arduino Uno  | 24538 bytes (76%)  | 1012 bytes (49%) |
-| Arduino Mega2560  | 24836 bytes (9%) | 1048 bytes (12%) |
-| Arduino Pro Mini | 24538 bytes (79%) | 1012 bytes (49%) |
-| Arduino Zero | 28308 bytes (10%) | |
+| Arduino Uno  | 25 114 bytes (78%)  | 917 bytes (45%) |
+| Arduino Mega2560  | 25 310 bytes (10%) | 945 bytes (12%) |
+| Arduino Pro Mini | 25 114 bytes (82%) | 917 bytes (45%) |
+| Arduino Zero | 31 128 bytes (12%) | 3 924 bytes |
 
 ### Ethernet2.h (W5500)
 
 | Board  | Program space | Dynamic memory |
 | :---: | :---: | :---: | 
-| Arduino Uno  | 21592 bytes (66%) | 811 bytes (39%) |
-| Arduino Mega2560  | 21900 bytes (8%) | 811 bytes (9%) |
-| Arduino Pro Mini | 21592 bytes (70%) | 811 bytes (39%) |
-| Arduino Zero | 25988 bytes (9%) | |
+| Arduino Uno  | 21 592 bytes (66%) | 811 bytes (39%) |
+| Arduino Mega2560  | 21 900 bytes (8%) | 811 bytes (9%) |
+| Arduino Pro Mini | 21 592 bytes (70%) | 811 bytes (39%) |
+| Arduino Zero | 25 988 bytes (9%) | |
 
 ### UIPEthernet.h (ENC28j60)
 :warning: **This library is incompatibile with Arduino Zero!** :warning:
 
 | Board  | Program space | Dynamic memory |
 | :---: | :---: | :---: | 
-| Arduino Uno  | 29762 bytes (92%) | 1659 bytes (81%) :warning: |
-| Arduino Mega2560  | 30172 bytes (11%) | 1659 bytes (20%) |
-| Arduino Pro Mini | 29762 bytes (96%) | 1659 bytes (81%) :warning: |
+| Arduino Uno  | 30 208 bytes (93%) | 1 519 bytes (74%) |
+| Arduino Mega2560  | 30 356 bytes (11%) | 1 519 bytes (18%) |
+| Arduino Pro Mini | 30 208 bytes (98%) | 1 519 bytes (74%) |
 
 ### WiFi
 
 | Board  | Program space | Dynamic memory |
 | :---: | :---: | :---: | 
-| Generic ESP8266  | 265864 bytes (53%) | 33644 bytes (41%) |
-| WeMos D1 mini | 265864 bytes (25%) | 33644 bytes (41%) |
-| NodeMCU | 265864 bytes (25%) | 33624 33644 (41%) |
+| Generic ESP8266  | 286 916 bytes (30%) | 27 556 bytes (34%) |
+| WeMos D1 mini | 286 916 bytes (27%) | 27 556 bytes (34%) |
+| NodeMCU | 286 916 bytes (27%) | 27 556 (33%) |
 
 ## Ethernet "2" library modification
 
@@ -310,7 +311,7 @@ to this:
 #endif
 ```
 
-## Known issues		
+## Known issues
 
 1. ENC28j60 is slow, eats much more memory than W5100/W5500 and hangs on ``available()`` function
 

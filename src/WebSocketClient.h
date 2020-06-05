@@ -25,9 +25,9 @@ public:
 
 private:
   void _sendRequest(const char *host, uint16_t port, const char *path);
-  bool _readResponse();
-
   bool _waitForResponse(uint16_t maxAttempts, uint8_t time = 1);
+  bool _readResponse();
+  bool _validateHandshake(uint8_t flags);
 
 private:
   char *m_secKey{ nullptr };

@@ -2,6 +2,7 @@
 
 #define _TRIGGER_ERROR(code)                                                   \
   {                                                                            \
+    terminate();                                                               \
     if (_onError) _onError(code);                                              \
   }
 
@@ -14,7 +15,7 @@ bool WebSocketClient::open(const char *host, uint16_t port, const char *path) {
   if (!m_client.connect(host, port)) {
     __debugOutput(
       F("Error in connection establishment: net::ERR_CONNECTION_REFUSED\n"));
-    terminate();
+    _TRIGGER_ERROR(WebSocketError::CONNECTION_REFUSED);
     return false;
   }
 
@@ -24,15 +25,12 @@ bool WebSocketClient::open(const char *host, uint16_t port, const char *path) {
     __debugOutput(
       F("Error in connection establishment: net::ERR_CONNECTION_TIMED_OUT\n"));
     _TRIGGER_ERROR(WebSocketError::REQUEST_TIMEOUT);
-    terminate();
     return false;
   }
 
-  if (!_readResponse()) {
-    terminate();
-    return false;
-  }
+  if (!_readResponse()) return false;
 
+  m_readyState = ReadyState::OPEN;
   if (_onOpen) _onOpen(*this);
   return true;
 }
@@ -48,7 +46,6 @@ void WebSocketClient::listen() {
       terminate();
       if (_onClose) _onClose(*this, ABNORMAL_CLOSURE, nullptr, 0);
     }
-
     return;
   }
 
@@ -62,19 +59,19 @@ void WebSocketClient::onError(const onErrorCallback &callback) {
   _onError = callback;
 }
 
+//
+// Send request (client handshake):
+//
+// [1] GET /chat HTTP/1.1
+// [2] Host: example.com:8000
+// [3] Upgrade: websocket
+// [4] Connection: Upgrade
+// [5] Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
+// [6] Sec-WebSocket-Version: 13
+// [7]
+//
 void WebSocketClient::_sendRequest(
   const char *host, uint16_t port, const char *path) {
-  //
-  // Send request (client handshake):
-  //
-  // [1] GET /chat HTTP/1.1
-  // [2] Host: example.com:8000
-  // [3] Upgrade: websocket
-  // [4] Connection: Upgrade
-  // [5] Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
-  // [6] Sec-WebSocket-Version: 13
-  // [7]
-  //
 
   char buffer[128]{};
 
@@ -97,6 +94,25 @@ void WebSocketClient::_sendRequest(
   m_client.flush();
 }
 
+bool WebSocketClient::_waitForResponse(uint16_t maxAttempts, uint8_t time) {
+  uint16_t attempts = 0;
+  while (!m_client.available() && attempts < maxAttempts) {
+    attempts++;
+    delay(time);
+  }
+
+  return attempts < maxAttempts;
+}
+
+//
+// Read response (server-side handshake):
+//
+// [1] HTTP/1.1 101 Switching Protocols
+// [2] Upgrade: websocket
+// [3] Connection: Upgrade
+// [4] Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=
+// [5]
+//
 bool WebSocketClient::_readResponse() {
   uint8_t flags = 0x0;
 
@@ -105,16 +121,6 @@ bool WebSocketClient::_readResponse() {
   byte counter = 0;
 
   char buffer[128]{};
-
-  //
-  // Read response (server-side handshake):
-  //
-  // [1] HTTP/1.1 101 Switching Protocols
-  // [2] Upgrade: websocket
-  // [3] Connection: Upgrade
-  // [4] Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=
-  // [5]
-  //
 
   while ((bite = _read()) != -1) {
     buffer[counter++] = bite;
@@ -136,17 +142,18 @@ bool WebSocketClient::_readResponse() {
         }
       } else {
         if (lineBreakPos > 0) {
-          char *header = strtok(buffer, ":");
+          char *rest = buffer;
           char *value = nullptr;
+          
+          char *header = strtok_r(rest, ":", &rest);
 
           //
           // [2] Upgrade header:
           //
 
           if (strcmp_P(header, (PGM_P)F("Upgrade")) == 0) {
-            value = strtok(nullptr, " ");
-
-            if (strcasecmp_P(value, (PGM_P)F("websocket")) != 0) {
+            value = strtok_r(rest, " ", &rest);
+            if (!value || (strcasecmp_P(value, (PGM_P)F("websocket")) != 0)) {
               __debugOutput(F("Error during WebSocket handshake: 'Upgrade' "
                               "header value is not 'websocket': %s\n"),
                 value);
@@ -162,9 +169,8 @@ bool WebSocketClient::_readResponse() {
           //
 
           else if (strcmp_P(header, (PGM_P)F("Connection")) == 0) {
-            value = strtok(nullptr, " ");
-
-            if (strcmp_P(value, (PGM_P)F("Upgrade")) != 0) {
+            value = strtok_r(rest, " ", &rest);
+            if (!value || (strcmp_P(value, (PGM_P)F("Upgrade")) != 0)) {
               __debugOutput(
                 F("Error during WebSocket handshake: 'Connection' header "
                   "value is not 'Upgrade': %s\n"),
@@ -181,13 +187,13 @@ bool WebSocketClient::_readResponse() {
           //
 
           else if (strcmp_P(header, (PGM_P)F("Sec-WebSocket-Accept")) == 0) {
-            value = strtok(nullptr, " ");
+            value = strtok_r(rest, " ", &rest);
 
             char encodedKey[32]{};
             encodeSecKey(encodedKey, m_secKey);
             SAFE_DELETE_ARRAY(m_secKey);
 
-            if (strcmp(value, encodedKey) != 0) {
+            if (!value || (strcmp(value, encodedKey) != 0)) {
               __debugOutput(F("Error during WebSocket handshake: Incorrect "
                               "'Sec-WebSocket-Accept' header value\n"));
               _TRIGGER_ERROR(WebSocketError::BAD_REQUEST);
@@ -214,6 +220,10 @@ bool WebSocketClient::_readResponse() {
     }
   }
 
+  return _validateHandshake(flags);
+}
+
+bool WebSocketClient::_validateHandshake(uint8_t flags) {
   if (!(flags & kValidUpgradeHeader)) {
     __debugOutput(
       F("Error during WebSocket handshake: 'Upgrade' header is missing\n"));
@@ -235,18 +245,7 @@ bool WebSocketClient::_readResponse() {
     return false;
   }
 
-  m_readyState = ReadyState::OPEN;
   return true;
-}
-
-bool WebSocketClient::_waitForResponse(uint16_t maxAttempts, uint8_t time) {
-  uint16_t attempts = 0;
-  while (!m_client.available() && attempts < maxAttempts) {
-    attempts++;
-    delay(time);
-  }
-
-  return attempts < maxAttempts;
 }
 
 } // namespace net

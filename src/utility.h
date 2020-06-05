@@ -18,6 +18,12 @@
     }                                                                          \
   }
 
+#ifdef _DEBUG
+#  define __debugOutput printf
+#else
+#  define __debugOutput(...)
+#endif
+
 void printf(const __FlashStringHelper *fmt, ...);
 
 namespace net {
@@ -29,9 +35,3 @@ void generateMask(char *output);
 bool isValidUTF8(const byte *str, size_t length);
 
 } // namespace net
-
-#ifdef _DEBUG
-#  define __debugOutput printf
-#else
-#  define __debugOutput(...)
-#endif

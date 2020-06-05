@@ -156,9 +156,12 @@ const uint16_t cases[]{
 
 void nextTest() {
   static const size_t numCases = sizeof(cases) / sizeof(uint16_t);
-  static int idx = 0;
+  static bool done = false;
+  static uint16_t idx = 0;
 
   static char path[80]{};
+
+  if (done) return;
   
   if (idx != numCases) {
     uint16_t test = cases[idx++];
@@ -167,6 +170,7 @@ void nextTest() {
   } else {
     snprintf_P(path, sizeof(path), (PGM_P)F("/updateReports?agent=%s%s%s"),
       platform, "%20/%20", lib);
+    done = true;
   }
 
   delay(100);
@@ -215,7 +219,7 @@ void setup() {
   client.onClose([](WebSocket &ws, const WebSocket::CloseCode &code,
                    const char *reason, uint16_t length) { nextTest(); });
 
-  delay(5000);
+  delay(2000);
   nextTest();
 }
 

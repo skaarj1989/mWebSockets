@@ -47,8 +47,14 @@ private:
   WebSocket *_getWebSocket(NetClient &client) const;
 
   bool _handleRequest(NetClient &client);
+  bool _isValidGET(char *line);
+  bool _isValidUpgrade(const char *line);
+  bool _isValidConnection(char *value);
+  bool _isValidVersion(uint8_t version);
+  WebSocketError _validateHandshake(uint8_t flags, const char *secKey);
   void _rejectRequest(NetClient &client, const WebSocketError &code);
-
+  void _acceptRequest(NetClient &client, const char *secKey);
+  
   void _cleanDeadConnections();
 
 private:

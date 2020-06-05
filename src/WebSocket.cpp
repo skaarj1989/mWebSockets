@@ -126,7 +126,6 @@ int32_t WebSocket::_read() {
   }
 
   if (millis() > timeout) {
-    __debugOutput(F("holly shit! timeout!\n"));
     close(PROTOCOL_ERROR, true);
     return -1;
   }
@@ -135,9 +134,9 @@ int32_t WebSocket::_read() {
 }
 
 bool WebSocket::_read(char *buffer, size_t size) {
-  int32_t bite = -1;
   size_t counter = 0;
-
+  
+  int32_t bite = -1;
   do {
     if ((bite = _read()) == -1) return false;
 
@@ -206,16 +205,12 @@ void WebSocket::_readFrame() {
   if (m_readyState == ReadyState::CLOSED) return;
 
   header_t header;
-  if (!_readHeader(header)) {
-    __debugOutput(F("Failed to read header, terminating\n"));
-    return;
-  }
-
+  if (!_readHeader(header)) return;
+  
   char *payload = nullptr;
   if (header.length > 0) {
     payload = new char[header.length + 1]{};
     if (!_readData(header, payload)) {
-      __debugOutput(F("Failed to read data, terminating\n"));
       SAFE_DELETE_ARRAY(payload);
       return;
     }
@@ -252,26 +247,25 @@ void WebSocket::_readFrame() {
   SAFE_DELETE_ARRAY(payload);
 }
 
+// 	0                   1                   2                   3
+// 	0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+// 	+-+-+-+-+-------+-+-------------+-------------------------------+
+// 	|F|R|R|R| opcode|M| Payload len |    Extended payload length    |
+// 	|I|S|S|S|  (4)  |A|     (7)     |             (16/64)           |
+// 	|N|V|V|V|       |S|             |   (if payload len==126/127)   |
+// 	| |1|2|3|       |K|             |                               |
+// 	+-+-+-+-+-------+-+-------------+ - - - - - - - - - - - - - - - +
+// 	|     Extended payload length continued, if payload len == 127  |
+// 	+ - - - - - - - - - - - - - - - +-------------------------------+
+// 	|                               |Masking-key, if MASK set to 1  |
+// 	+-------------------------------+-------------------------------+
+// 	| Masking-key (continued)       |          Payload Data         |
+// 	+-------------------------------- - - - - - - - - - - - - - - - +
+// 	:                     Payload Data continued ...                :
+// 	+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - +
+// 	|                     Payload Data continued ...                |
+// 	+---------------------------------------------------------------+
 bool WebSocket::_readHeader(header_t &header) {
-  // 	0                   1                   2                   3
-  // 	0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-  // 	+-+-+-+-+-------+-+-------------+-------------------------------+
-  // 	|F|R|R|R| opcode|M| Payload len |    Extended payload length    |
-  // 	|I|S|S|S|  (4)  |A|     (7)     |             (16/64)           |
-  // 	|N|V|V|V|       |S|             |   (if payload len==126/127)   |
-  // 	| |1|2|3|       |K|             |                               |
-  // 	+-+-+-+-+-------+-+-------------+ - - - - - - - - - - - - - - - +
-  // 	|     Extended payload length continued, if payload len == 127  |
-  // 	+ - - - - - - - - - - - - - - - +-------------------------------+
-  // 	|                               |Masking-key, if MASK set to 1  |
-  // 	+-------------------------------+-------------------------------+
-  // 	| Masking-key (continued)       |          Payload Data         |
-  // 	+-------------------------------- - - - - - - - - - - - - - - - +
-  // 	:                     Payload Data continued ...                :
-  // 	+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - +
-  // 	|                     Payload Data continued ...                |
-  // 	+---------------------------------------------------------------+
-
   int32_t bite = -1;
 
   char temp[2]{};
