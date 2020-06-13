@@ -1,0 +1,205 @@
+\hypertarget{class_cipher}{}\doxysection{Cipher Class Reference}
+\label{class_cipher}\index{Cipher@{Cipher}}
+
+
+Abstract base class for stream ciphers.  
+
+
+
+
+{\ttfamily \#include $<$Cipher.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_cipher_a6a61077eca3ccd5900f92ceac58fb09c}\label{class_cipher_a6a61077eca3ccd5900f92ceac58fb09c}} 
+\mbox{\hyperlink{class_cipher_a6a61077eca3ccd5900f92ceac58fb09c}{Cipher}} ()
+\begin{DoxyCompactList}\small\item\em Constructs a new cipher object. \end{DoxyCompactList}\item 
+virtual \mbox{\hyperlink{class_cipher_a84bdea765f7e35aa5b5950dd2853a383}{$\sim$\+Cipher}} ()
+\begin{DoxyCompactList}\small\item\em Destroys this cipher object. \end{DoxyCompactList}\item 
+virtual size\+\_\+t \mbox{\hyperlink{class_cipher_a4cea432ea0278c865441f17cbb88b1ab}{key\+Size}} () const =0
+\begin{DoxyCompactList}\small\item\em Default size of the key for this cipher, in bytes. \end{DoxyCompactList}\item 
+virtual size\+\_\+t \mbox{\hyperlink{class_cipher_ab8b53ddc4ce431f03c2a1903d70ace9c}{iv\+Size}} () const =0
+\begin{DoxyCompactList}\small\item\em Size of the initialization vector for this cipher, in bytes. \end{DoxyCompactList}\item 
+virtual bool \mbox{\hyperlink{class_cipher_a0dfe133bda81dfa680b668f5908ccbe5}{set\+Key}} (const uint8\+\_\+t $\ast$key, size\+\_\+t len)=0
+\begin{DoxyCompactList}\small\item\em Sets the key to use for future encryption and decryption operations. \end{DoxyCompactList}\item 
+virtual bool \mbox{\hyperlink{class_cipher_a3777acd8ff776a4e945bb7c9f2d044d9}{set\+IV}} (const uint8\+\_\+t $\ast$iv, size\+\_\+t len)=0
+\begin{DoxyCompactList}\small\item\em Sets the initialization vector to use for future encryption and decryption operations. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_cipher_ad2832bd61039d61560e34ea3382ca562}{encrypt}} (uint8\+\_\+t $\ast$output, const uint8\+\_\+t $\ast$input, size\+\_\+t len)=0
+\begin{DoxyCompactList}\small\item\em Encrypts an input buffer and writes the ciphertext to an output buffer. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_cipher_ac6099d1a0d7f2ff67b0e4ccb4a17eb08}{decrypt}} (uint8\+\_\+t $\ast$output, const uint8\+\_\+t $\ast$input, size\+\_\+t len)=0
+\begin{DoxyCompactList}\small\item\em Decrypts an input buffer and writes the plaintext to an output buffer. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_cipher_a4b7c3965646441a70d9ab934a7c92ab1}{clear}} ()=0
+\begin{DoxyCompactList}\small\item\em Clears all security-\/sensitive state from this cipher. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Abstract base class for stream ciphers. 
+
+This class is intended for implementing ciphers that operate on arbitrary amounts of data. In particular, stream ciphers where the number of bytes that are input to \mbox{\hyperlink{class_cipher_ad2832bd61039d61560e34ea3382ca562}{encrypt()}} or \mbox{\hyperlink{class_cipher_ac6099d1a0d7f2ff67b0e4ccb4a17eb08}{decrypt()}} is exactly the same as the number of bytes that are output.
+
+All of the stream ciphers such as Cha\+Cha inherit directly from this class, together with block cipher modes such as C\+TR and C\+FB. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_cipher_a84bdea765f7e35aa5b5950dd2853a383}\label{class_cipher_a84bdea765f7e35aa5b5950dd2853a383}} 
+\index{Cipher@{Cipher}!````~Cipher@{$\sim$Cipher}}
+\index{````~Cipher@{$\sim$Cipher}!Cipher@{Cipher}}
+\doxysubsubsection{\texorpdfstring{$\sim$Cipher()}{~Cipher()}}
+{\footnotesize\ttfamily Cipher\+::$\sim$\+Cipher (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Destroys this cipher object. 
+
+Subclasses are responsible for clearing temporary key schedules and other buffers so as to avoid leaking sensitive information.
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_cipher_a4b7c3965646441a70d9ab934a7c92ab1}{clear()}} 
+\end{DoxySeeAlso}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_cipher_a4b7c3965646441a70d9ab934a7c92ab1}\label{class_cipher_a4b7c3965646441a70d9ab934a7c92ab1}} 
+\index{Cipher@{Cipher}!clear@{clear}}
+\index{clear@{clear}!Cipher@{Cipher}}
+\doxysubsubsection{\texorpdfstring{clear()}{clear()}}
+{\footnotesize\ttfamily void Cipher\+::clear (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Clears all security-\/sensitive state from this cipher. 
+
+Security-\/sensitive information includes key schedules, initialization vectors, and any temporary state that is used by \mbox{\hyperlink{class_cipher_ad2832bd61039d61560e34ea3382ca562}{encrypt()}} or \mbox{\hyperlink{class_cipher_ac6099d1a0d7f2ff67b0e4ccb4a17eb08}{decrypt()}} which is stored in the cipher itself. \mbox{\Hypertarget{class_cipher_ac6099d1a0d7f2ff67b0e4ccb4a17eb08}\label{class_cipher_ac6099d1a0d7f2ff67b0e4ccb4a17eb08}} 
+\index{Cipher@{Cipher}!decrypt@{decrypt}}
+\index{decrypt@{decrypt}!Cipher@{Cipher}}
+\doxysubsubsection{\texorpdfstring{decrypt()}{decrypt()}}
+{\footnotesize\ttfamily void Cipher\+::decrypt (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{output,  }\item[{const uint8\+\_\+t $\ast$}]{input,  }\item[{size\+\_\+t}]{len }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Decrypts an input buffer and writes the plaintext to an output buffer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em output} & The output buffer to write to, which may be the same buffer as {\itshape input}. The {\itshape output} buffer must have at least as many bytes as the {\itshape input} buffer. \\
+\hline
+{\em input} & The input buffer to read from. \\
+\hline
+{\em len} & The number of bytes to decrypt.\\
+\hline
+\end{DoxyParams}
+The \mbox{\hyperlink{class_cipher_ac6099d1a0d7f2ff67b0e4ccb4a17eb08}{decrypt()}} function can be called multiple times with different regions of the ciphertext data.
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_cipher_ad2832bd61039d61560e34ea3382ca562}{encrypt()}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{class_cipher_ad2832bd61039d61560e34ea3382ca562}\label{class_cipher_ad2832bd61039d61560e34ea3382ca562}} 
+\index{Cipher@{Cipher}!encrypt@{encrypt}}
+\index{encrypt@{encrypt}!Cipher@{Cipher}}
+\doxysubsubsection{\texorpdfstring{encrypt()}{encrypt()}}
+{\footnotesize\ttfamily void Cipher\+::encrypt (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{output,  }\item[{const uint8\+\_\+t $\ast$}]{input,  }\item[{size\+\_\+t}]{len }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Encrypts an input buffer and writes the ciphertext to an output buffer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em output} & The output buffer to write to, which may be the same buffer as {\itshape input}. The {\itshape output} buffer must have at least as many bytes as the {\itshape input} buffer. \\
+\hline
+{\em input} & The input buffer to read from. \\
+\hline
+{\em len} & The number of bytes to encrypt.\\
+\hline
+\end{DoxyParams}
+The \mbox{\hyperlink{class_cipher_ad2832bd61039d61560e34ea3382ca562}{encrypt()}} function can be called multiple times with different regions of the plaintext data.
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_cipher_ac6099d1a0d7f2ff67b0e4ccb4a17eb08}{decrypt()}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{class_cipher_ab8b53ddc4ce431f03c2a1903d70ace9c}\label{class_cipher_ab8b53ddc4ce431f03c2a1903d70ace9c}} 
+\index{Cipher@{Cipher}!ivSize@{ivSize}}
+\index{ivSize@{ivSize}!Cipher@{Cipher}}
+\doxysubsubsection{\texorpdfstring{ivSize()}{ivSize()}}
+{\footnotesize\ttfamily size\+\_\+t Cipher\+::iv\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Size of the initialization vector for this cipher, in bytes. 
+
+If the cipher does not need an initialization vector, this function will return zero. \mbox{\Hypertarget{class_cipher_a4cea432ea0278c865441f17cbb88b1ab}\label{class_cipher_a4cea432ea0278c865441f17cbb88b1ab}} 
+\index{Cipher@{Cipher}!keySize@{keySize}}
+\index{keySize@{keySize}!Cipher@{Cipher}}
+\doxysubsubsection{\texorpdfstring{keySize()}{keySize()}}
+{\footnotesize\ttfamily size\+\_\+t Cipher\+::key\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Default size of the key for this cipher, in bytes. 
+
+If the cipher supports variable-\/sized keys, \mbox{\hyperlink{class_cipher_a4cea432ea0278c865441f17cbb88b1ab}{key\+Size()}} indicates the default or recommended key size. The cipher may support other key sizes.
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_cipher_a0dfe133bda81dfa680b668f5908ccbe5}{set\+Key()}}, \mbox{\hyperlink{class_cipher_ab8b53ddc4ce431f03c2a1903d70ace9c}{iv\+Size()}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{class_cipher_a3777acd8ff776a4e945bb7c9f2d044d9}\label{class_cipher_a3777acd8ff776a4e945bb7c9f2d044d9}} 
+\index{Cipher@{Cipher}!setIV@{setIV}}
+\index{setIV@{setIV}!Cipher@{Cipher}}
+\doxysubsubsection{\texorpdfstring{setIV()}{setIV()}}
+{\footnotesize\ttfamily bool Cipher\+::set\+IV (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t $\ast$}]{iv,  }\item[{size\+\_\+t}]{len }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Sets the initialization vector to use for future encryption and decryption operations. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em iv} & The initialization vector to use. \\
+\hline
+{\em len} & The length of the initialization vector in bytes. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Returns false if the length is not supported.
+\end{DoxyReturn}
+Initialization vectors should be set before the first call to \mbox{\hyperlink{class_cipher_ad2832bd61039d61560e34ea3382ca562}{encrypt()}} or \mbox{\hyperlink{class_cipher_ac6099d1a0d7f2ff67b0e4ccb4a17eb08}{decrypt()}} after a \mbox{\hyperlink{class_cipher_a0dfe133bda81dfa680b668f5908ccbe5}{set\+Key()}} call. If the initialization vector is changed after encryption or decryption begins, then the behaviour is undefined.
+
+\begin{DoxyNote}{Note}
+The IV is not encoded into the output stream by \mbox{\hyperlink{class_cipher_ad2832bd61039d61560e34ea3382ca562}{encrypt()}}. The caller is responsible for communicating the IV to the other party.
+\end{DoxyNote}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_cipher_ab8b53ddc4ce431f03c2a1903d70ace9c}{iv\+Size()}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{class_cipher_a0dfe133bda81dfa680b668f5908ccbe5}\label{class_cipher_a0dfe133bda81dfa680b668f5908ccbe5}} 
+\index{Cipher@{Cipher}!setKey@{setKey}}
+\index{setKey@{setKey}!Cipher@{Cipher}}
+\doxysubsubsection{\texorpdfstring{setKey()}{setKey()}}
+{\footnotesize\ttfamily bool Cipher\+::set\+Key (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t $\ast$}]{key,  }\item[{size\+\_\+t}]{len }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Sets the key to use for future encryption and decryption operations. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em key} & The key to use. \\
+\hline
+{\em len} & The length of the key in bytes. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Returns false if the key length is not supported, or the key is somehow \char`\"{}weak\char`\"{} and unusable by this cipher.
+\end{DoxyReturn}
+Use \mbox{\hyperlink{class_cipher_a4b7c3965646441a70d9ab934a7c92ab1}{clear()}} or the destructor to remove the key and any other sensitive data from the object once encryption or decryption is complete.
+
+Calling \mbox{\hyperlink{class_cipher_a0dfe133bda81dfa680b668f5908ccbe5}{set\+Key()}} resets the cipher. Any temporary data that was being retained for encrypting partial blocks will be abandoned.
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_cipher_a4cea432ea0278c865441f17cbb88b1ab}{key\+Size()}}, \mbox{\hyperlink{class_cipher_a4b7c3965646441a70d9ab934a7c92ab1}{clear()}} 
+\end{DoxySeeAlso}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/\+Crypto\+Legacy/Cipher.\+h\item 
+src/\+Crypto\+Legacy/Cipher.\+cpp\end{DoxyCompactItemize}

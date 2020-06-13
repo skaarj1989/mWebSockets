@@ -1,0 +1,263 @@
+\hypertarget{class_s_h_a1}{}\doxysection{S\+H\+A1 Class Reference}
+\label{class_s_h_a1}\index{SHA1@{SHA1}}
+
+
+S\+H\+A-\/1 hash algorithm.  
+
+
+
+
+{\ttfamily \#include $<$S\+H\+A1.\+h$>$}
+
+
+
+Inheritance diagram for S\+H\+A1\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=122pt]{class_s_h_a1__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for S\+H\+A1\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=122pt]{class_s_h_a1__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_s_h_a1_ad49a5108ffd6996b1133bf41224ff726}\label{class_s_h_a1_ad49a5108ffd6996b1133bf41224ff726}} 
+\mbox{\hyperlink{class_s_h_a1_ad49a5108ffd6996b1133bf41224ff726}{S\+H\+A1}} ()
+\begin{DoxyCompactList}\small\item\em Constructs a S\+H\+A-\/1 hash object. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_s_h_a1_a8485d7c14fa29286cd3c7acfe438606d}\label{class_s_h_a1_a8485d7c14fa29286cd3c7acfe438606d}} 
+virtual \mbox{\hyperlink{class_s_h_a1_a8485d7c14fa29286cd3c7acfe438606d}{$\sim$\+S\+H\+A1}} ()
+\begin{DoxyCompactList}\small\item\em Destroys this S\+H\+A-\/1 hash object after clearing sensitive information. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{class_s_h_a1_a69082dd1db04743cc4e0b7d9a34776d2}{hash\+Size}} () const
+\begin{DoxyCompactList}\small\item\em Size of the hash result from \mbox{\hyperlink{class_s_h_a1_a5a6a8a6169aa48e0bccadb22a149ab7c}{finalize()}}. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{class_s_h_a1_a897f296f7846f06cbf090958b9c9bf0f}{block\+Size}} () const
+\begin{DoxyCompactList}\small\item\em Size of the internal block used by the hash algorithm. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_s_h_a1_ab71aaf39ed956320054861a2fbfa454f}{reset}} ()
+\begin{DoxyCompactList}\small\item\em Resets the hash ready for a new hashing process. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_s_h_a1_aec77fbc5015f82bbf7055e535085656a}{update}} (const void $\ast$data, size\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Updates the hash with more data. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_s_h_a1_a5a6a8a6169aa48e0bccadb22a149ab7c}{finalize}} (void $\ast$hash, size\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Finalizes the hashing process and returns the hash. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_s_h_a1_a41a159d6565b04d3f620dcd720faaf3f}{clear}} ()
+\begin{DoxyCompactList}\small\item\em Clears the hash state, removing all sensitive data, and then resets the hash ready for a new hashing process. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_s_h_a1_ad0a09a5100d59ff90c04ed5d4071b606}{reset\+H\+M\+AC}} (const void $\ast$key, size\+\_\+t key\+Len)
+\begin{DoxyCompactList}\small\item\em Resets the hash ready for a new H\+M\+AC hashing process. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_s_h_a1_a791db53fe9d6cc0e383b25f1da0a97b8}{finalize\+H\+M\+AC}} (const void $\ast$key, size\+\_\+t key\+Len, void $\ast$hash, size\+\_\+t hash\+Len)
+\begin{DoxyCompactList}\small\item\em Finalizes the H\+M\+AC hashing process and returns the hash. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Additional Inherited Members}
+
+
+\doxysubsection{Detailed Description}
+S\+H\+A-\/1 hash algorithm. 
+
+Reference\+: \href{http://en.wikipedia.org/wiki/SHA-1}{\texttt{ http\+://en.\+wikipedia.\+org/wiki/\+S\+H\+A-\/1}}
+
+\begin{DoxySeeAlso}{See also}
+S\+H\+A256, S\+H\+A512 
+\end{DoxySeeAlso}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_s_h_a1_a897f296f7846f06cbf090958b9c9bf0f}\label{class_s_h_a1_a897f296f7846f06cbf090958b9c9bf0f}} 
+\index{SHA1@{SHA1}!blockSize@{blockSize}}
+\index{blockSize@{blockSize}!SHA1@{SHA1}}
+\doxysubsubsection{\texorpdfstring{blockSize()}{blockSize()}}
+{\footnotesize\ttfamily size\+\_\+t S\+H\+A1\+::block\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Size of the internal block used by the hash algorithm. 
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_s_h_a1_aec77fbc5015f82bbf7055e535085656a}{update()}}, \mbox{\hyperlink{class_s_h_a1_a69082dd1db04743cc4e0b7d9a34776d2}{hash\+Size()}} 
+\end{DoxySeeAlso}
+
+
+Implements \mbox{\hyperlink{class_hash_a4e4297812e3483410556830fe5d47bdf}{Hash}}.
+
+\mbox{\Hypertarget{class_s_h_a1_a41a159d6565b04d3f620dcd720faaf3f}\label{class_s_h_a1_a41a159d6565b04d3f620dcd720faaf3f}} 
+\index{SHA1@{SHA1}!clear@{clear}}
+\index{clear@{clear}!SHA1@{SHA1}}
+\doxysubsubsection{\texorpdfstring{clear()}{clear()}}
+{\footnotesize\ttfamily void S\+H\+A1\+::clear (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Clears the hash state, removing all sensitive data, and then resets the hash ready for a new hashing process. 
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_s_h_a1_ab71aaf39ed956320054861a2fbfa454f}{reset()}} 
+\end{DoxySeeAlso}
+
+
+Implements \mbox{\hyperlink{class_hash_a4a959469433cd9348ab7f3ac6228bb34}{Hash}}.
+
+\mbox{\Hypertarget{class_s_h_a1_a5a6a8a6169aa48e0bccadb22a149ab7c}\label{class_s_h_a1_a5a6a8a6169aa48e0bccadb22a149ab7c}} 
+\index{SHA1@{SHA1}!finalize@{finalize}}
+\index{finalize@{finalize}!SHA1@{SHA1}}
+\doxysubsubsection{\texorpdfstring{finalize()}{finalize()}}
+{\footnotesize\ttfamily void S\+H\+A1\+::finalize (\begin{DoxyParamCaption}\item[{void $\ast$}]{hash,  }\item[{size\+\_\+t}]{len }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Finalizes the hashing process and returns the hash. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em hash} & The buffer to return the hash value in. \\
+\hline
+{\em len} & The length of the {\itshape hash} buffer, normally \mbox{\hyperlink{class_s_h_a1_a69082dd1db04743cc4e0b7d9a34776d2}{hash\+Size()}}.\\
+\hline
+\end{DoxyParams}
+If {\itshape len} is less than \mbox{\hyperlink{class_s_h_a1_a69082dd1db04743cc4e0b7d9a34776d2}{hash\+Size()}}, then the hash value will be truncated to the first {\itshape len} bytes. If {\itshape len} is greater than \mbox{\hyperlink{class_s_h_a1_a69082dd1db04743cc4e0b7d9a34776d2}{hash\+Size()}}, then the remaining bytes will left unchanged.
+
+If \mbox{\hyperlink{class_s_h_a1_a5a6a8a6169aa48e0bccadb22a149ab7c}{finalize()}} is called again, then the returned {\itshape hash} value is undefined. Call \mbox{\hyperlink{class_s_h_a1_ab71aaf39ed956320054861a2fbfa454f}{reset()}} first to start a new hashing process.
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_s_h_a1_ab71aaf39ed956320054861a2fbfa454f}{reset()}}, \mbox{\hyperlink{class_s_h_a1_aec77fbc5015f82bbf7055e535085656a}{update()}}, \mbox{\hyperlink{class_s_h_a1_a791db53fe9d6cc0e383b25f1da0a97b8}{finalize\+H\+M\+A\+C()}} 
+\end{DoxySeeAlso}
+
+
+Implements \mbox{\hyperlink{class_hash_a09b3ccec22763fc86b1415695862977c}{Hash}}.
+
+\mbox{\Hypertarget{class_s_h_a1_a791db53fe9d6cc0e383b25f1da0a97b8}\label{class_s_h_a1_a791db53fe9d6cc0e383b25f1da0a97b8}} 
+\index{SHA1@{SHA1}!finalizeHMAC@{finalizeHMAC}}
+\index{finalizeHMAC@{finalizeHMAC}!SHA1@{SHA1}}
+\doxysubsubsection{\texorpdfstring{finalizeHMAC()}{finalizeHMAC()}}
+{\footnotesize\ttfamily void S\+H\+A1\+::finalize\+H\+M\+AC (\begin{DoxyParamCaption}\item[{const void $\ast$}]{key,  }\item[{size\+\_\+t}]{key\+Len,  }\item[{void $\ast$}]{hash,  }\item[{size\+\_\+t}]{hash\+Len }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Finalizes the H\+M\+AC hashing process and returns the hash. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em key} & Points to the H\+M\+AC key for the hashing process. The contents of this array must be identical to the value passed to \mbox{\hyperlink{class_s_h_a1_ad0a09a5100d59ff90c04ed5d4071b606}{reset\+H\+M\+A\+C()}}. \\
+\hline
+{\em key\+Len} & Size of the H\+M\+AC {\itshape key} in bytes. \\
+\hline
+{\em hash} & The buffer to return the hash value in. \\
+\hline
+{\em hash\+Len} & The length of the {\itshape hash} buffer, normally \mbox{\hyperlink{class_s_h_a1_a69082dd1db04743cc4e0b7d9a34776d2}{hash\+Size()}}.\\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_s_h_a1_ad0a09a5100d59ff90c04ed5d4071b606}{reset\+H\+M\+A\+C()}}, \mbox{\hyperlink{class_s_h_a1_a5a6a8a6169aa48e0bccadb22a149ab7c}{finalize()}} 
+\end{DoxySeeAlso}
+
+
+Implements \mbox{\hyperlink{class_hash_aab42fa5420cc0bda4321a3d3866cfd06}{Hash}}.
+
+\mbox{\Hypertarget{class_s_h_a1_a69082dd1db04743cc4e0b7d9a34776d2}\label{class_s_h_a1_a69082dd1db04743cc4e0b7d9a34776d2}} 
+\index{SHA1@{SHA1}!hashSize@{hashSize}}
+\index{hashSize@{hashSize}!SHA1@{SHA1}}
+\doxysubsubsection{\texorpdfstring{hashSize()}{hashSize()}}
+{\footnotesize\ttfamily size\+\_\+t S\+H\+A1\+::hash\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Size of the hash result from \mbox{\hyperlink{class_s_h_a1_a5a6a8a6169aa48e0bccadb22a149ab7c}{finalize()}}. 
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_s_h_a1_a5a6a8a6169aa48e0bccadb22a149ab7c}{finalize()}}, \mbox{\hyperlink{class_s_h_a1_a897f296f7846f06cbf090958b9c9bf0f}{block\+Size()}} 
+\end{DoxySeeAlso}
+
+
+Implements \mbox{\hyperlink{class_hash_adcdd30de3e5ecaa2f798c0c5644d9ef8}{Hash}}.
+
+\mbox{\Hypertarget{class_s_h_a1_ab71aaf39ed956320054861a2fbfa454f}\label{class_s_h_a1_ab71aaf39ed956320054861a2fbfa454f}} 
+\index{SHA1@{SHA1}!reset@{reset}}
+\index{reset@{reset}!SHA1@{SHA1}}
+\doxysubsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily void S\+H\+A1\+::reset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Resets the hash ready for a new hashing process. 
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_s_h_a1_aec77fbc5015f82bbf7055e535085656a}{update()}}, \mbox{\hyperlink{class_s_h_a1_a5a6a8a6169aa48e0bccadb22a149ab7c}{finalize()}}, \mbox{\hyperlink{class_s_h_a1_ad0a09a5100d59ff90c04ed5d4071b606}{reset\+H\+M\+A\+C()}} 
+\end{DoxySeeAlso}
+
+
+Implements \mbox{\hyperlink{class_hash_a7b94309acaa5f52386785fb780e5be61}{Hash}}.
+
+\mbox{\Hypertarget{class_s_h_a1_ad0a09a5100d59ff90c04ed5d4071b606}\label{class_s_h_a1_ad0a09a5100d59ff90c04ed5d4071b606}} 
+\index{SHA1@{SHA1}!resetHMAC@{resetHMAC}}
+\index{resetHMAC@{resetHMAC}!SHA1@{SHA1}}
+\doxysubsubsection{\texorpdfstring{resetHMAC()}{resetHMAC()}}
+{\footnotesize\ttfamily void S\+H\+A1\+::reset\+H\+M\+AC (\begin{DoxyParamCaption}\item[{const void $\ast$}]{key,  }\item[{size\+\_\+t}]{key\+Len }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Resets the hash ready for a new H\+M\+AC hashing process. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em key} & Points to the H\+M\+AC key for the hashing process. \\
+\hline
+{\em key\+Len} & Size of the H\+M\+AC {\itshape key} in bytes.\\
+\hline
+\end{DoxyParams}
+The following example computes a H\+M\+AC over a series of data blocks with a specific key\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{hash.resetHMAC(key, \textcolor{keyword}{sizeof}(key));}
+\DoxyCodeLine{hash.update(data1, \textcolor{keyword}{sizeof}(data1));}
+\DoxyCodeLine{hash.update(data2, \textcolor{keyword}{sizeof}(data2));}
+\DoxyCodeLine{...}
+\DoxyCodeLine{hash.update(dataN, \textcolor{keyword}{sizeof}(dataN));}
+\DoxyCodeLine{hash.finalizeHMAC(key, \textcolor{keyword}{sizeof}(key), hmac, \textcolor{keyword}{sizeof}(hmac));}
+\end{DoxyCode}
+
+
+The same key must be passed to both \mbox{\hyperlink{class_s_h_a1_ad0a09a5100d59ff90c04ed5d4071b606}{reset\+H\+M\+A\+C()}} and \mbox{\hyperlink{class_s_h_a1_a791db53fe9d6cc0e383b25f1da0a97b8}{finalize\+H\+M\+A\+C()}}.
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_s_h_a1_a791db53fe9d6cc0e383b25f1da0a97b8}{finalize\+H\+M\+A\+C()}}, \mbox{\hyperlink{class_s_h_a1_ab71aaf39ed956320054861a2fbfa454f}{reset()}} 
+\end{DoxySeeAlso}
+
+
+Implements \mbox{\hyperlink{class_hash_adf50359c1f525af884721cc9034e7945}{Hash}}.
+
+\mbox{\Hypertarget{class_s_h_a1_aec77fbc5015f82bbf7055e535085656a}\label{class_s_h_a1_aec77fbc5015f82bbf7055e535085656a}} 
+\index{SHA1@{SHA1}!update@{update}}
+\index{update@{update}!SHA1@{SHA1}}
+\doxysubsubsection{\texorpdfstring{update()}{update()}}
+{\footnotesize\ttfamily void S\+H\+A1\+::update (\begin{DoxyParamCaption}\item[{const void $\ast$}]{data,  }\item[{size\+\_\+t}]{len }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Updates the hash with more data. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Data to be hashed. \\
+\hline
+{\em len} & Number of bytes of data to be hashed.\\
+\hline
+\end{DoxyParams}
+If \mbox{\hyperlink{class_s_h_a1_a5a6a8a6169aa48e0bccadb22a149ab7c}{finalize()}} has already been called, then the behavior of \mbox{\hyperlink{class_s_h_a1_aec77fbc5015f82bbf7055e535085656a}{update()}} will be undefined. Call \mbox{\hyperlink{class_s_h_a1_ab71aaf39ed956320054861a2fbfa454f}{reset()}} first to start a new hashing process.
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_s_h_a1_ab71aaf39ed956320054861a2fbfa454f}{reset()}}, \mbox{\hyperlink{class_s_h_a1_a5a6a8a6169aa48e0bccadb22a149ab7c}{finalize()}} 
+\end{DoxySeeAlso}
+
+
+Implements \mbox{\hyperlink{class_hash_aec9761ee427d122e7450de8df200265c}{Hash}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/\+Crypto\+Legacy/S\+H\+A1.\+h\item 
+src/\+Crypto\+Legacy/S\+H\+A1.\+cpp\end{DoxyCompactItemize}

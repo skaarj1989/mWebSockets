@@ -1,0 +1,176 @@
+\hypertarget{class_block_cipher}{}\doxysection{Block\+Cipher Class Reference}
+\label{class_block_cipher}\index{BlockCipher@{BlockCipher}}
+
+
+Abstract base class for block ciphers.  
+
+
+
+
+{\ttfamily \#include $<$Block\+Cipher.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_block_cipher_adc3d7cba116cbea9ad017f4cded6fe2f}\label{class_block_cipher_adc3d7cba116cbea9ad017f4cded6fe2f}} 
+\mbox{\hyperlink{class_block_cipher_adc3d7cba116cbea9ad017f4cded6fe2f}{Block\+Cipher}} ()
+\begin{DoxyCompactList}\small\item\em Constructs a block cipher. \end{DoxyCompactList}\item 
+virtual \mbox{\hyperlink{class_block_cipher_acec1bc4faeaa6dda2d91bffd79a988f9}{$\sim$\+Block\+Cipher}} ()
+\begin{DoxyCompactList}\small\item\em Destroys this block cipher object. \end{DoxyCompactList}\item 
+virtual size\+\_\+t \mbox{\hyperlink{class_block_cipher_a7059a310487c128db034b0ce0ad425a0}{block\+Size}} () const =0
+\begin{DoxyCompactList}\small\item\em Size of a single block processed by this cipher, in bytes. \end{DoxyCompactList}\item 
+virtual size\+\_\+t \mbox{\hyperlink{class_block_cipher_afde6004a859e015d877eab3c37042a0f}{key\+Size}} () const =0
+\begin{DoxyCompactList}\small\item\em Default size of the key for this block cipher, in bytes. \end{DoxyCompactList}\item 
+virtual bool \mbox{\hyperlink{class_block_cipher_a9a05307664469777592799c8f77397c4}{set\+Key}} (const uint8\+\_\+t $\ast$key, size\+\_\+t len)=0
+\begin{DoxyCompactList}\small\item\em Sets the key to use for future encryption and decryption operations. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_block_cipher_aed0788b25f6bb2f1bd47d5a5f0c5db33}{encrypt\+Block}} (uint8\+\_\+t $\ast$output, const uint8\+\_\+t $\ast$input)=0
+\begin{DoxyCompactList}\small\item\em Encrypts a single block using this cipher. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_block_cipher_ac3ba2450222aa1ea804ae4881ab6440c}{decrypt\+Block}} (uint8\+\_\+t $\ast$output, const uint8\+\_\+t $\ast$input)=0
+\begin{DoxyCompactList}\small\item\em Decrypts a single block using this cipher. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_block_cipher_a6f27d46e9dfa7761d014d828ad5f955b}{clear}} ()=0
+\begin{DoxyCompactList}\small\item\em Clears all security-\/sensitive state from this block cipher. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Abstract base class for block ciphers. 
+
+Block ciphers always operate in electronic codebook (E\+CB) mode. Higher-\/level classes such as C\+F\+B128 and C\+T\+R128 wrap the block cipher to create more useful classes for encryption and decryption of bulk data.
+
+References\+: \href{http://en.wikipedia.org/wiki/Block_cipher,}{\texttt{ http\+://en.\+wikipedia.\+org/wiki/\+Block\+\_\+cipher,}} \href{http://en.wikipedia.org/wiki/Block_cipher_modes_of_operation\#Electronic_codebook_.28ECB.29}{\texttt{ http\+://en.\+wikipedia.\+org/wiki/\+Block\+\_\+cipher\+\_\+modes\+\_\+of\+\_\+operation\#\+Electronic\+\_\+codebook\+\_\+.\+28\+E\+C\+B.\+29}} 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_block_cipher_acec1bc4faeaa6dda2d91bffd79a988f9}\label{class_block_cipher_acec1bc4faeaa6dda2d91bffd79a988f9}} 
+\index{BlockCipher@{BlockCipher}!````~BlockCipher@{$\sim$BlockCipher}}
+\index{````~BlockCipher@{$\sim$BlockCipher}!BlockCipher@{BlockCipher}}
+\doxysubsubsection{\texorpdfstring{$\sim$BlockCipher()}{~BlockCipher()}}
+{\footnotesize\ttfamily Block\+Cipher\+::$\sim$\+Block\+Cipher (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Destroys this block cipher object. 
+
+Subclasses are responsible for clearing temporary key schedules and other buffers so as to avoid leaking sensitive information.
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_block_cipher_a6f27d46e9dfa7761d014d828ad5f955b}{clear()}} 
+\end{DoxySeeAlso}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_block_cipher_a7059a310487c128db034b0ce0ad425a0}\label{class_block_cipher_a7059a310487c128db034b0ce0ad425a0}} 
+\index{BlockCipher@{BlockCipher}!blockSize@{blockSize}}
+\index{blockSize@{blockSize}!BlockCipher@{BlockCipher}}
+\doxysubsubsection{\texorpdfstring{blockSize()}{blockSize()}}
+{\footnotesize\ttfamily size\+\_\+t Block\+Cipher\+::block\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Size of a single block processed by this cipher, in bytes. 
+
+\begin{DoxyReturn}{Returns}
+Returns the size of a block in bytes.
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_block_cipher_afde6004a859e015d877eab3c37042a0f}{key\+Size()}}, \mbox{\hyperlink{class_block_cipher_aed0788b25f6bb2f1bd47d5a5f0c5db33}{encrypt\+Block()}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{class_block_cipher_a6f27d46e9dfa7761d014d828ad5f955b}\label{class_block_cipher_a6f27d46e9dfa7761d014d828ad5f955b}} 
+\index{BlockCipher@{BlockCipher}!clear@{clear}}
+\index{clear@{clear}!BlockCipher@{BlockCipher}}
+\doxysubsubsection{\texorpdfstring{clear()}{clear()}}
+{\footnotesize\ttfamily void Block\+Cipher\+::clear (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Clears all security-\/sensitive state from this block cipher. 
+
+Security-\/sensitive information includes key schedules and any temporary state that is used by \mbox{\hyperlink{class_block_cipher_aed0788b25f6bb2f1bd47d5a5f0c5db33}{encrypt\+Block()}} or \mbox{\hyperlink{class_block_cipher_ac3ba2450222aa1ea804ae4881ab6440c}{decrypt\+Block()}} which is stored in the object itself.
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_block_cipher_a9a05307664469777592799c8f77397c4}{set\+Key()}}, \mbox{\hyperlink{class_block_cipher_aed0788b25f6bb2f1bd47d5a5f0c5db33}{encrypt\+Block()}}, \mbox{\hyperlink{class_block_cipher_ac3ba2450222aa1ea804ae4881ab6440c}{decrypt\+Block()}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{class_block_cipher_ac3ba2450222aa1ea804ae4881ab6440c}\label{class_block_cipher_ac3ba2450222aa1ea804ae4881ab6440c}} 
+\index{BlockCipher@{BlockCipher}!decryptBlock@{decryptBlock}}
+\index{decryptBlock@{decryptBlock}!BlockCipher@{BlockCipher}}
+\doxysubsubsection{\texorpdfstring{decryptBlock()}{decryptBlock()}}
+{\footnotesize\ttfamily void Block\+Cipher\+::decrypt\+Block (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{output,  }\item[{const uint8\+\_\+t $\ast$}]{input }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Decrypts a single block using this cipher. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em output} & The output buffer to put the plaintext into. Must be at least \mbox{\hyperlink{class_block_cipher_a7059a310487c128db034b0ce0ad425a0}{block\+Size()}} bytes in length. \\
+\hline
+{\em input} & The input buffer to read the ciphertext from which is allowed to overlap with {\itshape output}. Must be at least \mbox{\hyperlink{class_block_cipher_a7059a310487c128db034b0ce0ad425a0}{block\+Size()}} bytes in length.\\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_block_cipher_aed0788b25f6bb2f1bd47d5a5f0c5db33}{encrypt\+Block()}}, \mbox{\hyperlink{class_block_cipher_a7059a310487c128db034b0ce0ad425a0}{block\+Size()}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{class_block_cipher_aed0788b25f6bb2f1bd47d5a5f0c5db33}\label{class_block_cipher_aed0788b25f6bb2f1bd47d5a5f0c5db33}} 
+\index{BlockCipher@{BlockCipher}!encryptBlock@{encryptBlock}}
+\index{encryptBlock@{encryptBlock}!BlockCipher@{BlockCipher}}
+\doxysubsubsection{\texorpdfstring{encryptBlock()}{encryptBlock()}}
+{\footnotesize\ttfamily void Block\+Cipher\+::encrypt\+Block (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{output,  }\item[{const uint8\+\_\+t $\ast$}]{input }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Encrypts a single block using this cipher. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em output} & The output buffer to put the ciphertext into. Must be at least \mbox{\hyperlink{class_block_cipher_a7059a310487c128db034b0ce0ad425a0}{block\+Size()}} bytes in length. \\
+\hline
+{\em input} & The input buffer to read the plaintext from which is allowed to overlap with {\itshape output}. Must be at least \mbox{\hyperlink{class_block_cipher_a7059a310487c128db034b0ce0ad425a0}{block\+Size()}} bytes in length.\\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_block_cipher_ac3ba2450222aa1ea804ae4881ab6440c}{decrypt\+Block()}}, \mbox{\hyperlink{class_block_cipher_a7059a310487c128db034b0ce0ad425a0}{block\+Size()}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{class_block_cipher_afde6004a859e015d877eab3c37042a0f}\label{class_block_cipher_afde6004a859e015d877eab3c37042a0f}} 
+\index{BlockCipher@{BlockCipher}!keySize@{keySize}}
+\index{keySize@{keySize}!BlockCipher@{BlockCipher}}
+\doxysubsubsection{\texorpdfstring{keySize()}{keySize()}}
+{\footnotesize\ttfamily size\+\_\+t Block\+Cipher\+::key\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Default size of the key for this block cipher, in bytes. 
+
+This value indicates the default, or recommended, size for the key.
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_block_cipher_a9a05307664469777592799c8f77397c4}{set\+Key()}}, \mbox{\hyperlink{class_block_cipher_a7059a310487c128db034b0ce0ad425a0}{block\+Size()}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{class_block_cipher_a9a05307664469777592799c8f77397c4}\label{class_block_cipher_a9a05307664469777592799c8f77397c4}} 
+\index{BlockCipher@{BlockCipher}!setKey@{setKey}}
+\index{setKey@{setKey}!BlockCipher@{BlockCipher}}
+\doxysubsubsection{\texorpdfstring{setKey()}{setKey()}}
+{\footnotesize\ttfamily bool Block\+Cipher\+::set\+Key (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t $\ast$}]{key,  }\item[{size\+\_\+t}]{len }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Sets the key to use for future encryption and decryption operations. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em key} & The key to use. \\
+\hline
+{\em len} & The length of the key. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Returns false if the key length is not supported, or the key is somehow \char`\"{}weak\char`\"{} and unusable by this cipher.
+\end{DoxyReturn}
+Use \mbox{\hyperlink{class_block_cipher_a6f27d46e9dfa7761d014d828ad5f955b}{clear()}} or the destructor to remove the key and any other sensitive data from the object once encryption or decryption is complete.
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{class_block_cipher_afde6004a859e015d877eab3c37042a0f}{key\+Size()}}, \mbox{\hyperlink{class_block_cipher_a6f27d46e9dfa7761d014d828ad5f955b}{clear()}} 
+\end{DoxySeeAlso}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/\+Crypto\+Legacy/Block\+Cipher.\+h\item 
+src/\+Crypto\+Legacy/Block\+Cipher.\+cpp\end{DoxyCompactItemize}

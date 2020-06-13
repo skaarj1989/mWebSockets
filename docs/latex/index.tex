@@ -1,0 +1,319 @@
+\href{https://www.ardu-badge.com/mWebSockets}{\texttt{ }} \href{https://travis-ci.org/skaarj1989/mWebSockets}{\texttt{ }} \href{https://www.codefactor.io/repository/github/skaarj1989/mwebsockets/overview/master}{\texttt{ }}  
+
+Simple to use implementation of Web\+Sockets for microcontrollers.
+
+{\bfseries{List of supported I\+D\+Es\+:}}
+\begin{DoxyItemize}
+\item \href{https://www.arduino.cc/en/Main/Software}{\texttt{ Arduino}}
+\item Visual Studio Code with \href{https://platformio.org/}{\texttt{ Platformio}}
+\item Microsoft Visual Studio with \href{https://www.visualmicro.com/}{\texttt{ Visual Micro}}
+\end{DoxyItemize}
+
+{\bfseries{List of supported M\+C\+Us\+:}}
+\begin{DoxyItemize}
+\item A\+Tmega328P
+\item A\+Tmega2560
+\item A\+RM Cortex M0
+\item E\+S\+P8266
+\item S\+T\+M32
+\end{DoxyItemize}
+
+{\bfseries{Web\+Socket\+Server compatible browsers\+:}}
+\begin{DoxyItemize}
+\item Chrome
+\item Edge
+\item Firefox
+\end{DoxyItemize}
+
+The {\bfseries{Autobahn}}$\vert$\+Testsuite reports for \href{https://skaarj1989.github.io/mWebSockets/autobahn-testsuite/servers/index.html}{\texttt{ server}} and \href{https://skaarj1989.github.io/mWebSockets/autobahn-testsuite/clients/index.html}{\texttt{ client}}
+
+Some tests will never pass just because of memory lack in A\+Tmega family.\hypertarget{index_autotoc_md1}{}\doxysection{Table of contents}\label{index_autotoc_md1}
+
+\begin{DoxyItemize}
+\item \href{\#requirements}{\texttt{ Requirements}}
+\item \href{\#installation}{\texttt{ Installation}}
+\begin{DoxyItemize}
+\item \href{\#configh}{\texttt{ config.\+h}}
+\item \href{\#physical-connection}{\texttt{ Physical connection}}
+\end{DoxyItemize}
+\item \href{\#usage-examples}{\texttt{ Usage examples}}
+\begin{DoxyItemize}
+\item \href{\#server}{\texttt{ Server}}
+\item \href{\#client}{\texttt{ Client}}
+\item \href{\#chat}{\texttt{ Chat}}
+\end{DoxyItemize}
+\item \href{\#approx-memory-usage}{\texttt{ Approx memory usage}}
+\item \href{\#known-issues}{\texttt{ Known issues}}
+\item \href{\#license}{\texttt{ License}}
+\end{DoxyItemize}\hypertarget{index_autotoc_md2}{}\doxysection{Requirements}\label{index_autotoc_md2}
+
+\begin{DoxyItemize}
+\item Development board (confirmed working, other boards may or may not work)\+:
+\begin{DoxyItemize}
+\item Arduino Uno (A\+Tmega328P)
+\item Arduino Pro Mini (A\+Tmega328P)
+\item Arduino Mega2560
+\item Arduino Zero / S\+A\+M\+D21 M0 (A\+RM Cortex M0)
+\item We\+Mos D1 mini (E\+S\+P8266)
+\item Node\+M\+CU v3 (E\+S\+P8266)
+\end{DoxyItemize}
+\item Ethernet module or shield (confirmed working)\+:
+\begin{DoxyItemize}
+\item Arduino Ethernet Shield (W5100)
+\item Arduino Ethernet Shield 2 (W5500)
+\item Wiz\+Net W5500 module
+\item E\+N\+C28j60
+\end{DoxyItemize}
+\item Libraries\+:
+\begin{DoxyItemize}
+\item U\+I\+P\+Ethernet \href{https://github.com/ntruchsess/arduino_uip}{\texttt{ \#1}} or \href{https://github.com/UIPEthernet/UIPEthernet}{\texttt{ \#2}} (the choice is yours) if you decide to use E\+N\+C28j60
+\end{DoxyItemize}
+\end{DoxyItemize}\hypertarget{index_autotoc_md3}{}\doxysection{Installation}\label{index_autotoc_md3}
+Use \href{https://www.ardu-badge.com/mWebSockets}{\texttt{ Arduino Download Manager}} or follow \href{https://www.arduino.cc/en/Guide/Libraries}{\texttt{ this}} guide.\hypertarget{index_autotoc_md4}{}\doxysubsection{config.\+h}\label{index_autotoc_md4}
+Change below definition if you use a different controller\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{...}
+\DoxyCodeLine{}
+\DoxyCodeLine{\#define \mbox{\hyperlink{config_8h_a996062b053619fb77a9df7ffdc7fcc26}{NETWORK\_CONTROLLER}} ETHERNET\_CONTROLLER\_W5X00}
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{ETHERNET\_CONTROLLER\_W5X00}
+\DoxyCodeLine{ETHERNET\_CONTROLLER\_ENC28J60}
+\DoxyCodeLine{NETWORK\_CONTROLLER\_WIFI}
+\end{DoxyCode}
+
+
+{\ttfamily E\+T\+H\+E\+R\+N\+E\+T\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+W5\+X00} stands for official Arduino Ethernet library.
+
+Uncomment these if you want additional informations in serial monitor\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{//\#define \_DEBUG}}
+\DoxyCodeLine{\textcolor{comment}{//\#define \_DUMP\_HANDSHAKE}}
+\DoxyCodeLine{\textcolor{comment}{//\#define \_DUMP\_FRAME\_DATA}}
+\DoxyCodeLine{\textcolor{comment}{//\#define \_DUMP\_HEADER}}
+\end{DoxyCode}
+
+
+Increase below value if you expect big data frames (or decrease for devices with small amount of memory)
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{constexpr uint16\_t \mbox{\hyperlink{config_8h_a111f6eed4eba64d4e00f143ed1bdd286}{kBufferMaxSize}} = 256;}
+\end{DoxyCode}
+\hypertarget{index_autotoc_md5}{}\doxysubsection{Physical connection}\label{index_autotoc_md5}
+If you have {\bfseries{We\+Mos D1}} in size of {\bfseries{Arduino Uno}} simply attaching shield does not work, you have to wire {\bfseries{I\+C\+SP}} on {\bfseries{Ethernet Shield}} to proper pins.
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{6}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Ethernet Shield ~\newline
+ W5100/\+W5500 }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Arduino Uno / ~\newline
+ Mega2560 }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Arduino ~\newline
+ Pro Mini }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Arduino Zero }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ We\+Mos D1 }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ S\+T\+M32 ~\newline
+ \char`\"{}\+Blue Pill\char`\"{}  }\\\cline{1-6}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Ethernet Shield ~\newline
+ W5100/\+W5500 }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Arduino Uno / ~\newline
+ Mega2560 }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Arduino ~\newline
+ Pro Mini }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Arduino Zero }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ We\+Mos D1 }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ S\+T\+M32 ~\newline
+ \char`\"{}\+Blue Pill\char`\"{}  }\\\cline{1-6}
+\endhead
+\PBS\centering (I\+C\+SP) M\+I\+SO &\PBS\centering (I\+C\+SP) M\+I\+SO &\PBS\centering P\+IN 12 &\PBS\centering (I\+C\+SP) M\+I\+SO &\PBS\centering D12 / M\+I\+SO &\PBS\centering A6  \\\cline{1-6}
+\PBS\centering (I\+C\+SP) M\+O\+SI &\PBS\centering (I\+C\+SP) M\+O\+SI &\PBS\centering P\+IN 11 &\PBS\centering (I\+C\+SP) M\+O\+SI &\PBS\centering D11 / M\+O\+SI &\PBS\centering A7  \\\cline{1-6}
+\PBS\centering (I\+C\+SP) S\+CK &\PBS\centering (I\+C\+SP) S\+CK &\PBS\centering P\+IN 13 &\PBS\centering (I\+C\+SP) S\+CK &\PBS\centering D13 / S\+CK &\PBS\centering A5  \\\cline{1-6}
+\PBS\centering (SS) P\+IN 10 &\PBS\centering P\+IN 10 &\PBS\centering P\+IN 10 &\PBS\centering P\+IN 10 &\PBS\centering D10 / SS &\PBS\centering A4  \\\cline{1-6}
+\end{longtabu}
+
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{3}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ W5500 / ~\newline
+ E\+N\+C28j60 }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Arduino Uno / ~\newline
+ Pro Mini }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Arduino ~\newline
+ Mega2560  }\\\cline{1-3}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ W5500 / ~\newline
+ E\+N\+C28j60 }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Arduino Uno / ~\newline
+ Pro Mini }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Arduino ~\newline
+ Mega2560  }\\\cline{1-3}
+\endhead
+\PBS\centering M\+I\+SO &\PBS\centering P\+IN 12 &\PBS\centering P\+IN 50  \\\cline{1-3}
+\PBS\centering M\+O\+SI &\PBS\centering P\+IN 11 &\PBS\centering P\+IN 51  \\\cline{1-3}
+\PBS\centering S\+CS &\PBS\centering P\+IN 10 &\PBS\centering P\+IN 53  \\\cline{1-3}
+\PBS\centering S\+C\+LK &\PBS\centering P\+IN 13 &\PBS\centering P\+IN 52  \\\cline{1-3}
+\end{longtabu}
+\hypertarget{index_autotoc_md6}{}\doxysection{Usage examples}\label{index_autotoc_md6}
+\hypertarget{index_autotoc_md7}{}\doxysubsection{Server}\label{index_autotoc_md7}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <\mbox{\hyperlink{_web_socket_server_8h}{WebSocketServer.h}}>}}
+\DoxyCodeLine{\textcolor{keyword}{using namespace }net;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\mbox{\hyperlink{classnet_1_1_web_socket_server}{WebSocketServer}} server(3000);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void} setup() \{}
+\DoxyCodeLine{  \textcolor{comment}{// Ethernet/WiFi initialization goes here ...}}
+\DoxyCodeLine{  \textcolor{comment}{// ...}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  server.onConnection([](\mbox{\hyperlink{classnet_1_1_web_socket}{WebSocket}} \&ws) \{}
+\DoxyCodeLine{    \textcolor{keyword}{const} \textcolor{keywordtype}{char} message[]\{ \textcolor{stringliteral}{"Hello from Arduino server!"} \};}
+\DoxyCodeLine{    ws.\mbox{\hyperlink{classnet_1_1_web_socket_a7971abf4be4ed0f540f1ccc50c36c021}{send}}(message, strlen(message));}
+\DoxyCodeLine{}
+\DoxyCodeLine{    ws.\mbox{\hyperlink{classnet_1_1_web_socket_ab0386484ae3d772db9b4a5f8ca57162b}{onClose}}([](\mbox{\hyperlink{classnet_1_1_web_socket}{WebSocket}} \&ws, \textcolor{keyword}{const} \mbox{\hyperlink{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893f}{WebSocket::CloseCode}} \&code,}
+\DoxyCodeLine{                 \textcolor{keyword}{const} \textcolor{keywordtype}{char} *reason, uint16\_t length) \{}
+\DoxyCodeLine{      \textcolor{comment}{// ...}}
+\DoxyCodeLine{    \});}
+\DoxyCodeLine{    ws.\mbox{\hyperlink{classnet_1_1_web_socket_a531e5ce8d7f930b1fe5b498fc51a8b91}{onMessage}}([](\mbox{\hyperlink{classnet_1_1_web_socket}{WebSocket}} \&ws, \textcolor{keyword}{const} \mbox{\hyperlink{classnet_1_1_web_socket_a3cfccdbf394baf6ba239174a6a50be5d}{WebSocket::DataType}} \&dataType,}
+\DoxyCodeLine{                   \textcolor{keyword}{const} \textcolor{keywordtype}{char} *message, uint16\_t length) \{}
+\DoxyCodeLine{      \textcolor{comment}{// ...}}
+\DoxyCodeLine{    \});}
+\DoxyCodeLine{  \});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  server.begin();}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void} loop() \{}
+\DoxyCodeLine{  server.listen();}
+\DoxyCodeLine{\}}
+\end{DoxyCode}
+\hypertarget{index_autotoc_md8}{}\doxysubsubsection{Verify clients}\label{index_autotoc_md8}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{void} setup() \{}
+\DoxyCodeLine{  \textcolor{comment}{// ...}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// verifyClient callback is called for every header during handshake}}
+\DoxyCodeLine{  \textcolor{comment}{// (except for those required by protocol, like "Connection", "Upgrade" etc.)}}
+\DoxyCodeLine{  server.begin([](\textcolor{keyword}{const} IPAddress \&ip, \textcolor{keyword}{const} \textcolor{keywordtype}{char} *header, \textcolor{keyword}{const} \textcolor{keywordtype}{char} *value) \{}
+\DoxyCodeLine{    \textcolor{comment}{// verify ip ...}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// verify "Origin" header:}}
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (strcmp\_P(header, (PGM\_P)F(\textcolor{stringliteral}{"Origin"})) == 0)}
+\DoxyCodeLine{      \textcolor{keywordflow}{if} (strcmp\_P(value, (PGM\_P)F(\textcolor{stringliteral}{"file://"})) == 0) \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{  \});}
+\DoxyCodeLine{\}}
+\end{DoxyCode}
+\hypertarget{index_autotoc_md9}{}\doxyparagraph{Node.\+js server examples $<$a href=\char`\"{}node.\+js\char`\"{}$>$here$<$/a$>$}\label{index_autotoc_md9}
+\hypertarget{index_autotoc_md10}{}\doxysubsection{Client}\label{index_autotoc_md10}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <\mbox{\hyperlink{_web_socket_client_8h}{WebSocketClient.h}}>}}
+\DoxyCodeLine{\textcolor{keyword}{using namespace }net;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\mbox{\hyperlink{classnet_1_1_web_socket_client}{WebSocketClient}} client;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void} setup() \{}
+\DoxyCodeLine{  \textcolor{comment}{// Ethernet/WiFi initialization goes here ...}}
+\DoxyCodeLine{  \textcolor{comment}{// ...}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  client.\mbox{\hyperlink{classnet_1_1_web_socket_client_a44e4ca1a512d5393f06b4c6d2b65234e}{onOpen}}([](\mbox{\hyperlink{classnet_1_1_web_socket}{WebSocket}} \&ws) \{}
+\DoxyCodeLine{    \textcolor{keyword}{const} \textcolor{keywordtype}{char} message[]\{ \textcolor{stringliteral}{"Hello from Arduino client!"} \};}
+\DoxyCodeLine{    ws.\mbox{\hyperlink{classnet_1_1_web_socket_a7971abf4be4ed0f540f1ccc50c36c021}{send}}(message, strlen(message));}
+\DoxyCodeLine{  \});}
+\DoxyCodeLine{  client.\mbox{\hyperlink{classnet_1_1_web_socket_ab0386484ae3d772db9b4a5f8ca57162b}{onClose}}([](\mbox{\hyperlink{classnet_1_1_web_socket}{WebSocket}} \&ws, \textcolor{keyword}{const} \mbox{\hyperlink{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893f}{WebSocket::CloseCode}} \&code,}
+\DoxyCodeLine{                   \textcolor{keyword}{const} \textcolor{keywordtype}{char} *reason, uint16\_t length) \{}
+\DoxyCodeLine{    \textcolor{comment}{// ...}}
+\DoxyCodeLine{  \});}
+\DoxyCodeLine{  client.\mbox{\hyperlink{classnet_1_1_web_socket_a531e5ce8d7f930b1fe5b498fc51a8b91}{onMessage}}([](\mbox{\hyperlink{classnet_1_1_web_socket}{WebSocket}} \&ws, \textcolor{keyword}{const} \mbox{\hyperlink{classnet_1_1_web_socket_a3cfccdbf394baf6ba239174a6a50be5d}{WebSocket::DataType}} \&dataType,}
+\DoxyCodeLine{                     \textcolor{keyword}{const} \textcolor{keywordtype}{char} *message, uint16\_t length) \{}
+\DoxyCodeLine{    \textcolor{comment}{// ...}}
+\DoxyCodeLine{  \});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  client.\mbox{\hyperlink{classnet_1_1_web_socket_client_a7158282129f28d883acbe5814ffa3eb7}{open}}(\textcolor{stringliteral}{"echo.websocket.org"}, 80);}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void} loop() \{}
+\DoxyCodeLine{  client.\mbox{\hyperlink{classnet_1_1_web_socket_client_a54870cf72e296a80ee9d3ca94d1d07e3}{listen}}();}
+\DoxyCodeLine{\}}
+\end{DoxyCode}
+\hypertarget{index_autotoc_md11}{}\doxysubsection{Chat}\label{index_autotoc_md11}
+Following screenshots shows Rasperry Pi server, browser client and Arduino client in action\+:
+
+\doxysubparagraph*{Node.\+js server on Raspberry Pi (/node.js/chat.\+js)}
+
+$<$img src=\href{https://github.com/skaarj1989/ArduinoWebSocketClient/blob/gh-pages/images/rpi-nodejs.png?raw=true}{\texttt{ https\+://github.\+com/skaarj1989/\+Arduino\+Web\+Socket\+Client/blob/gh-\/pages/images/rpi-\/nodejs.\+png?raw=true}}"$>$ 
+
+\doxysubparagraph*{Browser client (/node.js/chat-\/client.\+htm)}
+
+$<$img src=\href{https://github.com/skaarj1989/ArduinoWebSocketClient/blob/gh-pages/images/browser-client.PNG?raw=true}{\texttt{ https\+://github.\+com/skaarj1989/\+Arduino\+Web\+Socket\+Client/blob/gh-\/pages/images/browser-\/client.\+P\+N\+G?raw=true}}"$>$ 
+
+\doxysubparagraph*{Arduino Uno client (/examples/chat/chat.ino)}
+
+$<$img src=\href{https://github.com/skaarj1989/ArduinoWebSocketClient/blob/gh-pages/images/arduino-serial-monitor.png?raw=true}{\texttt{ https\+://github.\+com/skaarj1989/\+Arduino\+Web\+Socket\+Client/blob/gh-\/pages/images/arduino-\/serial-\/monitor.\+png?raw=true}}"$>$ \hypertarget{index_autotoc_md12}{}\doxyparagraph{More examples \mbox{[}here\mbox{]}(examples)}\label{index_autotoc_md12}
+\hypertarget{index_autotoc_md13}{}\doxysection{Approx memory usage}\label{index_autotoc_md13}
+\doxysubparagraph*{$\ast$simple-\/client.ino example (without debug output, 128 bytes data buffer)}\hypertarget{index_autotoc_md14}{}\doxysubsection{Ethernet.\+h (\+W5100 and W5500)}\label{index_autotoc_md14}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{3}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Board }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Program space }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Dynamic memory  }\\\cline{1-3}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Board }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Program space }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Dynamic memory  }\\\cline{1-3}
+\endhead
+\PBS\centering Arduino Uno &\PBS\centering 25 114 bytes (78\%) &\PBS\centering 917 bytes (45\%)  \\\cline{1-3}
+\PBS\centering Arduino Mega2560 &\PBS\centering 25 310 bytes (10\%) &\PBS\centering 945 bytes (12\%)  \\\cline{1-3}
+\PBS\centering Arduino Pro Mini &\PBS\centering 25 114 bytes (82\%) &\PBS\centering 917 bytes (45\%)  \\\cline{1-3}
+\PBS\centering Arduino Zero &\PBS\centering 31 128 bytes (12\%) &\PBS\centering 3 924 bytes  \\\cline{1-3}
+\end{longtabu}
+\hypertarget{index_autotoc_md15}{}\doxysubsection{U\+I\+P\+Ethernet.\+h (\+E\+N\+C28j60)}\label{index_autotoc_md15}
+\+:warning\+: {\bfseries{This library is incompatibile with Arduino Zero!}} \+:warning\+:
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{3}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Board }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Program space }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Dynamic memory  }\\\cline{1-3}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Board }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Program space }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Dynamic memory  }\\\cline{1-3}
+\endhead
+\PBS\centering Arduino Uno &\PBS\centering 30 208 bytes (93\%) &\PBS\centering 1 519 bytes (74\%)  \\\cline{1-3}
+\PBS\centering Arduino Mega2560 &\PBS\centering 30 356 bytes (11\%) &\PBS\centering 1 519 bytes (18\%)  \\\cline{1-3}
+\PBS\centering Arduino Pro Mini &\PBS\centering 30 208 bytes (98\%) &\PBS\centering 1 519 bytes (74\%)  \\\cline{1-3}
+\end{longtabu}
+\hypertarget{index_autotoc_md16}{}\doxysubsection{Wi\+Fi}\label{index_autotoc_md16}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{3}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Board }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Program space }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Dynamic memory  }\\\cline{1-3}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Board }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Program space }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Dynamic memory  }\\\cline{1-3}
+\endhead
+\PBS\centering Generic E\+S\+P8266 &\PBS\centering 286 916 bytes (30\%) &\PBS\centering 27 556 bytes (34\%)  \\\cline{1-3}
+\PBS\centering We\+Mos D1 mini &\PBS\centering 286 916 bytes (27\%) &\PBS\centering 27 556 bytes (34\%)  \\\cline{1-3}
+\PBS\centering Node\+M\+CU &\PBS\centering 286 916 bytes (27\%) &\PBS\centering 27 556 (33\%)  \\\cline{1-3}
+\end{longtabu}
+\hypertarget{index_autotoc_md17}{}\doxysection{Known issues}\label{index_autotoc_md17}
+
+\begin{DoxyEnumerate}
+\item E\+N\+C28j60 is slow, eats much more memory than W5100/\+W5500 and hangs on {\ttfamily available()} function
+\end{DoxyEnumerate}\hypertarget{index_autotoc_md18}{}\doxysection{License}\label{index_autotoc_md18}
+
+\begin{DoxyItemize}
+\item This project is licensed under the M\+IT License -\/ see the \mbox{[}L\+I\+C\+E\+N\+SE\mbox{]}(L\+I\+C\+E\+N\+SE) file for details
+\item \href{https://github.com/adamvr/arduino-base64}{\texttt{ arduino-\/base64}} licensed under licensed under M\+IT License
+\item \href{https://github.com/rweather/arduinolibs}{\texttt{ arduinolibs}} licensed under M\+IT
+\item \href{https://www.cl.cam.ac.uk/~mgk25/ucs/utf8_check.c}{\texttt{ utf8\+\_\+check}} licensed under M\+IT 
+\end{DoxyItemize}

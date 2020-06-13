@@ -1,0 +1,90 @@
+\hypertarget{_web_socket_8h}{}\doxysection{src/\+Web\+Socket.h File Reference}
+\label{_web_socket_8h}\index{src/WebSocket.h@{src/WebSocket.h}}
+{\ttfamily \#include \char`\"{}utility.\+h\char`\"{}}\newline
+Include dependency graph for Web\+Socket.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=278pt]{_web_socket_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=334pt]{_web_socket_8h__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classnet_1_1_web_socket}{net\+::\+Web\+Socket}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{_web_socket_8h_a9bee059cc1939cd3530562b73d88a8cf}{net\+::\+Web\+Socket\+Error}} \{ \newline
+{\bfseries N\+O\+\_\+\+E\+R\+R\+OR}, 
+{\bfseries C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+E\+R\+R\+OR}, 
+{\bfseries C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+R\+E\+F\+U\+S\+ED}, 
+{\bfseries B\+A\+D\+\_\+\+R\+E\+Q\+U\+E\+ST} = 400, 
+\newline
+{\bfseries R\+E\+Q\+U\+E\+S\+T\+\_\+\+T\+I\+M\+E\+O\+UT} = 408, 
+{\bfseries U\+P\+G\+R\+A\+D\+E\+\_\+\+R\+E\+Q\+U\+I\+R\+ED} = 426, 
+{\bfseries I\+N\+T\+E\+R\+N\+A\+L\+\_\+\+S\+E\+R\+V\+E\+R\+\_\+\+E\+R\+R\+OR} = 500, 
+{\bfseries N\+O\+T\+\_\+\+I\+M\+P\+L\+E\+M\+E\+N\+T\+ED} = 501, 
+\newline
+{\bfseries S\+E\+R\+V\+I\+C\+E\+\_\+\+U\+N\+A\+V\+A\+I\+L\+A\+B\+LE} = 503
+ \}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void {\bfseries net\+::generate\+Sec\+Key} (char output\mbox{[}$\,$\mbox{]})
+\begin{DoxyCompactList}\small\item\em Generates Sec-\/\+Web\+Socket-\/\+Key value. \end{DoxyCompactList}\item 
+void {\bfseries net\+::encode\+Sec\+Key} (char output\mbox{[}$\,$\mbox{]}, const char $\ast$key)
+\begin{DoxyCompactList}\small\item\em Generates Sec-\/\+Web\+Socket-\/\+Accept value. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{_web_socket_8h_a9bee059cc1939cd3530562b73d88a8cf}\label{_web_socket_8h_a9bee059cc1939cd3530562b73d88a8cf}} 
+\index{WebSocket.h@{WebSocket.h}!WebSocketError@{WebSocketError}}
+\index{WebSocketError@{WebSocketError}!WebSocket.h@{WebSocket.h}}
+\doxysubsubsection{\texorpdfstring{WebSocketError}{WebSocketError}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{_web_socket_8h_a9bee059cc1939cd3530562b73d88a8cf}{net\+::\+Web\+Socket\+Error}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+Error codes. 
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{_web_socket_8cpp_abd6932d95cb14859cbdca50cc78cbd16}\label{_web_socket_8cpp_abd6932d95cb14859cbdca50cc78cbd16}} 
+\index{WebSocket.h@{WebSocket.h}!encodeSecKey@{encodeSecKey}}
+\index{encodeSecKey@{encodeSecKey}!WebSocket.h@{WebSocket.h}}
+\doxysubsubsection{\texorpdfstring{encodeSecKey()}{encodeSecKey()}}
+{\footnotesize\ttfamily void net\+::encode\+Sec\+Key (\begin{DoxyParamCaption}\item[{char}]{output\mbox{[}$\,$\mbox{]},  }\item[{const char $\ast$}]{key }\end{DoxyParamCaption})}
+
+
+
+Generates Sec-\/\+Web\+Socket-\/\+Accept value. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}output\mbox{]}} & Array of at least 28 elements. \\
+\hline
+{\em \mbox{[}key\mbox{]}} & Key to encode \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{_web_socket_8cpp_a9ada621b29db4b724525518173e6a8b1}\label{_web_socket_8cpp_a9ada621b29db4b724525518173e6a8b1}} 
+\index{WebSocket.h@{WebSocket.h}!generateSecKey@{generateSecKey}}
+\index{generateSecKey@{generateSecKey}!WebSocket.h@{WebSocket.h}}
+\doxysubsubsection{\texorpdfstring{generateSecKey()}{generateSecKey()}}
+{\footnotesize\ttfamily void net\+::generate\+Sec\+Key (\begin{DoxyParamCaption}\item[{char}]{output\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
+
+
+
+Generates Sec-\/\+Web\+Socket-\/\+Key value. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}output\mbox{]}} & Array of at least 24 elements. \\
+\hline
+\end{DoxyParams}

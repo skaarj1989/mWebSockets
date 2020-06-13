@@ -1,0 +1,448 @@
+\hypertarget{classnet_1_1_web_socket}{}\doxysection{net\+::Web\+Socket Class Reference}
+\label{classnet_1_1_web_socket}\index{net::WebSocket@{net::WebSocket}}
+
+
+{\ttfamily \#include $<$Web\+Socket.\+h$>$}
+
+
+
+Inheritance diagram for net\+::Web\+Socket\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=192pt]{classnet_1_1_web_socket__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for net\+::Web\+Socket\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=241pt]{classnet_1_1_web_socket__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{classnet_1_1_web_socket_ad1a5fb575c421fd4bd8368d75bf5e25b}{Ready\+State}} \+: int8\+\_\+t \{ {\bfseries C\+O\+N\+N\+E\+C\+T\+I\+NG} = 0, 
+{\bfseries O\+P\+EN}, 
+{\bfseries C\+L\+O\+S\+I\+NG}, 
+{\bfseries C\+L\+O\+S\+ED}
+ \}
+\item 
+enum \mbox{\hyperlink{classnet_1_1_web_socket_a3cfccdbf394baf6ba239174a6a50be5d}{Data\+Type}} \+: int8\+\_\+t \{ {\bfseries T\+E\+XT}, 
+{\bfseries B\+I\+N\+A\+RY}
+ \}
+\item 
+enum \mbox{\hyperlink{classnet_1_1_web_socket_ac1885f8dbcd9a2e1818fc54e1849b8a2}{Opcode}} \{ \newline
+{\bfseries C\+O\+N\+T\+I\+N\+U\+A\+T\+I\+O\+N\+\_\+\+F\+R\+A\+ME} = 0x00, 
+{\bfseries T\+E\+X\+T\+\_\+\+F\+R\+A\+ME} = 0x01, 
+{\bfseries B\+I\+N\+A\+R\+Y\+\_\+\+F\+R\+A\+ME} = 0x02, 
+{\bfseries C\+O\+N\+N\+E\+C\+T\+I\+O\+N\+\_\+\+C\+L\+O\+S\+E\+\_\+\+F\+R\+A\+ME} = 0x08, 
+\newline
+{\bfseries P\+I\+N\+G\+\_\+\+F\+R\+A\+ME} = 0x09, 
+{\bfseries P\+O\+N\+G\+\_\+\+F\+R\+A\+ME} = 0x0A
+ \}
+\item 
+enum \mbox{\hyperlink{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893f}{Close\+Code}} \{ \newline
+\mbox{\hyperlink{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa1f061bdaaeaf4e04060e0a8a6a9f1665}{N\+O\+R\+M\+A\+L\+\_\+\+C\+L\+O\+S\+U\+RE}}, 
+\mbox{\hyperlink{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa8df78defaff9701ab23891d089cd734a}{G\+O\+I\+N\+G\+\_\+\+A\+W\+AY}}, 
+\mbox{\hyperlink{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa22dda80b02445b49d815d94463406715}{P\+R\+O\+T\+O\+C\+O\+L\+\_\+\+E\+R\+R\+OR}}, 
+\mbox{\hyperlink{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa076e812878dbb36d1931504e57f32caa}{U\+N\+S\+U\+P\+P\+O\+R\+T\+E\+D\+\_\+\+D\+A\+TA}}, 
+\newline
+\mbox{\hyperlink{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa2a49c6c69383b6891425b2e380998ddb}{N\+O\+\_\+\+S\+T\+A\+T\+U\+S\+\_\+\+R\+E\+C\+VD}} = 1005, 
+\mbox{\hyperlink{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fab3350db91c4ed7ceb8fbc90124345af3}{A\+B\+N\+O\+R\+M\+A\+L\+\_\+\+C\+L\+O\+S\+U\+RE}}, 
+\mbox{\hyperlink{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa39c8489c4471537f7608c5522f92787a}{I\+N\+V\+A\+L\+I\+D\+\_\+\+F\+R\+A\+M\+E\+\_\+\+P\+A\+Y\+L\+O\+A\+D\+\_\+\+D\+A\+TA}}, 
+\mbox{\hyperlink{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa4360151d15810bd53f440341058f7eaf}{P\+O\+L\+I\+C\+Y\+\_\+\+V\+I\+O\+L\+A\+T\+I\+ON}}, 
+\newline
+\mbox{\hyperlink{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fac64386e2f3e6348b72668fb497728dd1}{M\+E\+S\+S\+A\+G\+E\+\_\+\+T\+O\+O\+\_\+\+B\+IG}}, 
+\mbox{\hyperlink{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa47a568d13bfa79d7304dfc5bd2af6db9}{M\+I\+S\+S\+I\+N\+G\+\_\+\+E\+X\+T\+E\+N\+S\+I\+ON}}, 
+\mbox{\hyperlink{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa3832a715c885acc35c5923249c9d8d18}{I\+N\+T\+E\+R\+N\+A\+L\+\_\+\+E\+R\+R\+OR}}, 
+\mbox{\hyperlink{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa5fe6dca877f44bb85299f6060dc534fc}{S\+E\+R\+V\+I\+C\+E\+\_\+\+R\+E\+S\+T\+A\+RT}}, 
+\newline
+\mbox{\hyperlink{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fadb055e7682b8c697681c977ae6ff5b15}{T\+R\+Y\+\_\+\+A\+G\+A\+I\+N\+\_\+\+L\+A\+T\+ER}}, 
+\mbox{\hyperlink{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa2b34f722ec006bbd63ad1b29030549fe}{B\+A\+D\+\_\+\+G\+A\+T\+E\+W\+AY}}, 
+\mbox{\hyperlink{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fac1c3e75026cdbab7e574aa3d14f19302}{T\+L\+S\+\_\+\+H\+A\+N\+D\+S\+H\+A\+KE}}
+ \}
+\item 
+using \mbox{\hyperlink{classnet_1_1_web_socket_ac1d9127f33a5c9bdd4a219ccd70da3cf}{on\+Close\+Callback}} = void($\ast$)(\mbox{\hyperlink{classnet_1_1_web_socket}{Web\+Socket}} \&ws, const \mbox{\hyperlink{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893f}{Web\+Socket\+::\+Close\+Code}} \&code, const char $\ast$reason, uint16\+\_\+t length)
+\item 
+using \mbox{\hyperlink{classnet_1_1_web_socket_a0f84afa4b903c29d1f5c7339c837c2ca}{on\+Message\+Callback}} = void($\ast$)(\mbox{\hyperlink{classnet_1_1_web_socket}{Web\+Socket}} \&ws, const \mbox{\hyperlink{classnet_1_1_web_socket_a3cfccdbf394baf6ba239174a6a50be5d}{Web\+Socket\+::\+Data\+Type}} \&data\+Type, const char $\ast$message, uint16\+\_\+t length)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classnet_1_1_web_socket_a3b61cfd4a22c37da3098793e3665f9c1}\label{classnet_1_1_web_socket_a3b61cfd4a22c37da3098793e3665f9c1}} 
+{\bfseries Web\+Socket} (const \mbox{\hyperlink{classnet_1_1_web_socket}{Web\+Socket}} \&)=delete
+\item 
+\mbox{\Hypertarget{classnet_1_1_web_socket_a883eb2688134ea4bfbb347337e03b3ee}\label{classnet_1_1_web_socket_a883eb2688134ea4bfbb347337e03b3ee}} 
+\mbox{\hyperlink{classnet_1_1_web_socket}{Web\+Socket}} \& {\bfseries operator=} (const \mbox{\hyperlink{classnet_1_1_web_socket}{Web\+Socket}} \&)=delete
+\item 
+void \mbox{\hyperlink{classnet_1_1_web_socket_af8708d68fc8f0ce5f950df48f631594d}{close}} (const \mbox{\hyperlink{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893f}{Close\+Code}} \&code, bool instant, const char $\ast$reason=nullptr, uint16\+\_\+t length=0)
+\begin{DoxyCompactList}\small\item\em Sends close event. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classnet_1_1_web_socket_a3eeac7a9a57cb5c1d59df658c8184029}\label{classnet_1_1_web_socket_a3eeac7a9a57cb5c1d59df658c8184029}} 
+void \mbox{\hyperlink{classnet_1_1_web_socket_a3eeac7a9a57cb5c1d59df658c8184029}{terminate}} ()
+\begin{DoxyCompactList}\small\item\em Instantly closes connection. \end{DoxyCompactList}\item 
+const \mbox{\hyperlink{classnet_1_1_web_socket_ad1a5fb575c421fd4bd8368d75bf5e25b}{Ready\+State}} \& \mbox{\hyperlink{classnet_1_1_web_socket_a40a7c83557d821308451513f2cff1840}{get\+Ready\+State}} () const
+\item 
+\mbox{\Hypertarget{classnet_1_1_web_socket_af6c5e4f9d1d95f5f1a9b78ce16772f42}\label{classnet_1_1_web_socket_af6c5e4f9d1d95f5f1a9b78ce16772f42}} 
+bool \mbox{\hyperlink{classnet_1_1_web_socket_af6c5e4f9d1d95f5f1a9b78ce16772f42}{is\+Alive}} () const
+\begin{DoxyCompactList}\small\item\em Verifies endpoint connection. \end{DoxyCompactList}\item 
+I\+P\+Address \mbox{\hyperlink{classnet_1_1_web_socket_aba416e086ba31b4a077f1cfe89bf5a0b}{get\+Remote\+IP}} () const
+\item 
+void \mbox{\hyperlink{classnet_1_1_web_socket_a7971abf4be4ed0f540f1ccc50c36c021}{send}} (const \mbox{\hyperlink{classnet_1_1_web_socket_a3cfccdbf394baf6ba239174a6a50be5d}{Web\+Socket\+::\+Data\+Type}} data\+Type, const char $\ast$message, uint16\+\_\+t length)
+\begin{DoxyCompactList}\small\item\em Sends message frame. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classnet_1_1_web_socket_a0777520df0240652e68301f802dc1c4e}{ping}} (const char $\ast$payload=nullptr, uint16\+\_\+t length=0)
+\begin{DoxyCompactList}\small\item\em Sends ping message. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classnet_1_1_web_socket_ab0386484ae3d772db9b4a5f8ca57162b}{on\+Close}} (const \mbox{\hyperlink{classnet_1_1_web_socket_ac1d9127f33a5c9bdd4a219ccd70da3cf}{on\+Close\+Callback}} \&callback)
+\begin{DoxyCompactList}\small\item\em Sets close event handler. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classnet_1_1_web_socket_a531e5ce8d7f930b1fe5b498fc51a8b91}{on\+Message}} (const \mbox{\hyperlink{classnet_1_1_web_socket_a0f84afa4b903c29d1f5c7339c837c2ca}{on\+Message\+Callback}} \&callback)
+\begin{DoxyCompactList}\small\item\em Sets message handler function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classnet_1_1_web_socket_a8665973c14fd7d51e31c308541cea47d}{Web\+Socket}} ()
+\item 
+\mbox{\hyperlink{classnet_1_1_web_socket_a596b2c433aed294e830da3a88b9db6e8}{Web\+Socket}} (const Net\+Client \&client)
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classnet_1_1_web_socket_a1006e3fc5f67ae9d7b83cd338edfcc46}\label{classnet_1_1_web_socket_a1006e3fc5f67ae9d7b83cd338edfcc46}} 
+Net\+Client {\bfseries m\+\_\+client}
+\item 
+\mbox{\Hypertarget{classnet_1_1_web_socket_a998296a4e8cc408d2a0e73e4ac73bd4c}\label{classnet_1_1_web_socket_a998296a4e8cc408d2a0e73e4ac73bd4c}} 
+\mbox{\hyperlink{classnet_1_1_web_socket_ad1a5fb575c421fd4bd8368d75bf5e25b}{Ready\+State}} {\bfseries m\+\_\+ready\+State}
+\item 
+bool \mbox{\hyperlink{classnet_1_1_web_socket_aa2f4a845b161faa61024ea85c6e9120e}{m\+\_\+mask\+Enabled}}
+\item 
+\mbox{\Hypertarget{classnet_1_1_web_socket_afdd822cb9127a426befc09b3d09e89f3}\label{classnet_1_1_web_socket_afdd822cb9127a426befc09b3d09e89f3}} 
+char {\bfseries m\+\_\+data\+Buffer} \mbox{[}\mbox{\hyperlink{config_8h_a111f6eed4eba64d4e00f143ed1bdd286}{k\+Buffer\+Max\+Size}}\mbox{]} \{\}
+\item 
+\mbox{\Hypertarget{classnet_1_1_web_socket_a65ea6bcafdea260260efe997ad68de1d}\label{classnet_1_1_web_socket_a65ea6bcafdea260260efe997ad68de1d}} 
+uint16\+\_\+t {\bfseries m\+\_\+current\+Offset} \{ 0 \}
+\item 
+int8\+\_\+t \mbox{\hyperlink{classnet_1_1_web_socket_af8d9faa442cec7a05c80c56c26f97646}{m\+\_\+tbc\+Opcode}} \{ -\/1 \}
+\item 
+\mbox{\Hypertarget{classnet_1_1_web_socket_a18bd1d7ad16bddb81f0c2a847f4d44ba}\label{classnet_1_1_web_socket_a18bd1d7ad16bddb81f0c2a847f4d44ba}} 
+\mbox{\hyperlink{classnet_1_1_web_socket_ac1d9127f33a5c9bdd4a219ccd70da3cf}{on\+Close\+Callback}} {\bfseries \+\_\+on\+Close} \{ nullptr \}
+\item 
+\mbox{\Hypertarget{classnet_1_1_web_socket_af1024b194515586abd632725ae33b2d8}\label{classnet_1_1_web_socket_af1024b194515586abd632725ae33b2d8}} 
+\mbox{\hyperlink{classnet_1_1_web_socket_a0f84afa4b903c29d1f5c7339c837c2ca}{on\+Message\+Callback}} {\bfseries \+\_\+on\+Message} \{ nullptr \}
+\end{DoxyCompactItemize}
+\doxysubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classnet_1_1_web_socket_a6177d39bbb136fba11358216c55d1625}\label{classnet_1_1_web_socket_a6177d39bbb136fba11358216c55d1625}} 
+class {\bfseries Web\+Socket\+Server}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxySeeAlso}{See also}
+\href{https://tools.ietf.org/html/rfc6455}{\texttt{ https\+://tools.\+ietf.\+org/html/rfc6455}} 
+\end{DoxySeeAlso}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2simple-client_2simple-client_8ino-example}{/simple-\/client/simple-\/client.\+ino}}, and \mbox{\hyperlink{_2simple-server_2simple-server_8ino-example}{/simple-\/server/simple-\/server.\+ino}}.\end{Desc}
+
+
+\doxysubsection{Member Typedef Documentation}
+\mbox{\Hypertarget{classnet_1_1_web_socket_ac1d9127f33a5c9bdd4a219ccd70da3cf}\label{classnet_1_1_web_socket_ac1d9127f33a5c9bdd4a219ccd70da3cf}} 
+\index{net::WebSocket@{net::WebSocket}!onCloseCallback@{onCloseCallback}}
+\index{onCloseCallback@{onCloseCallback}!net::WebSocket@{net::WebSocket}}
+\doxysubsubsection{\texorpdfstring{onCloseCallback}{onCloseCallback}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{classnet_1_1_web_socket_ac1d9127f33a5c9bdd4a219ccd70da3cf}{net\+::\+Web\+Socket\+::on\+Close\+Callback}} =  void ($\ast$)(\mbox{\hyperlink{classnet_1_1_web_socket}{Web\+Socket}} \&ws, const \mbox{\hyperlink{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893f}{Web\+Socket\+::\+Close\+Code}} \&code, const char $\ast$reason, uint16\+\_\+t length)}
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}ws\mbox{]}} & Closing endpoint. \\
+\hline
+{\em \mbox{[}code\mbox{]}} & Close event code. \\
+\hline
+{\em \mbox{[}reason\mbox{]}} & Contains message for close event, c-\/string, non N\+U\+L\+L-\/terminated. May be empty. \\
+\hline
+{\em \mbox{[}length\mbox{]}} & Number of characters in reason c-\/string. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classnet_1_1_web_socket_a0f84afa4b903c29d1f5c7339c837c2ca}\label{classnet_1_1_web_socket_a0f84afa4b903c29d1f5c7339c837c2ca}} 
+\index{net::WebSocket@{net::WebSocket}!onMessageCallback@{onMessageCallback}}
+\index{onMessageCallback@{onMessageCallback}!net::WebSocket@{net::WebSocket}}
+\doxysubsubsection{\texorpdfstring{onMessageCallback}{onMessageCallback}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{classnet_1_1_web_socket_a0f84afa4b903c29d1f5c7339c837c2ca}{net\+::\+Web\+Socket\+::on\+Message\+Callback}} =  void ($\ast$)(\mbox{\hyperlink{classnet_1_1_web_socket}{Web\+Socket}} \&ws, const \mbox{\hyperlink{classnet_1_1_web_socket_a3cfccdbf394baf6ba239174a6a50be5d}{Web\+Socket\+::\+Data\+Type}} \&data\+Type, const char $\ast$message, uint16\+\_\+t length)}
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}ws\mbox{]}} & Source of a message. \\
+\hline
+{\em \mbox{[}data\+Type\mbox{]}} & Type of message. \\
+\hline
+{\em \mbox{[}message\mbox{]}} & Contains data, non N\+U\+L\+L-\/terminated. \\
+\hline
+{\em \mbox{[}length\mbox{]}} & Number of data bytes. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Enumeration Documentation}
+\mbox{\Hypertarget{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893f}\label{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893f}} 
+\index{net::WebSocket@{net::WebSocket}!CloseCode@{CloseCode}}
+\index{CloseCode@{CloseCode}!net::WebSocket@{net::WebSocket}}
+\doxysubsubsection{\texorpdfstring{CloseCode}{CloseCode}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893f}{net\+::\+Web\+Socket\+::\+Close\+Code}}}
+
+Close event code. \begin{DoxySeeAlso}{See also}
+\href{https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent}{\texttt{ https\+://developer.\+mozilla.\+org/en-\/\+U\+S/docs/\+Web/\+A\+P\+I/\+Close\+Event}} 
+\end{DoxySeeAlso}
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NORMAL\_CLOSURE@{NORMAL\_CLOSURE}!net::WebSocket@{net::WebSocket}}\index{net::WebSocket@{net::WebSocket}!NORMAL\_CLOSURE@{NORMAL\_CLOSURE}}}\mbox{\Hypertarget{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa1f061bdaaeaf4e04060e0a8a6a9f1665}\label{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa1f061bdaaeaf4e04060e0a8a6a9f1665}} 
+N\+O\+R\+M\+A\+L\+\_\+\+C\+L\+O\+S\+U\+RE&Normal closure; the connection successfully completed whatever purpose for which it was created. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{GOING\_AWAY@{GOING\_AWAY}!net::WebSocket@{net::WebSocket}}\index{net::WebSocket@{net::WebSocket}!GOING\_AWAY@{GOING\_AWAY}}}\mbox{\Hypertarget{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa8df78defaff9701ab23891d089cd734a}\label{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa8df78defaff9701ab23891d089cd734a}} 
+G\+O\+I\+N\+G\+\_\+\+A\+W\+AY&The endpoint is going away, either because of a server failure or because the browser is navigating away from the page that opened the connection. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PROTOCOL\_ERROR@{PROTOCOL\_ERROR}!net::WebSocket@{net::WebSocket}}\index{net::WebSocket@{net::WebSocket}!PROTOCOL\_ERROR@{PROTOCOL\_ERROR}}}\mbox{\Hypertarget{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa22dda80b02445b49d815d94463406715}\label{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa22dda80b02445b49d815d94463406715}} 
+P\+R\+O\+T\+O\+C\+O\+L\+\_\+\+E\+R\+R\+OR&The endpoint is terminating the connection due to a protocol error. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{UNSUPPORTED\_DATA@{UNSUPPORTED\_DATA}!net::WebSocket@{net::WebSocket}}\index{net::WebSocket@{net::WebSocket}!UNSUPPORTED\_DATA@{UNSUPPORTED\_DATA}}}\mbox{\Hypertarget{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa076e812878dbb36d1931504e57f32caa}\label{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa076e812878dbb36d1931504e57f32caa}} 
+U\+N\+S\+U\+P\+P\+O\+R\+T\+E\+D\+\_\+\+D\+A\+TA&The connection is being terminated because the endpoint received data of a type it cannot accept (for example, a text-\/only endpoint received binary data). \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NO\_STATUS\_RECVD@{NO\_STATUS\_RECVD}!net::WebSocket@{net::WebSocket}}\index{net::WebSocket@{net::WebSocket}!NO\_STATUS\_RECVD@{NO\_STATUS\_RECVD}}}\mbox{\Hypertarget{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa2a49c6c69383b6891425b2e380998ddb}\label{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa2a49c6c69383b6891425b2e380998ddb}} 
+N\+O\+\_\+\+S\+T\+A\+T\+U\+S\+\_\+\+R\+E\+C\+VD&Reserved. Indicates that no status code was provided even though one was expected. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ABNORMAL\_CLOSURE@{ABNORMAL\_CLOSURE}!net::WebSocket@{net::WebSocket}}\index{net::WebSocket@{net::WebSocket}!ABNORMAL\_CLOSURE@{ABNORMAL\_CLOSURE}}}\mbox{\Hypertarget{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fab3350db91c4ed7ceb8fbc90124345af3}\label{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fab3350db91c4ed7ceb8fbc90124345af3}} 
+A\+B\+N\+O\+R\+M\+A\+L\+\_\+\+C\+L\+O\+S\+U\+RE&Reserved. Used to indicate that a connection was closed abnormally (that is, with no close frame being sent) when a status code is expected. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{INVALID\_FRAME\_PAYLOAD\_DATA@{INVALID\_FRAME\_PAYLOAD\_DATA}!net::WebSocket@{net::WebSocket}}\index{net::WebSocket@{net::WebSocket}!INVALID\_FRAME\_PAYLOAD\_DATA@{INVALID\_FRAME\_PAYLOAD\_DATA}}}\mbox{\Hypertarget{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa39c8489c4471537f7608c5522f92787a}\label{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa39c8489c4471537f7608c5522f92787a}} 
+I\+N\+V\+A\+L\+I\+D\+\_\+\+F\+R\+A\+M\+E\+\_\+\+P\+A\+Y\+L\+O\+A\+D\+\_\+\+D\+A\+TA&The endpoint is terminating the connection because a message was received that contained inconsistent data (e.\+g., non-\/\+U\+T\+F-\/8 data within a text message). \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{POLICY\_VIOLATION@{POLICY\_VIOLATION}!net::WebSocket@{net::WebSocket}}\index{net::WebSocket@{net::WebSocket}!POLICY\_VIOLATION@{POLICY\_VIOLATION}}}\mbox{\Hypertarget{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa4360151d15810bd53f440341058f7eaf}\label{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa4360151d15810bd53f440341058f7eaf}} 
+P\+O\+L\+I\+C\+Y\+\_\+\+V\+I\+O\+L\+A\+T\+I\+ON&The endpoint is terminating the connection because it received a message that violates its policy. This is a generic status code, used when codes 1003 and 1009 are not suitable. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MESSAGE\_TOO\_BIG@{MESSAGE\_TOO\_BIG}!net::WebSocket@{net::WebSocket}}\index{net::WebSocket@{net::WebSocket}!MESSAGE\_TOO\_BIG@{MESSAGE\_TOO\_BIG}}}\mbox{\Hypertarget{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fac64386e2f3e6348b72668fb497728dd1}\label{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fac64386e2f3e6348b72668fb497728dd1}} 
+M\+E\+S\+S\+A\+G\+E\+\_\+\+T\+O\+O\+\_\+\+B\+IG&The endpoint is terminating the connection because a data frame was received that is too large. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MISSING\_EXTENSION@{MISSING\_EXTENSION}!net::WebSocket@{net::WebSocket}}\index{net::WebSocket@{net::WebSocket}!MISSING\_EXTENSION@{MISSING\_EXTENSION}}}\mbox{\Hypertarget{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa47a568d13bfa79d7304dfc5bd2af6db9}\label{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa47a568d13bfa79d7304dfc5bd2af6db9}} 
+M\+I\+S\+S\+I\+N\+G\+\_\+\+E\+X\+T\+E\+N\+S\+I\+ON&The client is terminating the connection because it expected the server to negotiate one or more extension, but the server didn\textquotesingle{}t. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{INTERNAL\_ERROR@{INTERNAL\_ERROR}!net::WebSocket@{net::WebSocket}}\index{net::WebSocket@{net::WebSocket}!INTERNAL\_ERROR@{INTERNAL\_ERROR}}}\mbox{\Hypertarget{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa3832a715c885acc35c5923249c9d8d18}\label{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa3832a715c885acc35c5923249c9d8d18}} 
+I\+N\+T\+E\+R\+N\+A\+L\+\_\+\+E\+R\+R\+OR&The server is terminating the connection because it encountered an unexpected condition that prevented it from fulfilling the request. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SERVICE\_RESTART@{SERVICE\_RESTART}!net::WebSocket@{net::WebSocket}}\index{net::WebSocket@{net::WebSocket}!SERVICE\_RESTART@{SERVICE\_RESTART}}}\mbox{\Hypertarget{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa5fe6dca877f44bb85299f6060dc534fc}\label{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa5fe6dca877f44bb85299f6060dc534fc}} 
+S\+E\+R\+V\+I\+C\+E\+\_\+\+R\+E\+S\+T\+A\+RT&The server is terminating the connection because it is restarting. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{TRY\_AGAIN\_LATER@{TRY\_AGAIN\_LATER}!net::WebSocket@{net::WebSocket}}\index{net::WebSocket@{net::WebSocket}!TRY\_AGAIN\_LATER@{TRY\_AGAIN\_LATER}}}\mbox{\Hypertarget{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fadb055e7682b8c697681c977ae6ff5b15}\label{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fadb055e7682b8c697681c977ae6ff5b15}} 
+T\+R\+Y\+\_\+\+A\+G\+A\+I\+N\+\_\+\+L\+A\+T\+ER&The server is terminating the connection due to a temporary condition, e.\+g. it is overloaded and is casting off some of its clients. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{BAD\_GATEWAY@{BAD\_GATEWAY}!net::WebSocket@{net::WebSocket}}\index{net::WebSocket@{net::WebSocket}!BAD\_GATEWAY@{BAD\_GATEWAY}}}\mbox{\Hypertarget{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa2b34f722ec006bbd63ad1b29030549fe}\label{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fa2b34f722ec006bbd63ad1b29030549fe}} 
+B\+A\+D\+\_\+\+G\+A\+T\+E\+W\+AY&The server was acting as a gateway or proxy and received an invalid response from the upstream server. This is similar to 502 H\+T\+TP Status Code. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{TLS\_HANDSHAKE@{TLS\_HANDSHAKE}!net::WebSocket@{net::WebSocket}}\index{net::WebSocket@{net::WebSocket}!TLS\_HANDSHAKE@{TLS\_HANDSHAKE}}}\mbox{\Hypertarget{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fac1c3e75026cdbab7e574aa3d14f19302}\label{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893fac1c3e75026cdbab7e574aa3d14f19302}} 
+T\+L\+S\+\_\+\+H\+A\+N\+D\+S\+H\+A\+KE&Reserved. Indicates that the connection was closed due to a failure to perform a T\+LS handshake (e.\+g., the server certificate can\textquotesingle{}t be verified). \\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{classnet_1_1_web_socket_a3cfccdbf394baf6ba239174a6a50be5d}\label{classnet_1_1_web_socket_a3cfccdbf394baf6ba239174a6a50be5d}} 
+\index{net::WebSocket@{net::WebSocket}!DataType@{DataType}}
+\index{DataType@{DataType}!net::WebSocket@{net::WebSocket}}
+\doxysubsubsection{\texorpdfstring{DataType}{DataType}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{classnet_1_1_web_socket_a3cfccdbf394baf6ba239174a6a50be5d}{net\+::\+Web\+Socket\+::\+Data\+Type}} \+: int8\+\_\+t\hspace{0.3cm}{\ttfamily [strong]}}
+
+Frame data types. \mbox{\Hypertarget{classnet_1_1_web_socket_ac1885f8dbcd9a2e1818fc54e1849b8a2}\label{classnet_1_1_web_socket_ac1885f8dbcd9a2e1818fc54e1849b8a2}} 
+\index{net::WebSocket@{net::WebSocket}!Opcode@{Opcode}}
+\index{Opcode@{Opcode}!net::WebSocket@{net::WebSocket}}
+\doxysubsubsection{\texorpdfstring{Opcode}{Opcode}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{classnet_1_1_web_socket_ac1885f8dbcd9a2e1818fc54e1849b8a2}{net\+::\+Web\+Socket\+::\+Opcode}}}
+
+Frame opcodes. \mbox{\Hypertarget{classnet_1_1_web_socket_ad1a5fb575c421fd4bd8368d75bf5e25b}\label{classnet_1_1_web_socket_ad1a5fb575c421fd4bd8368d75bf5e25b}} 
+\index{net::WebSocket@{net::WebSocket}!ReadyState@{ReadyState}}
+\index{ReadyState@{ReadyState}!net::WebSocket@{net::WebSocket}}
+\doxysubsubsection{\texorpdfstring{ReadyState}{ReadyState}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{classnet_1_1_web_socket_ad1a5fb575c421fd4bd8368d75bf5e25b}{net\+::\+Web\+Socket\+::\+Ready\+State}} \+: int8\+\_\+t\hspace{0.3cm}{\ttfamily [strong]}}
+
+Connection states. \begin{DoxySeeAlso}{See also}
+\href{https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/readyState}{\texttt{ https\+://developer.\+mozilla.\+org/en-\/\+U\+S/docs/\+Web/\+A\+P\+I/\+Web\+Socket/ready\+State}} 
+\end{DoxySeeAlso}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classnet_1_1_web_socket_a8665973c14fd7d51e31c308541cea47d}\label{classnet_1_1_web_socket_a8665973c14fd7d51e31c308541cea47d}} 
+\index{net::WebSocket@{net::WebSocket}!WebSocket@{WebSocket}}
+\index{WebSocket@{WebSocket}!net::WebSocket@{net::WebSocket}}
+\doxysubsubsection{\texorpdfstring{WebSocket()}{WebSocket()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily net\+::\+Web\+Socket\+::\+Web\+Socket (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyRemark}{Remarks}
+Reserved for \mbox{\hyperlink{classnet_1_1_web_socket_client}{Web\+Socket\+Client}}. 
+\end{DoxyRemark}
+\mbox{\Hypertarget{classnet_1_1_web_socket_a596b2c433aed294e830da3a88b9db6e8}\label{classnet_1_1_web_socket_a596b2c433aed294e830da3a88b9db6e8}} 
+\index{net::WebSocket@{net::WebSocket}!WebSocket@{WebSocket}}
+\index{WebSocket@{WebSocket}!net::WebSocket@{net::WebSocket}}
+\doxysubsubsection{\texorpdfstring{WebSocket()}{WebSocket()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily net\+::\+Web\+Socket\+::\+Web\+Socket (\begin{DoxyParamCaption}\item[{const Net\+Client \&}]{client }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyRemark}{Remarks}
+Reserved for \mbox{\hyperlink{classnet_1_1_web_socket_server}{Web\+Socket\+Server}}. 
+\end{DoxyRemark}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classnet_1_1_web_socket_af8708d68fc8f0ce5f950df48f631594d}\label{classnet_1_1_web_socket_af8708d68fc8f0ce5f950df48f631594d}} 
+\index{net::WebSocket@{net::WebSocket}!close@{close}}
+\index{close@{close}!net::WebSocket@{net::WebSocket}}
+\doxysubsubsection{\texorpdfstring{close()}{close()}}
+{\footnotesize\ttfamily void net\+::\+Web\+Socket\+::close (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893f}{Close\+Code}} \&}]{code,  }\item[{bool}]{instant,  }\item[{const char $\ast$}]{reason = {\ttfamily nullptr},  }\item[{uint16\+\_\+t}]{length = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Sends close event. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}code\mbox{]}} & \\
+\hline
+{\em \mbox{[}instant\mbox{]}} & Determines if close should be done immediately. \\
+\hline
+{\em \mbox{[}reason\mbox{]}} & Additional message (not required), doesn\textquotesingle{}t have to be N\+U\+L\+L-\/terminated. Max length = 123 characters. \\
+\hline
+{\em \mbox{[}length\mbox{]}} & Number of characters in reason. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classnet_1_1_web_socket_a40a7c83557d821308451513f2cff1840}\label{classnet_1_1_web_socket_a40a7c83557d821308451513f2cff1840}} 
+\index{net::WebSocket@{net::WebSocket}!getReadyState@{getReadyState}}
+\index{getReadyState@{getReadyState}!net::WebSocket@{net::WebSocket}}
+\doxysubsubsection{\texorpdfstring{getReadyState()}{getReadyState()}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{classnet_1_1_web_socket_ad1a5fb575c421fd4bd8368d75bf5e25b}{Web\+Socket\+::\+Ready\+State}} \& net\+::\+Web\+Socket\+::get\+Ready\+State (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+\begin{DoxyReturn}{Returns}
+Endpoint connection status. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classnet_1_1_web_socket_aba416e086ba31b4a077f1cfe89bf5a0b}\label{classnet_1_1_web_socket_aba416e086ba31b4a077f1cfe89bf5a0b}} 
+\index{net::WebSocket@{net::WebSocket}!getRemoteIP@{getRemoteIP}}
+\index{getRemoteIP@{getRemoteIP}!net::WebSocket@{net::WebSocket}}
+\doxysubsubsection{\texorpdfstring{getRemoteIP()}{getRemoteIP()}}
+{\footnotesize\ttfamily I\+P\+Address net\+::\+Web\+Socket\+::get\+Remote\+IP (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+\begin{DoxyReturn}{Returns}
+Endpoint IP address. 
+\end{DoxyReturn}
+\begin{DoxyRemark}{Remarks}
+For some microcontrollers it may be empty. 
+\end{DoxyRemark}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2simple-server_2simple-server_8ino-example}{/simple-\/server/simple-\/server.\+ino}}.\end{Desc}
+\mbox{\Hypertarget{classnet_1_1_web_socket_ab0386484ae3d772db9b4a5f8ca57162b}\label{classnet_1_1_web_socket_ab0386484ae3d772db9b4a5f8ca57162b}} 
+\index{net::WebSocket@{net::WebSocket}!onClose@{onClose}}
+\index{onClose@{onClose}!net::WebSocket@{net::WebSocket}}
+\doxysubsubsection{\texorpdfstring{onClose()}{onClose()}}
+{\footnotesize\ttfamily void net\+::\+Web\+Socket\+::on\+Close (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classnet_1_1_web_socket_ac1d9127f33a5c9bdd4a219ccd70da3cf}{on\+Close\+Callback}} \&}]{callback }\end{DoxyParamCaption})}
+
+
+
+Sets close event handler. 
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{ws.onClose([](\mbox{\hyperlink{classnet_1_1_web_socket_a8665973c14fd7d51e31c308541cea47d}{WebSocket}} \&ws, \textcolor{keyword}{const} \mbox{\hyperlink{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893f}{WebSocket::CloseCode}} \&code,}
+\DoxyCodeLine{            \textcolor{keyword}{const} \textcolor{keywordtype}{char} *reason, uint16\_t length) \{}
+\DoxyCodeLine{  \textcolor{comment}{// handle close event ...}}
+\DoxyCodeLine{\});}
+\end{DoxyCode}
+ \begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2simple-client_2simple-client_8ino-example}{/simple-\/client/simple-\/client.\+ino}}, and \mbox{\hyperlink{_2simple-server_2simple-server_8ino-example}{/simple-\/server/simple-\/server.\+ino}}.\end{Desc}
+\mbox{\Hypertarget{classnet_1_1_web_socket_a531e5ce8d7f930b1fe5b498fc51a8b91}\label{classnet_1_1_web_socket_a531e5ce8d7f930b1fe5b498fc51a8b91}} 
+\index{net::WebSocket@{net::WebSocket}!onMessage@{onMessage}}
+\index{onMessage@{onMessage}!net::WebSocket@{net::WebSocket}}
+\doxysubsubsection{\texorpdfstring{onMessage()}{onMessage()}}
+{\footnotesize\ttfamily void net\+::\+Web\+Socket\+::on\+Message (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classnet_1_1_web_socket_a0f84afa4b903c29d1f5c7339c837c2ca}{on\+Message\+Callback}} \&}]{callback }\end{DoxyParamCaption})}
+
+
+
+Sets message handler function. 
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{ws.onMessage([](\mbox{\hyperlink{classnet_1_1_web_socket_a8665973c14fd7d51e31c308541cea47d}{WebSocket}} \&ws, \textcolor{keyword}{const} \mbox{\hyperlink{classnet_1_1_web_socket_a3cfccdbf394baf6ba239174a6a50be5d}{WebSocket::DataType}} \&dataType,}
+\DoxyCodeLine{              \textcolor{keyword}{const} \textcolor{keywordtype}{char} *message, uint16\_t length) \{}
+\DoxyCodeLine{  \textcolor{comment}{// handle data frame ...}}
+\DoxyCodeLine{\});}
+\end{DoxyCode}
+ \begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2simple-client_2simple-client_8ino-example}{/simple-\/client/simple-\/client.\+ino}}, and \mbox{\hyperlink{_2simple-server_2simple-server_8ino-example}{/simple-\/server/simple-\/server.\+ino}}.\end{Desc}
+\mbox{\Hypertarget{classnet_1_1_web_socket_a0777520df0240652e68301f802dc1c4e}\label{classnet_1_1_web_socket_a0777520df0240652e68301f802dc1c4e}} 
+\index{net::WebSocket@{net::WebSocket}!ping@{ping}}
+\index{ping@{ping}!net::WebSocket@{net::WebSocket}}
+\doxysubsubsection{\texorpdfstring{ping()}{ping()}}
+{\footnotesize\ttfamily void net\+::\+Web\+Socket\+::ping (\begin{DoxyParamCaption}\item[{const char $\ast$}]{payload = {\ttfamily nullptr},  }\item[{uint16\+\_\+t}]{length = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Sends ping message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}payload\mbox{]}} & Additional message, doesn\textquotesingle{}t have to be N\+U\+L\+L-\/terminated. Max length = 125. \\
+\hline
+{\em \mbox{[}length\mbox{]}} & Number of characters in payload. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classnet_1_1_web_socket_a7971abf4be4ed0f540f1ccc50c36c021}\label{classnet_1_1_web_socket_a7971abf4be4ed0f540f1ccc50c36c021}} 
+\index{net::WebSocket@{net::WebSocket}!send@{send}}
+\index{send@{send}!net::WebSocket@{net::WebSocket}}
+\doxysubsubsection{\texorpdfstring{send()}{send()}}
+{\footnotesize\ttfamily void net\+::\+Web\+Socket\+::send (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classnet_1_1_web_socket_a3cfccdbf394baf6ba239174a6a50be5d}{Web\+Socket\+::\+Data\+Type}}}]{data\+Type,  }\item[{const char $\ast$}]{message,  }\item[{uint16\+\_\+t}]{length }\end{DoxyParamCaption})}
+
+
+
+Sends message frame. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}message\mbox{]}} & Doesn\textquotesingle{}t have to be N\+U\+L\+L-\/terminated. \\
+\hline
+\end{DoxyParams}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2simple-client_2simple-client_8ino-example}{/simple-\/client/simple-\/client.\+ino}}, and \mbox{\hyperlink{_2simple-server_2simple-server_8ino-example}{/simple-\/server/simple-\/server.\+ino}}.\end{Desc}
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{classnet_1_1_web_socket_aa2f4a845b161faa61024ea85c6e9120e}\label{classnet_1_1_web_socket_aa2f4a845b161faa61024ea85c6e9120e}} 
+\index{net::WebSocket@{net::WebSocket}!m\_maskEnabled@{m\_maskEnabled}}
+\index{m\_maskEnabled@{m\_maskEnabled}!net::WebSocket@{net::WebSocket}}
+\doxysubsubsection{\texorpdfstring{m\_maskEnabled}{m\_maskEnabled}}
+{\footnotesize\ttfamily bool net\+::\+Web\+Socket\+::m\+\_\+mask\+Enabled\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyNote}{Note}
+Client endpoint must always mask frames. 
+\end{DoxyNote}
+\mbox{\Hypertarget{classnet_1_1_web_socket_af8d9faa442cec7a05c80c56c26f97646}\label{classnet_1_1_web_socket_af8d9faa442cec7a05c80c56c26f97646}} 
+\index{net::WebSocket@{net::WebSocket}!m\_tbcOpcode@{m\_tbcOpcode}}
+\index{m\_tbcOpcode@{m\_tbcOpcode}!net::WebSocket@{net::WebSocket}}
+\doxysubsubsection{\texorpdfstring{m\_tbcOpcode}{m\_tbcOpcode}}
+{\footnotesize\ttfamily int8\+\_\+t net\+::\+Web\+Socket\+::m\+\_\+tbc\+Opcode \{ -\/1 \}\hspace{0.3cm}{\ttfamily [protected]}}
+
+Indicates opcode (text/binary) that should be continued by continuation frame. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/\mbox{\hyperlink{_web_socket_8h}{Web\+Socket.\+h}}\item 
+src/Web\+Socket.\+cpp\end{DoxyCompactItemize}

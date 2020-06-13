@@ -1,0 +1,165 @@
+\hypertarget{classnet_1_1_web_socket_server}{}\doxysection{net\+::Web\+Socket\+Server Class Reference}
+\label{classnet_1_1_web_socket_server}\index{net::WebSocketServer@{net::WebSocketServer}}
+
+
+{\ttfamily \#include $<$Web\+Socket\+Server.\+h$>$}
+
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+using \mbox{\hyperlink{classnet_1_1_web_socket_server_abb882d65cb52cd94f7a34de2192201c7}{verify\+Client\+Callback}} = bool($\ast$)(const I\+P\+Address \&ip, const char $\ast$header, const char $\ast$value)
+\item 
+using \mbox{\hyperlink{classnet_1_1_web_socket_server_a0d0ae518333e83900130fb52afc3b66f}{on\+Connection\+Callback}} = void($\ast$)(\mbox{\hyperlink{classnet_1_1_web_socket}{Web\+Socket}} \&ws)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classnet_1_1_web_socket_server_a19534d0cd91b2ff1e1d3402847d475ea}\label{classnet_1_1_web_socket_server_a19534d0cd91b2ff1e1d3402847d475ea}} 
+{\bfseries Web\+Socket\+Server} (const \mbox{\hyperlink{classnet_1_1_web_socket_server}{Web\+Socket\+Server}} \&)=delete
+\item 
+\mbox{\Hypertarget{classnet_1_1_web_socket_server_a33f22da004dba5237f29d16d97abb38e}\label{classnet_1_1_web_socket_server_a33f22da004dba5237f29d16d97abb38e}} 
+\mbox{\hyperlink{classnet_1_1_web_socket_server}{Web\+Socket\+Server}} \& {\bfseries operator=} (const \mbox{\hyperlink{classnet_1_1_web_socket_server}{Web\+Socket\+Server}} \&)=delete
+\item 
+\mbox{\hyperlink{classnet_1_1_web_socket_server_a0dd0b1fb012bba1404500e6487ad6ad0}{Web\+Socket\+Server}} (uint16\+\_\+t port=3000)
+\begin{DoxyCompactList}\small\item\em Initializes server on given port. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classnet_1_1_web_socket_server_a95cbd2e0ef5df4059f012bc370050927}{begin}} (const \mbox{\hyperlink{classnet_1_1_web_socket_server_abb882d65cb52cd94f7a34de2192201c7}{verify\+Client\+Callback}} \&callback=nullptr)
+\begin{DoxyCompactList}\small\item\em Startup server. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classnet_1_1_web_socket_server_a339ec04648e93c1698226df6d52d1915}\label{classnet_1_1_web_socket_server_a339ec04648e93c1698226df6d52d1915}} 
+void \mbox{\hyperlink{classnet_1_1_web_socket_server_a339ec04648e93c1698226df6d52d1915}{shutdown}} ()
+\begin{DoxyCompactList}\small\item\em Disconnects all clients. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classnet_1_1_web_socket_server_a929a278de64031640b4a2a1cd1373b51}\label{classnet_1_1_web_socket_server_a929a278de64031640b4a2a1cd1373b51}} 
+void \mbox{\hyperlink{classnet_1_1_web_socket_server_a929a278de64031640b4a2a1cd1373b51}{broadcast}} (const \mbox{\hyperlink{classnet_1_1_web_socket_a3cfccdbf394baf6ba239174a6a50be5d}{Web\+Socket\+::\+Data\+Type}} \&data\+Type, const char $\ast$message, uint16\+\_\+t length)
+\begin{DoxyCompactList}\small\item\em Sends message to all connected clients. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classnet_1_1_web_socket_server_a609113bb1469f03262ae2acd0bd091d7}{listen}} ()
+\item 
+uint8\+\_\+t \mbox{\hyperlink{classnet_1_1_web_socket_server_ab38804f046092d9eb96d7fe338738f2a}{count\+Clients}} () const
+\item 
+void \mbox{\hyperlink{classnet_1_1_web_socket_server_a8e51488e2c4b1b81858c2810a905cc18}{on\+Connection}} (const \mbox{\hyperlink{classnet_1_1_web_socket_server_a0d0ae518333e83900130fb52afc3b66f}{on\+Connection\+Callback}} \&callback)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxySeeAlso}{See also}
+\href{https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers}{\texttt{ https\+://developer.\+mozilla.\+org/en-\/\+U\+S/docs/\+Web/\+A\+P\+I/\+Web\+Sockets\+\_\+\+A\+P\+I/\+Writing\+\_\+\+Web\+Socket\+\_\+servers}} 
+\end{DoxySeeAlso}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2simple-server_2simple-server_8ino-example}{/simple-\/server/simple-\/server.\+ino}}.\end{Desc}
+
+
+\doxysubsection{Member Typedef Documentation}
+\mbox{\Hypertarget{classnet_1_1_web_socket_server_a0d0ae518333e83900130fb52afc3b66f}\label{classnet_1_1_web_socket_server_a0d0ae518333e83900130fb52afc3b66f}} 
+\index{net::WebSocketServer@{net::WebSocketServer}!onConnectionCallback@{onConnectionCallback}}
+\index{onConnectionCallback@{onConnectionCallback}!net::WebSocketServer@{net::WebSocketServer}}
+\doxysubsubsection{\texorpdfstring{onConnectionCallback}{onConnectionCallback}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{classnet_1_1_web_socket_server_a0d0ae518333e83900130fb52afc3b66f}{net\+::\+Web\+Socket\+Server\+::on\+Connection\+Callback}} =  void ($\ast$)(\mbox{\hyperlink{classnet_1_1_web_socket}{Web\+Socket}} \&ws)}
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}ws\mbox{]}} & Accepted client. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classnet_1_1_web_socket_server_abb882d65cb52cd94f7a34de2192201c7}\label{classnet_1_1_web_socket_server_abb882d65cb52cd94f7a34de2192201c7}} 
+\index{net::WebSocketServer@{net::WebSocketServer}!verifyClientCallback@{verifyClientCallback}}
+\index{verifyClientCallback@{verifyClientCallback}!net::WebSocketServer@{net::WebSocketServer}}
+\doxysubsubsection{\texorpdfstring{verifyClientCallback}{verifyClientCallback}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{classnet_1_1_web_socket_server_abb882d65cb52cd94f7a34de2192201c7}{net\+::\+Web\+Socket\+Server\+::verify\+Client\+Callback}} =  bool ($\ast$)( const I\+P\+Address \&ip, const char $\ast$header, const char $\ast$value)}
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}header\mbox{]}} & c-\/string, N\+U\+L\+L-\/terminated. \\
+\hline
+{\em \mbox{[}value\mbox{]}} & c-\/string, N\+U\+L\+L-\/terminated. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classnet_1_1_web_socket_server_a0dd0b1fb012bba1404500e6487ad6ad0}\label{classnet_1_1_web_socket_server_a0dd0b1fb012bba1404500e6487ad6ad0}} 
+\index{net::WebSocketServer@{net::WebSocketServer}!WebSocketServer@{WebSocketServer}}
+\index{WebSocketServer@{WebSocketServer}!net::WebSocketServer@{net::WebSocketServer}}
+\doxysubsubsection{\texorpdfstring{WebSocketServer()}{WebSocketServer()}}
+{\footnotesize\ttfamily net\+::\+Web\+Socket\+Server\+::\+Web\+Socket\+Server (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{port = {\ttfamily 3000} }\end{DoxyParamCaption})}
+
+
+
+Initializes server on given port. 
+
+\begin{DoxyNote}{Note}
+Don\textquotesingle{}t forget to call \mbox{\hyperlink{classnet_1_1_web_socket_server_a95cbd2e0ef5df4059f012bc370050927}{begin()}} 
+\end{DoxyNote}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classnet_1_1_web_socket_server_a95cbd2e0ef5df4059f012bc370050927}\label{classnet_1_1_web_socket_server_a95cbd2e0ef5df4059f012bc370050927}} 
+\index{net::WebSocketServer@{net::WebSocketServer}!begin@{begin}}
+\index{begin@{begin}!net::WebSocketServer@{net::WebSocketServer}}
+\doxysubsubsection{\texorpdfstring{begin()}{begin()}}
+{\footnotesize\ttfamily void net\+::\+Web\+Socket\+Server\+::begin (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classnet_1_1_web_socket_server_abb882d65cb52cd94f7a34de2192201c7}{verify\+Client\+Callback}} \&}]{callback = {\ttfamily nullptr} }\end{DoxyParamCaption})}
+
+
+
+Startup server. 
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{WebSocketServer server;}
+\DoxyCodeLine{server.begin([](\textcolor{keyword}{const} IPAddress \&ip, \textcolor{keyword}{const} \textcolor{keywordtype}{char} *header, \textcolor{keyword}{const} \textcolor{keywordtype}{char} *value) \{}
+\DoxyCodeLine{  \textcolor{comment}{// verify client ip address and/or request headers ...}}
+\DoxyCodeLine{\});}
+\end{DoxyCode}
+ 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}callback\mbox{]}} & Function called for every header during hadshake (except for those required by protocol, like {\bfseries{Connection}}, {\bfseries{Upgrade}} etc.) \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classnet_1_1_web_socket_server_ab38804f046092d9eb96d7fe338738f2a}\label{classnet_1_1_web_socket_server_ab38804f046092d9eb96d7fe338738f2a}} 
+\index{net::WebSocketServer@{net::WebSocketServer}!countClients@{countClients}}
+\index{countClients@{countClients}!net::WebSocketServer@{net::WebSocketServer}}
+\doxysubsubsection{\texorpdfstring{countClients()}{countClients()}}
+{\footnotesize\ttfamily uint8\+\_\+t net\+::\+Web\+Socket\+Server\+::count\+Clients (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+\begin{DoxyReturn}{Returns}
+Amount of connected clients. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classnet_1_1_web_socket_server_a609113bb1469f03262ae2acd0bd091d7}\label{classnet_1_1_web_socket_server_a609113bb1469f03262ae2acd0bd091d7}} 
+\index{net::WebSocketServer@{net::WebSocketServer}!listen@{listen}}
+\index{listen@{listen}!net::WebSocketServer@{net::WebSocketServer}}
+\doxysubsubsection{\texorpdfstring{listen()}{listen()}}
+{\footnotesize\ttfamily void net\+::\+Web\+Socket\+Server\+::listen (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyNote}{Note}
+Call this in main loop. 
+\end{DoxyNote}
+\mbox{\Hypertarget{classnet_1_1_web_socket_server_a8e51488e2c4b1b81858c2810a905cc18}\label{classnet_1_1_web_socket_server_a8e51488e2c4b1b81858c2810a905cc18}} 
+\index{net::WebSocketServer@{net::WebSocketServer}!onConnection@{onConnection}}
+\index{onConnection@{onConnection}!net::WebSocketServer@{net::WebSocketServer}}
+\doxysubsubsection{\texorpdfstring{onConnection()}{onConnection()}}
+{\footnotesize\ttfamily void net\+::\+Web\+Socket\+Server\+::on\+Connection (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classnet_1_1_web_socket_server_a0d0ae518333e83900130fb52afc3b66f}{on\+Connection\+Callback}} \&}]{callback }\end{DoxyParamCaption})}
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{WebSocketServer server;}
+\DoxyCodeLine{server.onConnection([](WebSocket \&ws) \{}
+\DoxyCodeLine{  \textcolor{comment}{// New client, setup it's callbacks:}}
+\DoxyCodeLine{  ws.onClose([](WebSocket \&ws, \textcolor{keyword}{const} \mbox{\hyperlink{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893f}{WebSocket::CloseCode}} \&code,}
+\DoxyCodeLine{            \textcolor{keyword}{const} \textcolor{keywordtype}{char} *reason, uint16\_t length) \{}
+\DoxyCodeLine{    \textcolor{comment}{// handle close event ...}}
+\DoxyCodeLine{  \});}
+\DoxyCodeLine{  ws.onMessage([](WebSocket \&ws, \textcolor{keyword}{const} \mbox{\hyperlink{classnet_1_1_web_socket_a3cfccdbf394baf6ba239174a6a50be5d}{WebSocket::DataType}} \&dataType,}
+\DoxyCodeLine{              \textcolor{keyword}{const} \textcolor{keywordtype}{char} *message, uint16\_t length) \{}
+\DoxyCodeLine{    \textcolor{comment}{// handle data frame ...}}
+\DoxyCodeLine{  \});}
+\DoxyCodeLine{\});}
+\end{DoxyCode}
+ 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}callback\mbox{]}} & Function that will be called for every successfully connected client. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/\mbox{\hyperlink{_web_socket_server_8h}{Web\+Socket\+Server.\+h}}\item 
+src/Web\+Socket\+Server.\+cpp\end{DoxyCompactItemize}

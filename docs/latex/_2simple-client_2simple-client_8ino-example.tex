@@ -1,0 +1,95 @@
+\hypertarget{_2simple-client_2simple-client_8ino-example}{}\doxysection{/simple-\/client/simple-\/client.\+ino}
+Example usage of Web\+Socket\+Client class
+
+
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <\mbox{\hyperlink{_web_socket_client_8h}{WebSocketClient.h}}>}}
+\DoxyCodeLine{\textcolor{keyword}{using namespace }net;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#if PLATFORM\_ARCH == PLATFORM\_ARCHITECTURE\_SAMD21}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#  define \_SERIAL SerialUSB}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#  define \_SERIAL Serial}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#if NETWORK\_CONTROLLER == NETWORK\_CONTROLLER\_WIFI}}
+\DoxyCodeLine{constexpr \textcolor{keywordtype}{char} kSSID[]\{ \textcolor{stringliteral}{"SKYNET"} \};}
+\DoxyCodeLine{constexpr \textcolor{keywordtype}{char} kPassword[]\{ \textcolor{stringliteral}{"***"} \};}
+\DoxyCodeLine{\textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{\textcolor{keywordtype}{byte} mac[]\{ 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED \};}
+\DoxyCodeLine{\textcolor{comment}{// IPAddress ip(192, 168, 46, 179);}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\mbox{\hyperlink{classnet_1_1_web_socket_client}{WebSocketClient}} client;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void} setup() \{}
+\DoxyCodeLine{  \_SERIAL.begin(115200);}
+\DoxyCodeLine{  \textcolor{keywordflow}{while} (!\_SERIAL)}
+\DoxyCodeLine{    ;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#if NETWORK\_CONTROLLER == NETWORK\_CONTROLLER\_WIFI}}
+\DoxyCodeLine{  \textcolor{comment}{//\_SERIAL.setDebugOutput(true);}}
+\DoxyCodeLine{  \_SERIAL.printf(\textcolor{stringliteral}{"\(\backslash\)nConnecting to \%s "}, kSSID);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  WiFi.mode(WIFI\_STA);}
+\DoxyCodeLine{  WiFi.begin(kSSID, kPassword);}
+\DoxyCodeLine{  \textcolor{keywordflow}{while} (WiFi.status() != WL\_CONNECTED) \{}
+\DoxyCodeLine{    delay(500);}
+\DoxyCodeLine{    \_SERIAL.print(F(\textcolor{stringliteral}{"."}));}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \_SERIAL.println(F(\textcolor{stringliteral}{" connected"}));}
+\DoxyCodeLine{}
+\DoxyCodeLine{  WiFi.printDiag(\_SERIAL);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \_SERIAL.print(F(\textcolor{stringliteral}{"Device IP: "}));}
+\DoxyCodeLine{  \_SERIAL.println(WiFi.localIP());}
+\DoxyCodeLine{\textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{  \_SERIAL.println(F(\textcolor{stringliteral}{"Initializing ... "}));}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#  if NETWORK\_CONTROLLER == ETHERNET\_CONTROLLER\_W5X00}}
+\DoxyCodeLine{  \textcolor{comment}{// Ethernet.init(53);}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#  endif}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  Ethernet.begin(mac); \textcolor{comment}{//, ip);}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \_SERIAL.print(F(\textcolor{stringliteral}{"Device IP: "}));}
+\DoxyCodeLine{  \_SERIAL.println(Ethernet.localIP());}
+\DoxyCodeLine{\textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  client.\mbox{\hyperlink{classnet_1_1_web_socket_client_a44e4ca1a512d5393f06b4c6d2b65234e}{onOpen}}([](\mbox{\hyperlink{classnet_1_1_web_socket}{WebSocket}} \&ws) \{}
+\DoxyCodeLine{    \_SERIAL.println(F(\textcolor{stringliteral}{"Connected"}));}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{const} \textcolor{keywordtype}{char} message[]\{ \textcolor{stringliteral}{"Hello from Arduino client!"} \};}
+\DoxyCodeLine{    ws.\mbox{\hyperlink{classnet_1_1_web_socket_a7971abf4be4ed0f540f1ccc50c36c021}{send}}(WebSocket::DataType::TEXT, message, strlen(message));}
+\DoxyCodeLine{  \});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  client.\mbox{\hyperlink{classnet_1_1_web_socket_a531e5ce8d7f930b1fe5b498fc51a8b91}{onMessage}}([](\mbox{\hyperlink{classnet_1_1_web_socket}{WebSocket}} \&ws, \textcolor{keyword}{const} \mbox{\hyperlink{classnet_1_1_web_socket_a3cfccdbf394baf6ba239174a6a50be5d}{WebSocket::DataType}} \&dataType,}
+\DoxyCodeLine{                     \textcolor{keyword}{const} \textcolor{keywordtype}{char} *message, uint16\_t length) \{}
+\DoxyCodeLine{    \textcolor{keywordflow}{switch} (dataType) \{}
+\DoxyCodeLine{    \textcolor{keywordflow}{case} WebSocket::DataType::TEXT:}
+\DoxyCodeLine{      \_SERIAL.print(F(\textcolor{stringliteral}{"Received: "}));}
+\DoxyCodeLine{      \_SERIAL.println(message);}
+\DoxyCodeLine{      \textcolor{keywordflow}{break};}
+\DoxyCodeLine{    \textcolor{keywordflow}{case} WebSocket::DataType::BINARY:}
+\DoxyCodeLine{      \_SERIAL.println(F(\textcolor{stringliteral}{"Received binary data"}));}
+\DoxyCodeLine{      \textcolor{keywordflow}{break};}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{    ws.\mbox{\hyperlink{classnet_1_1_web_socket_a7971abf4be4ed0f540f1ccc50c36c021}{send}}(dataType, message, length); \textcolor{comment}{// echo back to server}}
+\DoxyCodeLine{  \});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  client.\mbox{\hyperlink{classnet_1_1_web_socket_ab0386484ae3d772db9b4a5f8ca57162b}{onClose}}(}
+\DoxyCodeLine{    [](\mbox{\hyperlink{classnet_1_1_web_socket}{WebSocket}} \&ws, \textcolor{keyword}{const} \mbox{\hyperlink{classnet_1_1_web_socket_aac663d5f7c70dd53ef31b8123177893f}{WebSocket::CloseCode}} \&code, \textcolor{keyword}{const} \textcolor{keywordtype}{char} *reason,}
+\DoxyCodeLine{      uint16\_t length) \{ \_SERIAL.println(F(\textcolor{stringliteral}{"Disconnected\(\backslash\)n"})); \});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordflow}{if} (!client.\mbox{\hyperlink{classnet_1_1_web_socket_client_a7158282129f28d883acbe5814ffa3eb7}{open}}(\textcolor{stringliteral}{"192.168.46.31"}, 3000)) \{}
+\DoxyCodeLine{    \_SERIAL.println(F(\textcolor{stringliteral}{"Connection failed!"}));}
+\DoxyCodeLine{    \textcolor{keywordflow}{while} (\textcolor{keyword}{true})}
+\DoxyCodeLine{      ;}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void} loop() \{ client.\mbox{\hyperlink{classnet_1_1_web_socket_client_a54870cf72e296a80ee9d3ca94d1d07e3}{listen}}(); \}}
+\end{DoxyCodeInclude}
+ 
