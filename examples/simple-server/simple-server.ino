@@ -8,8 +8,8 @@ using namespace net;
 #endif
 
 #if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
-constexpr char SSID[]{ "SKYNET" };
-constexpr char password[]{ "***" };
+constexpr char kSSID[]{ "SKYNET" };
+constexpr char kPassword[]{ "***" };
 #else
 byte mac[]{ 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 IPAddress ip(192, 168, 46, 180);
@@ -25,10 +25,10 @@ void setup() {
 
 #if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
   //_SERIAL.setDebugOutput(true);
-  _SERIAL.printf("\nConnecting to %s ", SSID);
+  _SERIAL.printf("\nConnecting to %s ", kSSID);
 
   WiFi.mode(WIFI_STA);
-  WiFi.begin(SSID, password);
+  WiFi.begin(kSSID, kPassword);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     _SERIAL.print(F("."));
@@ -43,7 +43,7 @@ void setup() {
 #else
   _SERIAL.println(F("Initializing ... "));
 
-#  if NETWORK_CONTROLLER == ETHERNET_CONTROLLER_W5100
+#  if NETWORK_CONTROLLER == ETHERNET_CONTROLLER_W5X00
   // Ethernet.init(53);
 #  endif
 

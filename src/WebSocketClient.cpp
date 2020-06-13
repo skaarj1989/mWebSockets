@@ -77,7 +77,7 @@ void WebSocketClient::_sendRequest(
   snprintf_P(buffer, sizeof(buffer), (PGM_P)F("GET %s HTTP/1.1"), path);
   m_client.println(buffer);
 
-  snprintf_P(buffer, sizeof(buffer), (PGM_P)F("Host: %s:%d"), host, port);
+  snprintf_P(buffer, sizeof(buffer), (PGM_P)F("Host: %s:%u"), host, port);
   m_client.println(buffer);
 
   m_client.println(F("Upgrade: websocket"));
@@ -129,7 +129,7 @@ bool WebSocketClient::_readResponse() {
       buffer[lineBreakPos] = '\0';
 
 #ifdef _DUMP_HANDSHAKE
-      printf(F("[Line #%d] %s\n"), currentLine, buffer);
+      printf(F("[Line #%u] %s\n"), currentLine, buffer);
 #endif
 
       if (currentLine == 0) {
@@ -188,7 +188,7 @@ bool WebSocketClient::_readResponse() {
           else if (strcmp_P(header, (PGM_P)F("Sec-WebSocket-Accept")) == 0) {
             value = strtok_r(rest, " ", &rest);
 
-            char encodedKey[32]{};
+            char encodedKey[28]{};
             encodeSecKey(encodedKey, m_secKey);
             SAFE_DELETE_ARRAY(m_secKey);
 

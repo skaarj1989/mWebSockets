@@ -46,7 +46,7 @@ void setup() {
 #else
   _SERIAL.println(F("Initializing ... "));
 
-#  if NETWORK_CONTROLLER == ETHERNET_CONTROLLER_W5100
+#  if NETWORK_CONTROLLER == ETHERNET_CONTROLLER_W5X00
   // Ethernet.init(53);
 #  endif
 

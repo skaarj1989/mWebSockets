@@ -1,14 +1,26 @@
 #pragma once
 
+/** @file */
+
 #include "utility.h"
 
 namespace net {
 
-constexpr uint8_t kValidUpgradeHeader = 0x01;
-constexpr uint8_t kValidConnectionHeader = 0x02;
-constexpr uint8_t kValidSecKey = 0x04;
-constexpr uint8_t kValidVersion = 0x08;
+/**
+ * @brief Generates Sec-WebSocket-Key value.
+ * @param [output] Array of at least 24 elements.
+ */
+void generateSecKey(char output[]);
+/**
+ * @brief Generates Sec-WebSocket-Accept value.
+ * @param [output] Array of at least 28 elements.
+ * @param [key] Key to encode
+ */
+void encodeSecKey(char output[], const char *key);
 
+/**
+ * Error codes.
+ */
 enum class WebSocketError {
   NO_ERROR,
 
@@ -32,13 +44,24 @@ enum class WebSocketError {
   SERVICE_UNAVAILABLE = 503
 };
 
+/**
+ * @class WebSocket
+ * @see https://tools.ietf.org/html/rfc6455
+ */
 class WebSocket {
   friend class WebSocketServer;
   struct header_t;
 
 public:
+  /**
+   * Connection states.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/readyState
+   */
   enum class ReadyState : int8_t { CONNECTING = 0, OPEN, CLOSING, CLOSED };
+  /** Frame data types. */
   enum class DataType : int8_t { TEXT, BINARY };
+  
+  /** Frame opcodes. */
   enum Opcode {
     CONTINUATION_FRAME = 0x00,
 
@@ -49,7 +72,10 @@ public:
     TEXT_FRAME = 0x01,
     BINARY_FRAME = 0x02,
 
+    //
     // Reserved non-control frames:
+    //
+
     // 0x03
     // 0x04
     // 0x05
@@ -64,7 +90,10 @@ public:
     PING_FRAME = 0x09,
     PONG_FRAME = 0x0A
 
+    //
     // Reserved control opcodes:
+    //
+
     // 0x0B
     // 0x0C
     // 0x0D
@@ -72,7 +101,10 @@ public:
     // 0x0F
   };
 
-  // https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent
+  /**
+   * Close event code.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent
+   */
   enum CloseCode {
     // 0-999 : Reserved and not used.
 
@@ -131,8 +163,21 @@ public:
     // 4000-4999 : Available for use by applications.
   };
 
+  /**
+   * @param [ws] Closing endpoint.
+   * @param [code] Close event code.
+   * @param [reason] Contains message for close event, c-string, non NULL-terminated. May be empty.
+   * @param [length] Number of characters in reason c-string.
+   */
   using onCloseCallback = void (*)(WebSocket &ws,
     const WebSocket::CloseCode &code, const char *reason, uint16_t length);
+
+  /**
+   * @param [ws] Source of a message.
+   * @param [dataType] Type of message.
+   * @param [message] Contains data, non NULL-terminated.
+   * @param [length] Number of data bytes.
+   */
   using onMessageCallback = void (*)(WebSocket &ws,
     const WebSocket::DataType &dataType, const char *message, uint16_t length);
 
@@ -143,35 +188,69 @@ public:
   virtual ~WebSocket();
 
   /**
-    * Sends close event.
-    * @remarks Max reason length = 123 characters!
-    */
+   * @brief Sends close event.
+   * @param [code]
+   * @param [instant] Determines if close should be done immediately.
+   * @param [reason] Additional message (not required), doesn't have to be NULL-terminated. Max length = 123 characters.
+   * @param [length] Number of characters in reason.
+   */
   void close(const CloseCode &code, bool instant, const char *reason = nullptr,
     uint16_t length = 0);
-  /** Immediately closes the connection. */
+  /** @brief Instantly closes connection. */
   void terminate();
 
+  /** @return Endpoint connection status. */
   const ReadyState &getReadyState() const;
-  /** Verifies endpoint connection. */
-  bool isAlive();
+  /** @brief Verifies endpoint connection. */
+  bool isAlive() const;
 
- #if PLATFORM_ARCH != PLATFORM_ARCHITECTURE_ESP8266
-  IPAddress getRemoteIP();
- #endif
+  /**
+   * @return Endpoint IP address.
+   * @remark For some microcontrollers it may be empty.
+   */
+  IPAddress getRemoteIP() const;
 
+  /**
+   * @brief Sends message frame.
+   * @param [message] Doesn't have to be NULL-terminated.
+   */
   void send(
     const WebSocket::DataType dataType, const char *message, uint16_t length);
+  /**
+   * @brief Sends ping message.
+   * @param [payload] Additional message, doesn't have to be NULL-terminated. Max length = 125.
+   * @param [length] Number of characters in payload.
+   */
   void ping(const char *payload = nullptr, uint16_t length = 0);
 
+  /**
+   * @brief Sets close event handler.
+   * @code{.cpp}
+   * ws.onClose([](WebSocket &ws, const WebSocket::CloseCode &code,
+   *             const char *reason, uint16_t length) {
+   *   // handle close event ...
+   * });
+   * @endcode
+   */
   void onClose(const onCloseCallback &callback);
+  /**
+   * @brief Sets message handler function.
+   * @code{.cpp}
+   * ws.onMessage([](WebSocket &ws, const WebSocket::DataType &dataType,
+   *               const char *message, uint16_t length) {
+   *   // handle data frame ...
+   * });
+   * @endcode
+   */
   void onMessage(const onMessageCallback &callback);
 
 protected:
-  /** Initialization done by client. */
+  /** @remark Reserved for WebSocketClient. */
   WebSocket();
-  /** Endpoint initialized by server. */
+  /** @remark Reserved for WebSocketServer. */
   WebSocket(const NetClient &client);
 
+  /** @cond */
   int32_t _read();
   bool _read(char *buffer, size_t size);
 
@@ -185,22 +264,30 @@ protected:
   void _handleContinuationFrame(const header_t &header, const char *payload);
   void _handleDataFrame(const header_t &header, const char *payload);
   void _handleCloseFrame(const header_t &header, const char *payload);
-
+  /** @endcond */
 protected:
-  NetClient m_client;
+  mutable NetClient m_client;
   ReadyState m_readyState;
 
+  /** @note Client endpoint must always mask frames. */
   bool m_maskEnabled;
 
   char
-    m_dataBuffer[kBufferMaxSize]{}; // #TODO change to dynamic memory allocation
-                                    // (would save memory in server).
+    m_dataBuffer[kBufferMaxSize]{}; /* #TODO Change to dynamic memory allocation
+                                     (would save memory in server). */
   uint16_t m_currentOffset{ 0 };
-  int8_t m_tbcOpcode{ -1 }; /**< indicates opcode (text/binary) that should be
-                               continued by continuation frame */
+  int8_t m_tbcOpcode{ -1 }; /**< Indicates opcode (text/binary) that should be
+                               continued by continuation frame. */
 
   onCloseCallback _onClose{ nullptr };
   onMessageCallback _onMessage{ nullptr };
 };
+
+/** @cond */
+constexpr uint8_t kValidUpgradeHeader = 0x01;
+constexpr uint8_t kValidConnectionHeader = 0x02;
+constexpr uint8_t kValidSecKey = 0x04;
+constexpr uint8_t kValidVersion = 0x08;
+/** @endcond */
 
 } // namespace net

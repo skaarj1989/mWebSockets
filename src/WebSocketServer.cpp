@@ -11,7 +11,7 @@ void WebSocketServer::begin(const verifyClientCallback &callback) {
 }
 
 void WebSocketServer::shutdown() {
-  const auto end = &m_sockets[MAX_CONNECTIONS];
+  const auto end = &m_sockets[kMaxConnections];
   for (auto it = &m_sockets[0]; it != end; ++it) {
     if (*it) {
       (*it)->close(WebSocket::CloseCode::GOING_AWAY, true);
@@ -26,7 +26,7 @@ void WebSocketServer::shutdown() {
 
 void WebSocketServer::broadcast(
   const WebSocket::DataType &dataType, const char *message, uint16_t length) {
-  const auto end = &m_sockets[MAX_CONNECTIONS];
+  const auto end = &m_sockets[kMaxConnections];
   for (auto it = &m_sockets[0]; it != end; ++it) {
     if (!(*it) || (*it)->getReadyState() != WebSocket::ReadyState::OPEN)
       continue;
@@ -39,7 +39,7 @@ void WebSocketServer::listen() {
   _cleanDeadConnections();
 
 #if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
-  const auto end = &m_sockets[MAX_CONNECTIONS];
+  const auto end = &m_sockets[kMaxConnections];
 
   if (m_server.hasClient()) {
     WiFiClient client;
@@ -72,7 +72,7 @@ void WebSocketServer::listen() {
     WebSocket *ws = _getWebSocket(client);
 
     if (!ws) {
-      const auto end = &m_sockets[MAX_CONNECTIONS];
+      const auto end = &m_sockets[kMaxConnections];
       for (auto it = &m_sockets[0]; it != end; ++it) {
         if (!(*it)) {
           if (_handleRequest(client)) {
@@ -93,9 +93,9 @@ void WebSocketServer::listen() {
 #endif
 }
 
-uint8_t WebSocketServer::countClients() {
+uint8_t WebSocketServer::countClients() const {
   uint8_t count = 0;
-  const auto end = &m_sockets[MAX_CONNECTIONS];
+  const auto end = &m_sockets[kMaxConnections];
   for (auto it = &m_sockets[0]; it != end; ++it)
     if (*it && (*it)->isAlive()) count++;
 
@@ -107,7 +107,7 @@ void WebSocketServer::onConnection(const onConnectionCallback &callback) {
 }
 
 WebSocket *WebSocketServer::_getWebSocket(NetClient &client) const {
-  const auto end = &m_sockets[MAX_CONNECTIONS];
+  const auto end = &m_sockets[kMaxConnections];
   for (auto it = &m_sockets[0]; it != end; ++it)
     if (*it && (*it)->m_client == client) return *it;
 
@@ -156,7 +156,7 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
       char *rest = buffer;
 
 #ifdef _DUMP_HANDSHAKE
-      printf(F("[Line #%d] %s\n"), currentLine, buffer);
+      printf(F("[Line #%u] %s\n"), currentLine, buffer);
 #endif
 
       //
@@ -233,7 +233,7 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
           else {
             if (_verifyClient) {
               value = strtok_r(rest, " ", &rest);
-              if (!_verifyClient(_REMOTE_IP(client), header, value)) {
+              if (!_verifyClient(fetchRemoteIp(client), header, value)) {
                 _rejectRequest(client, WebSocketError::CONNECTION_REFUSED);
                 return false;
               }
@@ -378,14 +378,16 @@ void WebSocketServer::_rejectRequest(
 // [5]
 //
 void WebSocketServer::_acceptRequest(NetClient &client, const char *secKey) {
-  char acceptKey[32]{};
+  char acceptKey[28]{};
   encodeSecKey(acceptKey, secKey);
 
-  char secWebSocketAccept[64]{};
+  char secWebSocketAccept[50]{};
   strcpy_P(secWebSocketAccept, (PGM_P)F("Sec-WebSocket-Accept: "));
   strcat(secWebSocketAccept, acceptKey);
 
   client.println(F("HTTP/1.1 101 Switching Protocols"));
+  //client.println(F("Server: Arduino"));
+  //client.println(F("X-Powered-By: mWebSockets"));
   client.println(F("Upgrade: websocket"));
   client.println(F("Connection: Upgrade"));
   client.println(secWebSocketAccept);
@@ -393,10 +395,9 @@ void WebSocketServer::_acceptRequest(NetClient &client, const char *secKey) {
 }
 
 void WebSocketServer::_cleanDeadConnections() {
-  const auto end = &m_sockets[MAX_CONNECTIONS];
+  const auto end = &m_sockets[kMaxConnections];
   for (auto it = &m_sockets[0]; it != end; ++it) {
     if (*it && !(*it)->isAlive()) {
-      __debugOutput(F("dealing with dead connection ...\n"));
       delete *it;
       *it = nullptr;
     }

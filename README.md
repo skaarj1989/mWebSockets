@@ -1,4 +1,5 @@
 # μWebSockets
+[![arduino-library-badge](https://www.ardu-badge.com/badge/mWebSockets.svg?)](https://www.ardu-badge.com/mWebSockets)
 [![Build Status](https://travis-ci.org/skaarj1989/mWebSockets.svg?branch=master)](https://travis-ci.org/skaarj1989/mWebSockets)
 [![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/skaarj1989/mWebSockets)](https://www.codefactor.io/repository/github/skaarj1989/mwebsockets/overview/master)
 ![GitHub issues](https://img.shields.io/github/issues/skaarj1989/mWebSockets.svg)
@@ -16,6 +17,7 @@ Simple to use implementation of WebSockets for microcontrollers.
 - ATmega2560
 - ARM Cortex M0
 - ESP8266
+- STM32
 
 **WebSocketServer compatible browsers:**
 - Chrome
@@ -37,9 +39,6 @@ Some tests will never pass just because of memory lack in ATmega family.
   * [Client](#client)
   * [Chat](#chat)
 - [Approx memory usage](#approx-memory-usage)
-- [Ethernet "2" library modification](#ethernet-2-library-modification)
-  * [Fix for Arduino Mega](#fix-for-arduino-mega)
-- [Fix for arduino-base64 with ESP8266](#fix-for-arduino-base64-with-esp8266)
 - [Known issues](#known-issues)
 - [License](#license)
 
@@ -53,19 +52,17 @@ Some tests will never pass just because of memory lack in ATmega family.
   * WeMos D1 mini (ESP8266)
   * NodeMCU v3 (ESP8266)
 * Ethernet module or shield (confirmed working):
-  * Arduino Ethernet Shield W5100
+  * Arduino Ethernet Shield (W5100)
+  * Arduino Ethernet Shield 2 (W5500)
   * WizNet W5500 module
   * ENC28j60
 * Libraries:
-  * [arduino-base64](https://github.com/adamvr/arduino-base64)
-  * CryptoLegacy from [arduinolibs](https://github.com/rweather/arduinolibs), you can grab it from [here](CryptoLegacy.zip)
-  * [Ethernet "2"](https://github.com/adafruit/Ethernet2) for W5500
-    + This library is deprecated you can use official Arduino Ethernet library.
-  * UIPEthernet [#1](https://github.com/ntruchsess/arduino_uip) or [#2](https://github.com/UIPEthernet/UIPEthernet) (the choice is yours) for ENC28j60
+  * UIPEthernet [#1](https://github.com/ntruchsess/arduino_uip) or [#2](https://github.com/UIPEthernet/UIPEthernet) (the choice is yours) if you decide to use ENC28j60
 
 ## Installation
 
-Install this library, **arduino-base64** and **CryptoLegacy** in Arduino libraries directory, follow [this](https://www.arduino.cc/en/Guide/Libraries) guide if you don't know how to do it.
+Use [Arduino Download Manager](https://www.ardu-badge.com/mWebSockets) or follow [this](https://www.arduino.cc/en/Guide/Libraries) guide.
+
 
 ### config.h
 
@@ -74,18 +71,16 @@ Change below definition if you use a different controller:
 ```cpp
 ...
 
-#define NETWORK_CONTROLLER ETHERNET_CONTROLLER_W5100
+#define NETWORK_CONTROLLER ETHERNET_CONTROLLER_W5X00
 ```
 
 ```
-ETHERNET_CONTROLLER_W5100
-ETHERNET_CONTROLLER_W5500
+ETHERNET_CONTROLLER_W5X00
 ETHERNET_CONTROLLER_ENC28J60
 NETWORK_CONTROLLER_WIFI
 ```
 
-``ETHERNET_CONTROLLER_W5100`` means official Arduino Ethernet library. It is possible to use this with both **W5100** and **W5500**.
-``ETHERNET_CONTROLLER_W5500`` stands for **Ethernet "2"** library.
+``ETHERNET_CONTROLLER_W5X00`` stands for official Arduino Ethernet library.
 
 Uncomment these if you want additional informations in serial monitor:
 
@@ -106,14 +101,14 @@ constexpr uint16_t kBufferMaxSize = 256;
 
 If you have **WeMos D1** in size of **Arduino Uno** simply attaching shield does not work, you have to wire **ICSP** on **Ethernet Shield** to proper pins.
 
-| W5100 Ethernet shield  | Arduino Uno / Mega2560 |  Arduino Pro Mini | Arduino Zero | WeMos D1 |
-| :---: | :---: | :---: | :---: | :--- |
-| (ICSP) MISO  | (ICSP) MISO  | PIN 12 | (ICSP) MISO | D12 / MISO |
-| (ICSP) MOSI  | (ICSP) MOSI  | PIN 11 | (ICSP) MOSI | D11 / MOSI
-| (ICSP) SCK  | (ICSP) SCK | PIN 13 | (ICSP) SCK | D13 / SCK
-| (SS) PIN 10  | PIN 10 | PIN 10 | PIN 10 | D10 / SS
+| Ethernet Shield <br> W5100/W5500 | Arduino Uno / <br> Mega2560 | Arduino <br> Pro Mini | Arduino Zero | WeMos D1 | STM32 <br> "Blue Pill" |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| (ICSP) MISO  | (ICSP) MISO  | PIN 12 | (ICSP) MISO | D12 / MISO | A6 |
+| (ICSP) MOSI  | (ICSP) MOSI  | PIN 11 | (ICSP) MOSI | D11 / MOSI | A7 |
+| (ICSP) SCK  | (ICSP) SCK | PIN 13 | (ICSP) SCK | D13 / SCK | A5 |
+| (SS) PIN 10  | PIN 10 | PIN 10 | PIN 10 | D10 / SS | A4 |
 
-| W5500 / ENC28j60  | Arduino Uno / Pro Mini | Arduino Mega2560 |
+| W5500 / <br> ENC28j60  | Arduino Uno / <br> Pro Mini | Arduino <br> Mega2560 |
 | :---: | :---: | :---: | 
 | MISO  | PIN 12  | PIN 50 |
 | MOSI  | PIN 11  | PIN 51 |
@@ -218,19 +213,19 @@ Following screenshots shows Rasperry Pi server, browser client and Arduino clien
 ###### Node.js server on Raspberry Pi (/node.js/chat.js)
 
 <p align="center">
-   <img src=https://github.com/skaarj1989/ArduinoWebSocketClient/blob/master/images/rpi-nodejs.png?raw=true">
+   <img src=https://github.com/skaarj1989/ArduinoWebSocketClient/blob/gh-pages/images/rpi-nodejs.png?raw=true">
 </p>
 
 ###### Browser client (/node.js/chat-client.htm)
 
 <p align="center">
-   <img src=https://github.com/skaarj1989/ArduinoWebSocketClient/blob/master/images/browser-client.PNG?raw=true">
+   <img src=https://github.com/skaarj1989/ArduinoWebSocketClient/blob/gh-pages/images/browser-client.PNG?raw=true">
 </p>
 
 ###### Arduino Uno client (/examples/chat/chat.ino)
 
 <p align="center">
-   <img src=https://github.com/skaarj1989/ArduinoWebSocketClient/blob/master/images/arduino-serial-monitor.png?raw=true">
+   <img src=https://github.com/skaarj1989/ArduinoWebSocketClient/blob/gh-pages/images/arduino-serial-monitor.png?raw=true">
 </p>
 
 ##### More examples [here](examples)
@@ -247,15 +242,6 @@ Following screenshots shows Rasperry Pi server, browser client and Arduino clien
 | Arduino Mega2560  | 25 310 bytes (10%) | 945 bytes (12%) |
 | Arduino Pro Mini | 25 114 bytes (82%) | 917 bytes (45%) |
 | Arduino Zero | 31 128 bytes (12%) | 3 924 bytes |
-
-### Ethernet2.h (W5500)
-
-| Board  | Program space | Dynamic memory |
-| :---: | :---: | :---: | 
-| Arduino Uno  | 21 592 bytes (66%) | 811 bytes (39%) |
-| Arduino Mega2560  | 21 900 bytes (8%) | 811 bytes (9%) |
-| Arduino Pro Mini | 21 592 bytes (70%) | 811 bytes (39%) |
-| Arduino Zero | 25 988 bytes (9%) | |
 
 ### UIPEthernet.h (ENC28j60)
 :warning: **This library is incompatibile with Arduino Zero!** :warning:
@@ -274,47 +260,13 @@ Following screenshots shows Rasperry Pi server, browser client and Arduino clien
 | WeMos D1 mini | 286 916 bytes (27%) | 27 556 bytes (34%) |
 | NodeMCU | 286 916 bytes (27%) | 27 556 (33%) |
 
-## Ethernet "2" library modification
-
-### Fix for Arduino Mega
-
-#### Ethernet2.h
-
-```cpp
-#if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__)
-  EthernetClass() { _dhcp = NULL; w5500_cspin = 10; }
-  void init(uint8_t _cspin) { w5500_cspin = _cspin; }
-#elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
-  EthernetClass() { _dhcp = NULL; w5500_cspin = 53; }
-  void init(uint8_t _cspin = 53) { w5500_cspin = _cspin; }
-#endif
-```
-
-## Fix for arduino-base64 with **ESP8266**
-
-Move files: ``Base64.h`` and ``Base64.cpp`` to ``src`` directory of ``mWebSockets`` library.
-In ``Base64.cpp`` change:
-
-```cpp
-#include <avr/pgmspace.h>
-```
-
-to this:
-
-```cpp
-#include "platform.h"
-#include "Base64.h"
-#if PLATFORM_ARCH == PLATFORM_ARCHITECTURE_ESP8266
-#include <pgmspace.h>
-#else
-#include <avr/pgmspace.h>
-#endif
-```
-
 ## Known issues
 
 1. ENC28j60 is slow, eats much more memory than W5100/W5500 and hangs on ``available()`` function
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+* This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+* [arduino-base64](https://github.com/adamvr/arduino-base64) licensed under licensed under MIT License
+* [arduinolibs](https://github.com/rweather/arduinolibs) licensed under MIT
+* [utf8_check](https://www.cl.cam.ac.uk/~mgk25/ucs/utf8_check.c) licensed under MIT

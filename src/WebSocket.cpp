@@ -1,4 +1,6 @@
 #include "WebSocket.h"
+#include "base64/Base64.h"
+#include "CryptoLegacy/SHA1.h"
 
 namespace net {
 
@@ -22,22 +24,123 @@ constexpr bool isCloseCodeValid(const uint16_t code) {
           (code >= 3000 && code <= 4999));
 }
 
-struct WebSocket::header_t {
-  bool fin; ///< 0 = more frames of this message follow, 1 = final frame of this
-            ///< message
-  bool rsv1, ///< MUST be 0 unless negotiated otherwise
-    rsv2,    ///< MUST be 0 unless negotiated otherwise
-    rsv3;    ///< MUST be 0 unless negotiated otherwise
-  
-  uint8_t opcode;
+void generateSecKey(char output[]) {
+  char temp[17]{};
 
+  randomSeed(analogRead(0));
+  for (byte i = 0; i < 16; ++i)
+    temp[i] = static_cast<char>(random(0xFF));
+
+  base64_encode(output, temp, 16);
+}
+
+void encodeSecKey(char output[], const char *key) {
+  constexpr char kMagicString[]{ "258EAFA5-E914-47DA-95CA-C5AB0DC85B11" };
+
+  char buffer[64]{};
+  strcpy(buffer, key);
+  strcat(buffer, kMagicString);
+
+  SHA1 sha1;
+  sha1.update(buffer, strlen(buffer));
+
+  sha1.finalize(buffer, 20);
+  base64_encode(output, buffer, 20);
+}
+
+/** @param [output] Array of at least 4 elements. */
+void generateMask(char output[]) {
+  randomSeed(analogRead(0));
+  for (byte i = 0; i < 4; ++i)
+    output[i] = static_cast<char>(random(0xFF));
+}
+
+/**
+ * @see https://github.com/websockets/utf-8-validate/blob/master/src/validation.c
+ */
+bool isValidUTF8(const byte *s, size_t length) {
+  const uint8_t *end = s + length;
+
+  //
+  // This code has been taken from utf8_check.c which was developed by
+  // Markus Kuhn <http://www.cl.cam.ac.uk/~mgk25/>.
+  //
+  // For original code / licensing please refer to
+  // https://www.cl.cam.ac.uk/%7Emgk25/ucs/utf8_check.c
+  //
+  while (s < end) {
+    if (*s < 0x80) { // 0xxxxxxx
+      s++;
+    } else if ((s[0] & 0xe0) == 0xc0) { // 110xxxxx 10xxxxxx
+      if (s + 1 == end || (s[1] & 0xc0) != 0x80 ||
+          (s[0] & 0xfe) == 0xc0 // overlong
+      ) {
+        break;
+      } else {
+        s += 2;
+      }
+    } else if ((s[0] & 0xf0) == 0xe0) { // 1110xxxx 10xxxxxx 10xxxxxx
+      if (s + 2 >= end || (s[1] & 0xc0) != 0x80 || (s[2] & 0xc0) != 0x80 ||
+          (s[0] == 0xe0 && (s[1] & 0xe0) == 0x80) ||
+          (s[0] == 0xed && (s[1] & 0xe0) == 0xa0)) {
+        break;
+      } else {
+        s += 3;
+      }
+    } else if ((s[0] & 0xf8) == 0xf0) { // 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+      if (s + 3 >= end || (s[1] & 0xc0) != 0x80 || (s[2] & 0xc0) != 0x80 ||
+          (s[3] & 0xc0) != 0x80 ||
+          (s[0] == 0xf0 && (s[1] & 0xf0) == 0x80) ||   // overlong
+          (s[0] == 0xf4 && s[1] > 0x8f) || s[0] > 0xf4 // > U+10FFFF
+      ) {
+        break;
+      } else {
+        s += 4;
+      }
+    } else {
+      break;
+    }
+  }
+
+  return s == end;
+}
+
+//
+// Helper structs:
+//
+
+// 	0                   1                   2                   3
+// 	0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+// 	+-+-+-+-+-------+-+-------------+-------------------------------+
+// 	|F|R|R|R| opcode|M| Payload len |    Extended payload length    |
+// 	|I|S|S|S|  (4)  |A|     (7)     |             (16/64)           |
+// 	|N|V|V|V|       |S|             |   (if payload len==126/127)   |
+// 	| |1|2|3|       |K|             |                               |
+// 	+-+-+-+-+-------+-+-------------+ - - - - - - - - - - - - - - - +
+// 	|     Extended payload length continued, if payload len == 127  |
+// 	+ - - - - - - - - - - - - - - - +-------------------------------+
+// 	|                               |Masking-key, if MASK set to 1  |
+// 	+-------------------------------+-------------------------------+
+// 	| Masking-key (continued)       |          Payload Data         |
+// 	+-------------------------------- - - - - - - - - - - - - - - - +
+// 	:                     Payload Data continued ...                :
+// 	+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - +
+// 	|                     Payload Data continued ...                |
+// 	+---------------------------------------------------------------+
+
+/** @cond */
+struct WebSocket::header_t {
+  bool fin;
+  bool rsv1, rsv2, rsv3;
+  uint8_t opcode;
   bool mask;
   char maskingKey[4]{};
   uint32_t length;
 };
+/** @endcond */
 
 //
-// Public:
+// WebSocket class implementation (public):
 //
 
 WebSocket::~WebSocket() { terminate(); }
@@ -45,7 +148,10 @@ WebSocket::~WebSocket() { terminate(); }
 void WebSocket::close(
   const CloseCode &code, bool instant, const char *reason, uint16_t length) {
   if (m_readyState != ReadyState::OPEN) return;
-  if (length > 123) return; // trigger error?
+  if (length > 123) {
+    // #TODO Trigger error ...
+    return;
+  }
 
   m_readyState = ReadyState::CLOSING;
   char buffer[128]{
@@ -74,28 +180,26 @@ const WebSocket::ReadyState &WebSocket::getReadyState() const {
   return m_readyState;
 }
 
-bool WebSocket::isAlive() {
+bool WebSocket::isAlive() const {
   return m_client.connected() && m_readyState != ReadyState::CLOSED;
 }
 
-#if PLATFORM_ARCH != PLATFORM_ARCHITECTURE_ESP8266
-IPAddress WebSocket::getRemoteIP() { return _REMOTE_IP(m_client); }
-#endif
+IPAddress WebSocket::getRemoteIP() const { return fetchRemoteIp(m_client); }
 
 void WebSocket::send(
   const WebSocket::DataType dataType, const char *message, uint16_t length) {
-  if (m_readyState != WebSocket::ReadyState::OPEN) {
-    // #TODO trigger error ...
+  if (m_readyState != ReadyState::OPEN) {
+    // #TODO Trigger error ...
     return;
   }
 
-  _send(dataType == WebSocket::DataType::TEXT ? TEXT_FRAME : BINARY_FRAME, true,
+  _send(dataType == DataType::TEXT ? TEXT_FRAME : BINARY_FRAME, true,
     m_maskEnabled, message, length);
 }
 
 void WebSocket::ping(const char *payload, uint16_t length) {
-  if (m_readyState != WebSocket::ReadyState::OPEN) {
-    // #TODO trigger error ...
+  if (m_readyState != ReadyState::OPEN) {
+    // #TODO Trigger error ...
     return;
   }
 
@@ -111,11 +215,13 @@ void WebSocket::onMessage(const onMessageCallback &callback) {
 }
 
 //
-//
+// Protected:
 //
 
 WebSocket::WebSocket()
-  : m_readyState(ReadyState::CLOSED), m_maskEnabled(true) {}
+  : m_readyState(ReadyState::CLOSED), m_maskEnabled(true) {
+  // All frames sent from client to server are masked.
+}
 WebSocket::WebSocket(const NetClient &client)
   : m_client(client), m_readyState(ReadyState::OPEN), m_maskEnabled(false) {}
 
@@ -145,7 +251,6 @@ bool WebSocket::_read(char *buffer, size_t size) {
 
   return true;
 }
-
 
 void WebSocket::_send(
   uint8_t opcode, bool fin, bool mask, const char *data, uint16_t length) {
@@ -238,7 +343,7 @@ void WebSocket::_readFrame() {
     break;
   }
   default: {
-    __debugOutput(F("Unrecognized frame opcode: %d\n"), header.opcode);
+    __debugOutput(F("Unrecognized frame opcode: %u\n"), header.opcode);
     close(PROTOCOL_ERROR, true);
     break;
   }
@@ -247,30 +352,11 @@ void WebSocket::_readFrame() {
   SAFE_DELETE_ARRAY(payload);
 }
 
-// 	0                   1                   2                   3
-// 	0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-// 	+-+-+-+-+-------+-+-------------+-------------------------------+
-// 	|F|R|R|R| opcode|M| Payload len |    Extended payload length    |
-// 	|I|S|S|S|  (4)  |A|     (7)     |             (16/64)           |
-// 	|N|V|V|V|       |S|             |   (if payload len==126/127)   |
-// 	| |1|2|3|       |K|             |                               |
-// 	+-+-+-+-+-------+-+-------------+ - - - - - - - - - - - - - - - +
-// 	|     Extended payload length continued, if payload len == 127  |
-// 	+ - - - - - - - - - - - - - - - +-------------------------------+
-// 	|                               |Masking-key, if MASK set to 1  |
-// 	+-------------------------------+-------------------------------+
-// 	| Masking-key (continued)       |          Payload Data         |
-// 	+-------------------------------- - - - - - - - - - - - - - - - +
-// 	:                     Payload Data continued ...                :
-// 	+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - +
-// 	|                     Payload Data continued ...                |
-// 	+---------------------------------------------------------------+
 bool WebSocket::_readHeader(header_t &header) {
   int32_t bite = -1;
 
   char temp[2]{};
   if (!_read(temp, 2)) return false;
-  //__debugOutput(F("B[0] = %x, B[1] = %x\n"), temp[0], temp[1]);
 
   header.fin = temp[0] & 0x80;
   header.rsv1 = temp[0] & 0x40;
@@ -300,7 +386,7 @@ bool WebSocket::_readHeader(header_t &header) {
 
     if (header.length > 125) {
       __debugOutput(
-        F("Control frames max length = 125, here = %d\n"), header.length);
+        F("Control frames max length = 125, here = %u\n"), header.length);
 
       close(PROTOCOL_ERROR, true);
       return false;
@@ -321,7 +407,7 @@ bool WebSocket::_readHeader(header_t &header) {
   }
 
   if (header.length > kBufferMaxSize) {
-    __debugOutput(F("Unsupported frame size = %d\n"), header.length);
+    __debugOutput(F("Unsupported frame size = %u\n"), header.length);
 
     close(MESSAGE_TOO_BIG, true);
     return false;
@@ -366,11 +452,8 @@ bool WebSocket::_readData(const header_t &header, char *payload) {
 
 void WebSocket::_handleContinuationFrame(
   const header_t &header, const char *payload) {
-  if (m_tbcOpcode == -1) {
-    close(PROTOCOL_ERROR, true);
-    return;
-  }
-
+  if (m_tbcOpcode == -1) return close(PROTOCOL_ERROR, true);
+ 
   memcpy(&m_dataBuffer[m_currentOffset], payload, header.length);
 
   if (header.fin) {
@@ -380,10 +463,9 @@ void WebSocket::_handleContinuationFrame(
       m_tbcOpcode == Opcode::TEXT_FRAME ? DataType::TEXT : DataType::BINARY;
 
     if (dataType == DataType::TEXT) {
-      if (!isValidUTF8(reinterpret_cast<byte *>(m_dataBuffer), totalLength)) {
-        close(CloseCode::INVALID_FRAME_PAYLOAD_DATA, true);
-        return;
-      }
+      if (!isValidUTF8(
+            reinterpret_cast<const byte *>(m_dataBuffer), totalLength))
+        return close(INVALID_FRAME_PAYLOAD_DATA, true);
     }
 
     if (_onMessage) {
@@ -399,20 +481,15 @@ void WebSocket::_handleContinuationFrame(
 }
 
 void WebSocket::_handleDataFrame(const header_t &header, const char *payload) {
-  if (m_currentOffset > 0) {
-    close(PROTOCOL_ERROR, true);
-    return;
-  }
+  if (m_currentOffset > 0) return close(PROTOCOL_ERROR, true);
 
   if (header.fin) {
     const auto dataType =
       header.opcode == Opcode::TEXT_FRAME ? DataType::TEXT : DataType::BINARY;
 
     if (dataType == DataType::TEXT) {
-      if (!isValidUTF8(reinterpret_cast<const byte *>(payload), header.length)) {
-        close(CloseCode::INVALID_FRAME_PAYLOAD_DATA, true);
-        return;
-      }
+      if (!isValidUTF8(reinterpret_cast<const byte *>(payload), header.length))
+        return close(INVALID_FRAME_PAYLOAD_DATA, true);
     }
 
     if (_onMessage) {
@@ -435,16 +512,11 @@ void WebSocket::_handleCloseFrame(const header_t &header, const char *payload) {
     for (byte i = 0; i < 2; ++i)
       code = (code << 8) + (payload[i] & 0xFF);
 
-    if (!isCloseCodeValid(code)) {
-      close(PROTOCOL_ERROR, true);
-      return;
-    }
+    if (!isCloseCodeValid(code)) return close(PROTOCOL_ERROR, true);
 
     reason = (header.length) ? &(payload[2]) : nullptr;
-    if (!isValidUTF8(reinterpret_cast<const byte *>(reason), reasonLength)) {
-      close(PROTOCOL_ERROR, true);
-      return;
-    }
+    if (!isValidUTF8(reinterpret_cast<const byte *>(reason), reasonLength))
+      return close(PROTOCOL_ERROR, true);
   }
 
   __debugOutput(F("Received close frame: code = %u, reason = %s\n"), code,

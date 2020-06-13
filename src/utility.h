@@ -28,10 +28,6 @@ void printf(const __FlashStringHelper *fmt, ...);
 
 namespace net {
 
-void generateSecKey(char output[]);
-void encodeSecKey(char output[], const char *key);
-void generateMask(char *output);
-
-bool isValidUTF8(const byte *str, size_t length);
+IPAddress fetchRemoteIp(const NetClient &client);
 
 } // namespace net

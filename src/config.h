@@ -1,26 +1,30 @@
 #pragma once
-/*
-/// Enables __debugOutput function
-#define _DEBUG
-/// Handshake request/response on Serial output
-#define _DUMP_HANDSHAKE
-/// Frame header on Serial output
-#define _DUMP_HEADER
-/// Frame data on Serial output
-#define _DUMP_FRAME_DATA
+
+/** @file */
+
+/**
+ * @def _DEBUG Enables __debugOutput function.
+ * @def _DUMP_HANDSHAKE Prints any handshake request/response on Serial output.
+ * @def _DUMP_HEADER Prints frame header on Serial output.
+ * @def _DUMP_FRAME_DATA Prints frame data on Serial output.
 */
 
-//
-//
-//
+/**
+ * @def NETWORK_CONTROLLER
+ * @brief Specifies network controller, available values:
+ *  - ETHERNET_CONTROLLER_W5X00
+ *  - ETHERNET_CONTROLLER_ENC28J60
+ *  - NETWORK_CONTROLLER_WIFI
+ */
 
-/** Maximum size of data buffer. */
+//#define _DEBUG
+//#define _DUMP_HANDSHAKE
+//#define _DUMP_HEADER
+//#define _DUMP_FRAME_DATA
+
+#define NETWORK_CONTROLLER ETHERNET_CONTROLLER_W5X00
+
+/** Maximum size of data buffer (in bytes). */
 constexpr uint16_t kBufferMaxSize = 128;
 /** Maximum time to wait for endpoint response (in milliseconds). */
 constexpr uint16_t kTimeoutInterval = 5000;
-
-// ETHERNET_CONTROLLER_W5100
-// ETHERNET_CONTROLLER_W5500
-// ETHERNET_CONTROLLER_ENC28J60
-// NETWORK_CONTROLLER_WIFI
-#define NETWORK_CONTROLLER ETHERNET_CONTROLLER_W5100
