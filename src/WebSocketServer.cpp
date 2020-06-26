@@ -134,8 +134,9 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
 
   // Large enought to hold longest header field
   //  Chrome: 'User-Agent' = ~126 characters
-  //  Firefox: 'User-Agent' = ~90 characters
   //  Edge: 'User-Agent' = ~141 characters
+  //  Firefox: 'User-Agent' = ~90 characters
+  //  Opera: 'User-Agent' = ~145 characters
   char buffer[160]{};
   char secKey[32]{}; // Holds client Sec-WebSocket-Key
 
@@ -378,10 +379,11 @@ void WebSocketServer::_rejectRequest(
 // [5]
 //
 void WebSocketServer::_acceptRequest(NetClient &client, const char *secKey) {
-  char acceptKey[28]{};
+  char acceptKey[29]{}; // 28 characters for key + 1 for NULL
   encodeSecKey(acceptKey, secKey);
 
-  char secWebSocketAccept[50]{};
+  // 23 characters for header + 28 for accept key + 1 for NULL
+  char secWebSocketAccept[52]{};
   strcpy_P(secWebSocketAccept, (PGM_P)F("Sec-WebSocket-Accept: "));
   strcat(secWebSocketAccept, acceptKey);
 
