@@ -2,7 +2,6 @@
 [![arduino-library-badge](https://www.ardu-badge.com/badge/mWebSockets.svg?)](https://www.ardu-badge.com/mWebSockets)
 [![Build Status](https://travis-ci.org/skaarj1989/mWebSockets.svg?branch=master)](https://travis-ci.org/skaarj1989/mWebSockets)
 [![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/skaarj1989/mWebSockets)](https://www.codefactor.io/repository/github/skaarj1989/mwebsockets/overview/master)
-![GitHub issues](https://img.shields.io/github/issues/skaarj1989/mWebSockets.svg)
 ![GitHub](https://img.shields.io/github/license/skaarj1989/mWebSockets.svg)
 
 Simple to use implementation of WebSockets for microcontrollers.
@@ -15,18 +14,19 @@ Simple to use implementation of WebSockets for microcontrollers.
 **List of supported MCUs:**
 - ATmega328P
 - ATmega2560
-- ARM Cortex M0
+- SAMD21 (ARM Cortex-M0+)
+- STM32 (ARM Cortex-M)
 - ESP8266
-- STM32
+- ESP32-WROOM-32D
 
 **WebSocketServer compatible browsers:**
 - Chrome
 - Edge
 - Firefox
+- Opera
 
 The **Autobahn**|Testsuite reports for [server](https://skaarj1989.github.io/mWebSockets/autobahn-testsuite/servers/index.html) and [client](https://skaarj1989.github.io/mWebSockets/autobahn-testsuite/clients/index.html)
-
-Some tests will never pass just because of memory lack in ATmega family.
+<br><sup>Some tests will never pass just because of memory lack in ATmega family.</sup>
 
 ## Table of contents
 
@@ -48,9 +48,11 @@ Some tests will never pass just because of memory lack in ATmega family.
   * Arduino Uno (ATmega328P)
   * Arduino Pro Mini (ATmega328P)
   * Arduino Mega2560
-  * Arduino Zero / SAMD21 M0 (ARM Cortex M0)
+  * Arduino Zero / SAMD21 M0 (ARM Cortex-M0)
+  * STM Nucleo-64 (ARM Cortex-M)
   * WeMos D1 mini (ESP8266)
   * NodeMCU v3 (ESP8266)
+  * ESPDUINO-32 (ESP32-WROOM-32D)
 * Ethernet module or shield (confirmed working):
   * Arduino Ethernet Shield (W5100)
   * Arduino Ethernet Shield 2 (W5500)
@@ -101,18 +103,18 @@ constexpr uint16_t kBufferMaxSize = 256;
 
 If you have **WeMos D1** in size of **Arduino Uno** simply attaching shield does not work, you have to wire **ICSP** on **Ethernet Shield** to proper pins.
 
-| Ethernet Shield <br> W5100/W5500 | Arduino Uno / <br> Mega2560 | Arduino <br> Pro Mini | Arduino Zero | WeMos D1 | STM32 <br> "Blue Pill" |
-| :---: | :---: | :---: | :---: | :---: | :---: |
-| (ICSP) MISO  | (ICSP) MISO  | PIN 12 | (ICSP) MISO | D12 / MISO | A6 |
-| (ICSP) MOSI  | (ICSP) MOSI  | PIN 11 | (ICSP) MOSI | D11 / MOSI | A7 |
-| (ICSP) SCK  | (ICSP) SCK | PIN 13 | (ICSP) SCK | D13 / SCK | A5 |
-| (SS) PIN 10  | PIN 10 | PIN 10 | PIN 10 | D10 / SS | A4 |
+| Ethernet Shield <br> (W5100/W5500) | Arduino <br> Pro Mini | WeMos D1 |
+| :---: | :---: | :---: | :---: |
+| (ICSP) MISO  | PIN 12 | D12 / MISO |
+| (ICSP) MOSI  | PIN 11 | D11 / MOSI |
+| (ICSP) SCK   | PIN 13 | D13 / SCK  |
+| (SS) PIN 10  | PIN 10 | D10 / SS   |
 
 | W5500 / <br> ENC28j60  | Arduino Uno / <br> Pro Mini | Arduino <br> Mega2560 |
 | :---: | :---: | :---: | 
 | MISO  | PIN 12  | PIN 50 |
 | MOSI  | PIN 11  | PIN 51 |
-| SCS  | PIN 10  | PIN 53  |
+| SCS   | PIN 10  | PIN 53 |
 | SCLK  | PIN 13  | PIN 52 |
 
 ## Usage examples
