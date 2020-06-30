@@ -104,7 +104,7 @@ constexpr uint16_t kBufferMaxSize = 256;
 If you have **WeMos D1** in size of **Arduino Uno** simply attaching shield does not work, you have to wire **ICSP** on **Ethernet Shield** to proper pins.
 
 | Ethernet Shield <br> (W5100/W5500) | Arduino <br> Pro Mini | WeMos D1 |
-| :---: | :---: | :---: | :---: |
+| :---: | :---: | :---: |
 | (ICSP) MISO  | PIN 12 | D12 / MISO |
 | (ICSP) MOSI  | PIN 11 | D11 / MOSI |
 | (ICSP) SCK   | PIN 13 | D13 / SCK  |
