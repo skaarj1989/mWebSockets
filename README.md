@@ -173,7 +173,7 @@ void setup() {
 }
 ```
 
-##### Node.js server examples [here](node.js)
+##### Node.js server examples [here](https://github.com/skaarj1989/mWebSockets/tree/dev/node.js)
 
 ### Client
 
