@@ -38,6 +38,7 @@
 #define ETHERNET_CONTROLLER_W5X00			1
 #define ETHERNET_CONTROLLER_ENC28J60	2
 #define NETWORK_CONTROLLER_WIFI				3
+#define NETWORK_CONTROLLER_WIFI101		4
 /** @endcond */
 
 #include "config.h"
@@ -59,12 +60,17 @@ constexpr uint8_t kMaxConnections{ 4 };
 #  include <WiFiClient.h>
 #  include <WiFiServer.h>
 constexpr uint8_t kMaxConnections{ 8 };
+#elif NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI101
+#  include <WiFi101.h>
+#  include <WiFiClient.h>
+#  include <WiFiServer.h>
+constexpr uint8_t kMaxConnections{ 8 };
 #else
 #  error "Network controller is required!"
 #endif
 
 /** @cond */
-#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
+#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI || NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI101
 using NetClient = WiFiClient;
 using NetServer = WiFiServer;
 #else
