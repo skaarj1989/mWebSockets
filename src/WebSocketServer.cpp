@@ -43,7 +43,7 @@ void WebSocketServer::listen() {
 
   if (m_server.hasClient()) {
     WiFiClient client;
-    WebSocket *ws = nullptr;
+    WebSocket *ws{ nullptr };
 
     for (auto it = &m_sockets[0]; it != end; ++it) {
       if (!(*it)) {
@@ -69,7 +69,7 @@ void WebSocketServer::listen() {
 #else
   EthernetClient client = m_server.available();
   if (client && client.available()) {
-    WebSocket *ws = _getWebSocket(client);
+    WebSocket *ws{ _getWebSocket(client) };
 
     if (!ws) {
       const auto end = &m_sockets[kMaxConnections];
@@ -94,10 +94,10 @@ void WebSocketServer::listen() {
 }
 
 uint8_t WebSocketServer::countClients() const {
-  uint8_t count = 0;
+  uint8_t count{ 0 };
   const auto end = &m_sockets[kMaxConnections];
   for (auto it = &m_sockets[0]; it != end; ++it)
-    if (*it && (*it)->isAlive()) count++;
+    if (*it && (*it)->isAlive()) ++count;
 
   return count;
 }
@@ -126,11 +126,18 @@ WebSocket *WebSocketServer::_getWebSocket(NetClient &client) const {
 // [7]
 //
 bool WebSocketServer::_handleRequest(NetClient &client) {
-  uint8_t flags = 0x0;
+#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
+  while (!client.available()) {
+    delay(10);
+    __debugOutput(F("."));
+  }
+#endif
 
-  int32_t bite = -1;
-  byte currentLine = 0;
-  byte counter = 0;
+  uint8_t flags{ 0 };
+
+  int32_t bite{ -1 };
+  byte currentLine{ 0 };
+  byte counter{ 0 };
 
   // Large enought to hold longest header field
   //  Chrome: 'User-Agent' = ~126 characters
@@ -140,13 +147,6 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
   char buffer[160]{};
   char secKey[32]{}; // Holds client Sec-WebSocket-Key
 
-#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
-  while (!client.available()) {
-    delay(10);
-    __debugOutput(F("."));
-  }
-#endif
-
   while ((bite = client.read()) != -1) {
     buffer[counter++] = bite;
 
@@ -154,7 +154,7 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
       uint8_t lineBreakPos = strcspn(buffer, "\r\n");
       buffer[lineBreakPos] = '\0';
 
-      char *rest = buffer;
+      char *rest{ buffer };
 
 #ifdef _DUMP_HANDSHAKE
       printf(F("[Line #%u] %s\n"), currentLine, buffer);
@@ -171,8 +171,8 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
         }
       } else {
         if (lineBreakPos > 0) {
-          char *header = strtok_r(rest, ":", &rest);
-          char *value = nullptr;
+          char *header{ strtok_r(rest, ":", &rest) };
+          char *value{ nullptr };
 
           //
           // [2] Host header:
@@ -247,7 +247,7 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
         //
 
         else {
-          WebSocketError errorCode = _validateHandshake(flags, secKey);
+          WebSocketError errorCode{ _validateHandshake(flags, secKey) };
           if (errorCode != WebSocketError::NO_ERROR) {
             _rejectRequest(client, errorCode);
             return false;
@@ -260,7 +260,7 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
 
       memset(buffer, '\0', sizeof(buffer));
       counter = 0;
-      currentLine++;
+      ++currentLine;
     }
   }
 
@@ -269,17 +269,14 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
 }
 
 bool WebSocketServer::_isValidGET(char *line) {
-  char *rest = line;
-
+  char *rest{ line };
   for (byte i = 0; rest != nullptr; ++i) {
-    char *pch = strtok_r(rest, " ", &rest);
-
+    char *pch{ strtok_r(rest, " ", &rest) };
     switch (i) {
     case 0: {
       if (strcmp_P(pch, (PGM_P)F("GET")) != 0) {
         return false;
       }
-
       break;
     }
     case 1: {
@@ -289,7 +286,6 @@ bool WebSocketServer::_isValidGET(char *line) {
       if (strcmp_P(pch, (PGM_P)F("HTTP/1.1")) != 0) {
         return false;
       }
-
       break;
     }
     default:
@@ -305,8 +301,8 @@ bool WebSocketServer::_isValidUpgrade(const char *value) {
 }
 
 bool WebSocketServer::_isValidConnection(char *value) {
-  char *rest = value;
-  char *item = nullptr;
+  char *rest{ value };
+  char *item{ nullptr };
 
   // Firefox sends: "Connection: keep-alive, Upgrade"
   // simple "includes" check:
@@ -379,11 +375,11 @@ void WebSocketServer::_rejectRequest(
 // [5]
 //
 void WebSocketServer::_acceptRequest(NetClient &client, const char *secKey) {
-  char acceptKey[29]{}; // 28 characters for key + 1 for NULL
+  char acceptKey[29]{};
   encodeSecKey(acceptKey, secKey);
 
-  // 23 characters for header + 28 for accept key + 1 for NULL
-  char secWebSocketAccept[52]{};
+  // 22 characters for header + 28 for accept key + 1 for NULL
+  char secWebSocketAccept[51]{};
   strcpy_P(secWebSocketAccept, (PGM_P)F("Sec-WebSocket-Accept: "));
   strcat(secWebSocketAccept, acceptKey);
 

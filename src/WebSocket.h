@@ -8,15 +8,15 @@ namespace net {
 
 /**
  * @brief Generates Sec-WebSocket-Key value.
- * @param [output] Array of at least 24 elements.
+ * @param[out] output Array of 25 elements (with one for NULL).
  */
 void generateSecKey(char output[]);
 /**
  * @brief Generates Sec-WebSocket-Accept value.
- * @param [output] Array of at least 28 elements.
- * @param [key] Key to encode
+ * @param[out] output Array of 29 elements (including NULL).
+ * @param[in] key Client 'Sec-Websocket-Key' to encode
  */
-void encodeSecKey(char output[], const char *key);
+bool encodeSecKey(char output[], const char *key);
 
 /**
  * Error codes.
@@ -164,19 +164,19 @@ public:
   };
 
   /**
-   * @param [ws] Closing endpoint.
-   * @param [code] Close event code.
-   * @param [reason] Contains message for close event, c-string, non NULL-terminated. May be empty.
-   * @param [length] Number of characters in reason c-string.
+   * @param ws Closing endpoint.
+   * @param code Close event code.
+   * @param reason Contains message for close event, c-string, non NULL-terminated. May be empty.
+   * @param length Number of characters in reason c-string.
    */
   using onCloseCallback = void (*)(WebSocket &ws,
     const WebSocket::CloseCode &code, const char *reason, uint16_t length);
 
   /**
-   * @param [ws] Source of a message.
-   * @param [dataType] Type of message.
-   * @param [message] Contains data, non NULL-terminated.
-   * @param [length] Number of data bytes.
+   * @param ws Source of a message.
+   * @param dataType Type of message.
+   * @param message Contains data, non NULL-terminated.
+   * @param length Number of data bytes.
    */
   using onMessageCallback = void (*)(WebSocket &ws,
     const WebSocket::DataType &dataType, const char *message, uint16_t length);
@@ -189,10 +189,10 @@ public:
 
   /**
    * @brief Sends close event.
-   * @param [code]
-   * @param [instant] Determines if close should be done immediately.
-   * @param [reason] Additional message (not required), doesn't have to be NULL-terminated. Max length = 123 characters.
-   * @param [length] Number of characters in reason.
+   * @param code
+   * @param instant Determines if close should be done immediately.
+   * @param reason Additional message (not required), doesn't have to be NULL-terminated. Max length = 123 characters.
+   * @param length Number of characters in reason.
    */
   void close(const CloseCode &code, bool instant, const char *reason = nullptr,
     uint16_t length = 0);
@@ -212,14 +212,14 @@ public:
 
   /**
    * @brief Sends message frame.
-   * @param [message] Doesn't have to be NULL-terminated.
+   * @param message Doesn't have to be NULL-terminated.
    */
   void send(
     const WebSocket::DataType dataType, const char *message, uint16_t length);
   /**
    * @brief Sends ping message.
-   * @param [payload] Additional message, doesn't have to be NULL-terminated. Max length = 125.
-   * @param [length] Number of characters in payload.
+   * @param payload Additional message, doesn't have to be NULL-terminated. Max length = 125.
+   * @param length Number of characters in payload.
    */
   void ping(const char *payload = nullptr, uint16_t length = 0);
 
@@ -252,17 +252,19 @@ protected:
 
   /** @cond */
   int32_t _read();
-  bool _read(char *buffer, size_t size);
+  bool _read(char *buffer, size_t size, size_t offset = 0);
 
   void _send(
     uint8_t opcode, bool fin, bool mask, const char *data, uint16_t length);
 
   void _readFrame();
   bool _readHeader(header_t &header);
-  bool _readData(const header_t &header, char *payload);
+  bool _readData(const header_t &header, char *payload, size_t offset = 0);
 
-  void _handleContinuationFrame(const header_t &header, const char *payload);
-  void _handleDataFrame(const header_t &header, const char *payload);
+  void _clearDataBuffer();
+
+  void _handleContinuationFrame(const header_t &header);
+  void _handleDataFrame(const header_t &header);
   void _handleCloseFrame(const header_t &header, const char *payload);
   /** @endcond */
 protected:

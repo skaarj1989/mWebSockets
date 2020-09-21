@@ -2,7 +2,7 @@
 #include <stdarg.h>
 
 void printf(const __FlashStringHelper *fmt, ...) {
-  char buffer[192]{};
+  char buffer[256]{};
   va_list args;
   va_start(args, fmt);
 

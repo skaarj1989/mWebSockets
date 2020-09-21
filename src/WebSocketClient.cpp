@@ -83,7 +83,7 @@ void WebSocketClient::_sendRequest(
   m_client.println(F("Upgrade: websocket"));
   m_client.println(F("Connection: Upgrade"));
 
-  m_secKey = new char[26]{};
+  m_secKey = new char[25]{};
   generateSecKey(m_secKey);
   snprintf_P(
     buffer, sizeof(buffer), (PGM_P)F("Sec-WebSocket-Key: %s"), m_secKey);
@@ -94,9 +94,9 @@ void WebSocketClient::_sendRequest(
 }
 
 bool WebSocketClient::_waitForResponse(uint16_t maxAttempts, uint8_t time) {
-  uint16_t attempts = 0;
+  uint16_t attempts{ 0 };
   while (!m_client.available() && attempts < maxAttempts) {
-    attempts++;
+    ++attempts;
     delay(time);
   }
 
@@ -113,11 +113,11 @@ bool WebSocketClient::_waitForResponse(uint16_t maxAttempts, uint8_t time) {
 // [5]
 //
 bool WebSocketClient::_readResponse() {
-  uint8_t flags = 0x0;
+  uint8_t flags{ 0 };
 
-  int32_t bite = -1;
-  byte currentLine = 0;
-  byte counter = 0;
+  int32_t bite{ -1 };
+  byte currentLine{ 0 };
+  byte counter{ 0 };
 
   char buffer[128]{};
 
@@ -141,10 +141,10 @@ bool WebSocketClient::_readResponse() {
         }
       } else {
         if (lineBreakPos > 0) {
-          char *rest = buffer;
-          char *value = nullptr;
+          char *rest{ buffer };
+          char *value{ nullptr };
           
-          char *header = strtok_r(rest, ":", &rest);
+          char *header{ strtok_r(rest, ":", &rest) };
 
           //
           // [2] Upgrade header:
@@ -188,7 +188,7 @@ bool WebSocketClient::_readResponse() {
           else if (strcmp_P(header, (PGM_P)F("Sec-WebSocket-Accept")) == 0) {
             value = strtok_r(rest, " ", &rest);
 
-            char encodedKey[28]{};
+            char encodedKey[29]{};
             encodeSecKey(encodedKey, m_secKey);
             SAFE_DELETE_ARRAY(m_secKey);
 
@@ -215,7 +215,7 @@ bool WebSocketClient::_readResponse() {
 
       memset(buffer, '\0', sizeof(buffer));
       counter = 0;
-      currentLine++;
+      ++currentLine;
     }
   }
 
@@ -229,14 +229,12 @@ bool WebSocketClient::_validateHandshake(uint8_t flags) {
     _TRIGGER_ERROR(WebSocketError::UPGRADE_REQUIRED);
     return false;
   }
-
   if (!(flags & kValidConnectionHeader)) {
     __debugOutput(
       F("Error during WebSocket handshake: 'Connection' header is missing\n"));
     _TRIGGER_ERROR(WebSocketError::UPGRADE_REQUIRED);
     return false;
   }
-
   if (!(flags & kValidSecKey)) {
     __debugOutput(F("Error during WebSocket handshake: "
                     "'Sec-WebSocket-Accept' header missing or invalid\n"));

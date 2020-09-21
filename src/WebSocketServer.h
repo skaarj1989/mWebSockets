@@ -14,12 +14,12 @@ namespace net {
 class WebSocketServer {
 public:
   /**
-   * @param [header] c-string, NULL-terminated.
-   * @param [value] c-string, NULL-terminated.
+   * @param header c-string, NULL-terminated.
+   * @param value c-string, NULL-terminated.
    */
   using verifyClientCallback = bool (*)(
     const IPAddress &ip, const char *header, const char *value);
-  /** @param [ws] Accepted client. */
+  /** @param ws Accepted client. */
   using onConnectionCallback = void (*)(WebSocket &ws);
 
 public:
@@ -41,7 +41,7 @@ public:
    *   // verify client ip address and/or request headers ...
    * });
    * @endcode
-   * @param [callback] Function called for every header during hadshake (except
+   * @param callback Function called for every header during hadshake (except
    * for those required by protocol, like **Connection**, **Upgrade** etc.)
    */
   void begin(const verifyClientCallback &callback = nullptr);
@@ -73,7 +73,7 @@ public:
    *   });
    * });
    * @endcode
-   * @param [callback] Function that will be called for every successfully
+   * @param callback Function that will be called for every successfully
    * connected client.
    */
   void onConnection(const onConnectionCallback &callback);

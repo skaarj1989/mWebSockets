@@ -12,9 +12,9 @@ namespace net {
  */
 class WebSocketClient : public WebSocket {
 public:
-  /** @param [ws] */
+  /** @param ws */
   using onOpenCallback = void (*)(WebSocket &ws);
-  /** @param [code] */
+  /** @param code */
   using onErrorCallback = void (*)(const WebSocketError &code);
 
 public:

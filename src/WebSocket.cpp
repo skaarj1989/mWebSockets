@@ -8,7 +8,7 @@ namespace net {
 // Helper functions:
 //
 
-constexpr bool isControlFrame(const uint8_t opcode) {
+constexpr bool isControlFrame(uint8_t opcode) {
   return ((opcode == WebSocket::Opcode::PING_FRAME) ||
           (opcode == WebSocket::Opcode::PONG_FRAME) ||
           (opcode == WebSocket::Opcode::CONNECTION_CLOSE_FRAME));
@@ -16,7 +16,7 @@ constexpr bool isControlFrame(const uint8_t opcode) {
 
 // Inspired on "ws", Node.js WebSocket library
 // https://github.com/websockets/ws/blob/master/lib/validation.js
-constexpr bool isCloseCodeValid(const uint16_t code) {
+constexpr bool isCloseCodeValid(uint16_t code) {
   return ((code >= WebSocket::CloseCode::NORMAL_CLOSURE &&
             code <= WebSocket::CloseCode::TRY_AGAIN_LATER && code != 1004 &&
             code != WebSocket::CloseCode::NO_STATUS_RECVD &&
@@ -25,30 +25,34 @@ constexpr bool isCloseCodeValid(const uint16_t code) {
 }
 
 void generateSecKey(char output[]) {
-  char temp[17]{};
+  constexpr auto kLength{ 16 };
+  char temp[kLength + 1]{};
 
   randomSeed(analogRead(0));
-  for (byte i = 0; i < 16; ++i)
+  for (byte i = 0; i < kLength; ++i)
     temp[i] = static_cast<char>(random(0xFF));
 
-  base64_encode(output, temp, 16);
+  base64_encode(output, temp, kLength);
 }
 
-void encodeSecKey(char output[], const char *key) {
+bool encodeSecKey(char output[], const char *key) {
+  constexpr auto kSecKeyLength{ 24 };
   constexpr char kMagicString[]{ "258EAFA5-E914-47DA-95CA-C5AB0DC85B11" };
-
-  char buffer[64]{};
-  strcpy(buffer, key);
-  strcat(buffer, kMagicString);
+  constexpr auto kMagicStringLenght{ sizeof(kMagicString) - 1 };
+  
+  constexpr auto kBufferLength{ kSecKeyLength + kMagicStringLenght };
+  char buffer[kBufferLength + 1]{};
+  memcpy(&buffer[0], key, kSecKeyLength);
+  memcpy(&buffer[kSecKeyLength], kMagicString, kMagicStringLenght);
 
   SHA1 sha1;
-  sha1.update(buffer, strlen(buffer));
-
+  sha1.update(buffer, kBufferLength);
   sha1.finalize(buffer, 20);
   base64_encode(output, buffer, 20);
+  return true;
 }
 
-/** @param [output] Array of at least 4 elements. */
+/** @param[out] output Array of 4 elements (without NULL). */
 void generateMask(char output[]) {
   randomSeed(analogRead(0));
   for (byte i = 0; i < 4; ++i)
@@ -59,7 +63,7 @@ void generateMask(char output[]) {
  * @see https://github.com/websockets/utf-8-validate/blob/master/src/validation.c
  */
 bool isValidUTF8(const byte *s, size_t length) {
-  const uint8_t *end = s + length;
+  const uint8_t *end{ s + length };
 
   //
   // This code has been taken from utf8_check.c which was developed by
@@ -159,7 +163,7 @@ void WebSocket::close(
     static_cast<char>(code & 0xFF)
   };
 
-  if (length) memcpy(&buffer[2], reason, sizeof(char) * length);
+  if (length) memcpy(&buffer[2], reason, length);
   _send(CONNECTION_CLOSE_FRAME, true, m_maskEnabled, buffer, 2 + length);
 
   if (instant) {
@@ -170,10 +174,8 @@ void WebSocket::close(
 
 void WebSocket::terminate() {
   m_client.stop();
-
   m_readyState = ReadyState::CLOSED;
-  m_currentOffset = 0;
-  m_tbcOpcode = -1;
+  _clearDataBuffer();
 }
 
 const WebSocket::ReadyState &WebSocket::getReadyState() const {
@@ -226,7 +228,7 @@ WebSocket::WebSocket(const NetClient &client)
   : m_client(client), m_readyState(ReadyState::OPEN), m_maskEnabled(false) {}
 
 int32_t WebSocket::_read() {
-  const uint32_t timeout = millis() + kTimeoutInterval;
+  const uint32_t timeout{ millis() + kTimeoutInterval };
   while (!m_client.available() && millis() < timeout) {
     delay(1);
   }
@@ -239,14 +241,12 @@ int32_t WebSocket::_read() {
   return m_client.read();
 }
 
-bool WebSocket::_read(char *buffer, size_t size) {
-  size_t counter = 0;
-  
-  int32_t bite = -1;
+bool WebSocket::_read(char *buffer, size_t size, size_t offset) {
+  size_t counter{ 0 };
+  int32_t bite{ -1 };
   do {
     if ((bite = _read()) == -1) return false;
-
-    buffer[counter++] = bite;
+    buffer[offset + (counter++)] = bite;
   } while (counter != size);
 
   return true;
@@ -254,7 +254,7 @@ bool WebSocket::_read(char *buffer, size_t size) {
 
 void WebSocket::_send(
   uint8_t opcode, bool fin, bool mask, const char *data, uint16_t length) {
-  uint16_t bytesWritten = 0;
+  uint16_t bytesWritten{ 0 };
   bytesWritten += m_client.write(opcode | (fin ? 0x80 : 0x00));
 
   if (length <= 125) {
@@ -282,7 +282,6 @@ void WebSocket::_send(
 #endif
 
     bytesWritten += m_client.write(maskingKey, 4);
-
     for (uint16_t i = 0; i < length; ++i)
       bytesWritten +=
         m_client.write(static_cast<char>(data[i] ^ maskingKey[i % 4]));
@@ -312,23 +311,35 @@ void WebSocket::_readFrame() {
   header_t header;
   if (!_readHeader(header)) return;
   
-  char *payload = nullptr;
-  if (header.length > 0) {
+  bool usingTempBuffer = isControlFrame(header.opcode);
+  char *payload{ nullptr };
+  size_t offset{ 0 };
+
+  if (usingTempBuffer) {
     payload = new char[header.length + 1]{};
-    if (!_readData(header, payload)) {
-      SAFE_DELETE_ARRAY(payload);
+  } else {
+    payload = m_dataBuffer;
+    offset = m_currentOffset;
+
+    if (header.length + offset >= kBufferMaxSize)
+      return close(CloseCode::MESSAGE_TOO_BIG, true);
+  }
+
+  if (header.length > 0) {
+    if (!_readData(header, payload, offset)) {
+      if (usingTempBuffer) SAFE_DELETE_ARRAY(payload);
       return;
     }
   }
 
   switch (header.opcode) {
   case Opcode::CONTINUATION_FRAME: {
-    _handleContinuationFrame(header, payload);
+    _handleContinuationFrame(header);
     break;
   }
   case Opcode::TEXT_FRAME:
   case Opcode::BINARY_FRAME: {
-    _handleDataFrame(header, payload);
+    _handleDataFrame(header);
     break;
   }
   case Opcode::CONNECTION_CLOSE_FRAME: {
@@ -349,12 +360,10 @@ void WebSocket::_readFrame() {
   }
   }
 
-  SAFE_DELETE_ARRAY(payload);
+  if (usingTempBuffer) SAFE_DELETE_ARRAY(payload);
 }
 
 bool WebSocket::_readHeader(header_t &header) {
-  int32_t bite = -1;
-
   char temp[2]{};
   if (!_read(temp, 2)) return false;
 
@@ -393,6 +402,7 @@ bool WebSocket::_readHeader(header_t &header) {
     }
   }
 
+  int32_t bite{ -1 };
   if (header.length == 126) {
     if ((bite = _read()) == -1) return false;
     header.length = bite << 8;
@@ -429,16 +439,16 @@ bool WebSocket::_readHeader(header_t &header) {
   return true;
 }
 
-bool WebSocket::_readData(const header_t &header, char *payload) {
-  int32_t bite = -1;
+bool WebSocket::_readData(const header_t &header, char *payload, size_t offset) {
+  int32_t bite{ -1 };
 
   if (header.mask) {
     for (uint32_t i = 0; i < header.length; ++i) {
       if ((bite = _read()) == -1) return false;
-      payload[i] = bite ^ header.maskingKey[i % 4];
+      payload[offset + i] = bite ^ header.maskingKey[i % 4];
     }
   } else {
-    if (!_read(payload, header.length)) {
+    if (!_read(payload, header.length, offset)) {
       return false;
     }
   }
@@ -450,18 +460,19 @@ bool WebSocket::_readData(const header_t &header, char *payload) {
   return true;
 }
 
-void WebSocket::_handleContinuationFrame(
-  const header_t &header, const char *payload) {
+void WebSocket::_clearDataBuffer() {
+  memset(m_dataBuffer, '\0', kBufferMaxSize);
+  m_currentOffset = 0;
+  m_tbcOpcode = -1;
+}
+
+void WebSocket::_handleContinuationFrame(const header_t &header) {
   if (m_tbcOpcode == -1) return close(PROTOCOL_ERROR, true);
- 
-  memcpy(&m_dataBuffer[m_currentOffset], payload, header.length);
 
   if (header.fin) {
-    auto totalLength = m_currentOffset + header.length;
-
-    const auto dataType =
-      m_tbcOpcode == Opcode::TEXT_FRAME ? DataType::TEXT : DataType::BINARY;
-
+    auto totalLength{ m_currentOffset + header.length };
+    const auto dataType{ m_tbcOpcode == Opcode::TEXT_FRAME ? DataType::TEXT
+                                                           : DataType::BINARY };
     if (dataType == DataType::TEXT) {
       if (!isValidUTF8(
             reinterpret_cast<const byte *>(m_dataBuffer), totalLength))
@@ -471,50 +482,49 @@ void WebSocket::_handleContinuationFrame(
     if (_onMessage) {
       _onMessage(*this, dataType, m_dataBuffer, totalLength);
     }
-
-    memset(m_dataBuffer, '\0', sizeof(char) * kBufferMaxSize);
-    m_currentOffset = 0;
-    m_tbcOpcode = -1;
+    _clearDataBuffer();
   } else {
     m_currentOffset += header.length;
   }
 }
 
-void WebSocket::_handleDataFrame(const header_t &header, const char *payload) {
+void WebSocket::_handleDataFrame(const header_t &header) {
   if (m_currentOffset > 0) return close(PROTOCOL_ERROR, true);
 
   if (header.fin) {
-    const auto dataType =
-      header.opcode == Opcode::TEXT_FRAME ? DataType::TEXT : DataType::BINARY;
+    const auto dataType{
+      header.opcode == Opcode::TEXT_FRAME ? DataType::TEXT : DataType::BINARY
+    };
 
     if (dataType == DataType::TEXT) {
-      if (!isValidUTF8(reinterpret_cast<const byte *>(payload), header.length))
+      if (!isValidUTF8(
+            reinterpret_cast<const byte *>(m_dataBuffer), header.length))
         return close(INVALID_FRAME_PAYLOAD_DATA, true);
     }
 
     if (_onMessage) {
-      _onMessage(*this, dataType, payload, header.length);
+      _onMessage(*this, dataType, m_dataBuffer, header.length);
     }
+    _clearDataBuffer();
   } else {
-    memcpy(&m_dataBuffer[m_currentOffset], payload, header.length);
     m_currentOffset += header.length;
     m_tbcOpcode = header.opcode;
   }
 }
 
 void WebSocket::_handleCloseFrame(const header_t &header, const char *payload) {
-  uint16_t code = 0;
-  const char *reason = nullptr;
-  uint16_t reasonLength = 0;
+  uint16_t code{ NORMAL_CLOSURE };
+  const char *reason{ nullptr };
+  uint16_t reasonLength{ 0 };
 
-  if (header.length) {
-    reasonLength = header.length - 2;
+  if (header.length > 0) {    
     for (byte i = 0; i < 2; ++i)
       code = (code << 8) + (payload[i] & 0xFF);
 
     if (!isCloseCodeValid(code)) return close(PROTOCOL_ERROR, true);
 
-    reason = (header.length) ? &(payload[2]) : nullptr;
+    reasonLength = header.length - 2;
+    reason = &payload[2];
     if (!isValidUTF8(reinterpret_cast<const byte *>(reason), reasonLength))
       return close(PROTOCOL_ERROR, true);
   }
@@ -522,12 +532,8 @@ void WebSocket::_handleCloseFrame(const header_t &header, const char *payload) {
   __debugOutput(F("Received close frame: code = %u, reason = %s\n"), code,
     header.length ? reason : " ");
 
-  if (m_readyState == ReadyState::OPEN) {
-    if (header.length)
-      close(static_cast<CloseCode>(code), true, reason, reasonLength);
-    else
-      close(NORMAL_CLOSURE, true);
-  }
+  if (m_readyState == ReadyState::OPEN)
+    close(static_cast<CloseCode>(code), true, reason, reasonLength);
 }
 
 } // namespace net
