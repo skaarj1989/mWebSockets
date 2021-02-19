@@ -179,13 +179,13 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
           //
 
           // #TODO ... or not
-          if (strcmp_P(header, (PGM_P)F("Host")) == 0) {}
+          if (strcasecmp_P(header, (PGM_P)F("Host")) == 0) {}
 
           //
           // [3] Upgrade header:
           //
 
-          else if (strcmp_P(header, (PGM_P)F("Upgrade")) == 0) {
+          else if (strcasecmp_P(header, (PGM_P)F("Upgrade")) == 0) {
             value = strtok_r(rest, " ", &rest);
             if (!value || !_isValidUpgrade(value)) {
               _rejectRequest(client, WebSocketError::BAD_REQUEST);
@@ -199,7 +199,7 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
           // [4] Connection header:
           //
 
-          else if (strcmp_P(header, (PGM_P)F("Connection")) == 0) {
+          else if (strcasecmp_P(header, (PGM_P)F("Connection")) == 0) {
             if (rest && _isValidConnection(rest))
               flags |= kValidConnectionHeader;
           }
@@ -208,7 +208,7 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
           // [5] Sec-WebSocket-Key header:
           //
 
-          else if (strcmp_P(header, (PGM_P)F("Sec-WebSocket-Key")) == 0) {
+          else if (strcasecmp_P(header, (PGM_P)F("Sec-WebSocket-Key")) == 0) {
             value = strtok_r(rest, " ", &rest);
             if (value != nullptr) strcpy(secKey, value);
           }
@@ -217,7 +217,7 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
           // [6] Sec-WebSocket-Version header:
           //
 
-          else if (strcmp_P(header, (PGM_P)F("Sec-WebSocket-Version")) == 0) {
+          else if (strcasecmp_P(header, (PGM_P)F("Sec-WebSocket-Version")) == 0) {
             value = strtok_r(rest, " ", &rest);
             if (!value || !_isValidVersion(atoi(value))) {
               _rejectRequest(client, WebSocketError::BAD_REQUEST);
