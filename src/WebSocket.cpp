@@ -228,16 +228,6 @@ WebSocket::WebSocket(const NetClient &client)
   : m_client(client), m_readyState(ReadyState::OPEN), m_maskEnabled(false) {}
 
 int32_t WebSocket::_read() {
-  const uint32_t timeout{ millis() + kTimeoutInterval };
-  while (!m_client.available() && millis() < timeout) {
-    delay(1);
-  }
-
-  if (millis() > timeout) {
-    close(PROTOCOL_ERROR, true);
-    return -1;
-  }
-
   return m_client.read();
 }
 
