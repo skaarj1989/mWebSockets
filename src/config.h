@@ -7,7 +7,7 @@
  * @def _DUMP_HANDSHAKE Prints any handshake request/response on Serial output.
  * @def _DUMP_HEADER Prints frame header on Serial output.
  * @def _DUMP_FRAME_DATA Prints frame data on Serial output.
-*/
+ */
 
 /**
  * @def NETWORK_CONTROLLER
@@ -25,6 +25,6 @@
 #define NETWORK_CONTROLLER ETHERNET_CONTROLLER_W5X00
 
 /** Maximum size of data buffer - frame payload (in bytes). */
-constexpr uint16_t kBufferMaxSize{ 256 };
+constexpr uint16_t kBufferMaxSize{256};
 /** Maximum time to wait for endpoint response (in milliseconds). */
-constexpr uint16_t kTimeoutInterval{ 5000 };
+constexpr uint16_t kTimeoutInterval{5000};

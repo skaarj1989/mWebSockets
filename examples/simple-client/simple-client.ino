@@ -8,10 +8,10 @@ using namespace net;
 #endif
 
 #if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
-constexpr char kSSID[]{ "SKYNET" };
-constexpr char kPassword[]{ "***" };
+constexpr char kSSID[]{"SKYNET"};
+constexpr char kPassword[]{"***"};
 #else
-byte mac[]{ 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+byte mac[]{0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
 // IPAddress ip(192, 168, 46, 179);
 #endif
 
@@ -54,12 +54,17 @@ void setup() {
 
   client.onOpen([](WebSocket &ws) {
     _SERIAL.println(F("Connected"));
+    const auto protocol = ws.getProtocol();
+    if (protocol) {
+      _SERIAL.print(F("Client protocol: "));
+      _SERIAL.println(protocol);
+    }
 
-    const char message[]{ "Hello from Arduino client!" };
+    const char message[]{"Hello from Arduino client!"};
     ws.send(WebSocket::DataType::TEXT, message, strlen(message));
   });
 
-  client.onMessage([](WebSocket &ws, const WebSocket::DataType &dataType,
+  client.onMessage([](WebSocket &ws, const WebSocket::DataType dataType,
                      const char *message, uint16_t length) {
     switch (dataType) {
     case WebSocket::DataType::TEXT:
@@ -71,14 +76,13 @@ void setup() {
       break;
     }
 
-    ws.send(dataType, message, length); // echo back to server
+    ws.send(dataType, message, length); // Echo back to server
   });
 
-  client.onClose(
-    [](WebSocket &ws, const WebSocket::CloseCode &code, const char *reason,
-      uint16_t length) { _SERIAL.println(F("Disconnected\n")); });
+  client.onClose([](WebSocket &, const WebSocket::CloseCode, const char *,
+                   uint16_t) { _SERIAL.println(F("Disconnected\n")); });
 
-  if (!client.open("192.168.46.31", 3000)) {
+  if (!client.open("192.168.46.31", 3000, "/", "foo")) {
     _SERIAL.println(F("Connection failed!"));
     while (true)
       ;

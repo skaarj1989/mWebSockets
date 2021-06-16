@@ -1,21 +1,23 @@
 #include "WebSocketServer.h"
 
+// https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers
+
 namespace net {
 
-WebSocketServer::WebSocketServer(uint16_t port) : m_server(port) {}
+WebSocketServer::WebSocketServer(uint16_t port) : m_server{port} {}
 WebSocketServer::~WebSocketServer() { shutdown(); }
 
-void WebSocketServer::begin(const verifyClientCallback &callback) {
-  _verifyClient = callback;
+void WebSocketServer::begin(const verifyClientCallback &verifyClient,
+  const protocolHandlerCallback &protocolHandler) {
+  _verifyClient = verifyClient;
+  _protocolHandler = protocolHandler;
   m_server.begin();
 }
-
 void WebSocketServer::shutdown() {
-  const auto end = &m_sockets[kMaxConnections];
-  for (auto it = &m_sockets[0]; it != end; ++it) {
-    if (*it) {
-      (*it)->close(WebSocket::CloseCode::GOING_AWAY, true);
-      SAFE_DELETE(*it);
+  for (auto ws : m_sockets) {
+    if (ws) {
+      ws->close(WebSocket::CloseCode::GOING_AWAY, true);
+      SAFE_DELETE(ws);
     }
   }
 
@@ -25,59 +27,54 @@ void WebSocketServer::shutdown() {
 }
 
 void WebSocketServer::broadcast(
-  const WebSocket::DataType &dataType, const char *message, uint16_t length) {
-  const auto end = &m_sockets[kMaxConnections];
-  for (auto it = &m_sockets[0]; it != end; ++it) {
-    if (!(*it) || (*it)->getReadyState() != WebSocket::ReadyState::OPEN)
-      continue;
-
-    (*it)->send(dataType, message, length);
-  }
+  const WebSocket::DataType dataType, const char *message, uint16_t length) {
+  for (auto ws : m_sockets)
+    if (ws && ws->getReadyState() == WebSocket::ReadyState::OPEN)
+      ws->send(dataType, message, length);
 }
 
 void WebSocketServer::listen() {
   _cleanDeadConnections();
 
 #if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
-  const auto end = &m_sockets[kMaxConnections];
-
   if (m_server.hasClient()) {
     WiFiClient client;
-    WebSocket *ws{ nullptr };
+    WebSocket *ws{nullptr};
 
-    for (auto it = &m_sockets[0]; it != end; ++it) {
-      if (!(*it)) {
+    for (auto &it : m_sockets) {
+      if (!it) {
         client = m_server.available();
-        if (_handleRequest(client)) {
-          *it = new WebSocket(client);
-          ws = *it;
+        char selectedProtocol[32]{};
+        if (_handleRequest(client, selectedProtocol)) {
+          ws = it = new WebSocket{
+            client, *selectedProtocol ? selectedProtocol : nullptr};
           if (_onConnection) _onConnection(*ws);
         }
         break;
       }
     }
 
-     // Server is full ...
+    // Server is full ...
     if (!ws) _rejectRequest(client, WebSocketError::SERVICE_UNAVAILABLE);
   }
 
-  for (auto it = &m_sockets[0]; it != end; ++it) {
-    if (*it && (*it)->m_client.connected()) {
-      if ((*it)->m_client.available()) (*it)->_readFrame();
+  for (auto it : m_sockets) {
+    if (it && it->m_client.connected() && it->m_client.available()) {
+      it->_readFrame();
     }
   }
 #else
-  EthernetClient client = m_server.available();
+  EthernetClient client{m_server.available()};
   if (client && client.available()) {
-    WebSocket *ws{ _getWebSocket(client) };
+    WebSocket *ws{_getWebSocket(client)};
 
     if (!ws) {
-      const auto end = &m_sockets[kMaxConnections];
-      for (auto it = &m_sockets[0]; it != end; ++it) {
-        if (!(*it)) {
-          if (_handleRequest(client)) {
-            *it = new WebSocket(client);
-            ws = *it;
+      for (auto &it : m_sockets) {
+        if (!it) {
+          char selectedProtocol[32]{};
+          if (_handleRequest(client, selectedProtocol)) {
+            ws = it = new WebSocket{
+              client, *selectedProtocol ? selectedProtocol : nullptr};
             if (_onConnection) _onConnection(*ws);
           }
           break;
@@ -94,10 +91,9 @@ void WebSocketServer::listen() {
 }
 
 uint8_t WebSocketServer::countClients() const {
-  uint8_t count{ 0 };
-  const auto end = &m_sockets[kMaxConnections];
-  for (auto it = &m_sockets[0]; it != end; ++it)
-    if (*it && (*it)->isAlive()) ++count;
+  uint8_t count{0};
+  for (auto ws : m_sockets)
+    if (ws && ws->isAlive()) ++count;
 
   return count;
 }
@@ -107,9 +103,8 @@ void WebSocketServer::onConnection(const onConnectionCallback &callback) {
 }
 
 WebSocket *WebSocketServer::_getWebSocket(NetClient &client) const {
-  const auto end = &m_sockets[kMaxConnections];
-  for (auto it = &m_sockets[0]; it != end; ++it)
-    if (*it && (*it)->m_client == client) return *it;
+  for (auto ws : m_sockets)
+    if (ws && ws->m_client == client) return ws;
 
   return nullptr;
 }
@@ -125,7 +120,8 @@ WebSocket *WebSocketServer::_getWebSocket(NetClient &client) const {
 // [6] Sec-WebSocket-Version: 13
 // [7]
 //
-bool WebSocketServer::_handleRequest(NetClient &client) {
+bool WebSocketServer::_handleRequest(
+  NetClient &client, char selectedProtocol[]) {
 #if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
   while (!client.available()) {
     delay(10);
@@ -133,35 +129,35 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
   }
 #endif
 
-  uint8_t flags{ 0 };
-
-  int32_t bite{ -1 };
-  byte currentLine{ 0 };
-  byte counter{ 0 };
-
-  // Large enought to hold longest header field
+  // Large enought to hold the longest header field
   //  Chrome: 'User-Agent' = ~126 characters
   //  Edge: 'User-Agent' = ~141 characters
   //  Firefox: 'User-Agent' = ~90 characters
   //  Opera: 'User-Agent' = ~145 characters
   char buffer[160]{};
+
   char secKey[32]{}; // Holds client Sec-WebSocket-Key
+  uint8_t flags{0};
+  char protocols[32]{};
+
+  int32_t bite{-1};
+  byte currentLine{0};
+  byte counter{0};
 
   while ((bite = client.read()) != -1) {
     buffer[counter++] = bite;
 
     if (bite == '\n') {
-      uint8_t lineBreakPos = strcspn(buffer, "\r\n");
+      const auto lineBreakPos = static_cast<uint8_t>(strcspn(buffer, "\r\n"));
       buffer[lineBreakPos] = '\0';
-
-      char *rest{ buffer };
-
 #ifdef _DUMP_HANDSHAKE
       printf(F("[Line #%u] %s\n"), currentLine, buffer);
 #endif
 
+      char *rest{buffer};
+
       //
-      // [1] GET method
+      // [1] GET method:
       //
 
       if (currentLine == 0) {
@@ -171,15 +167,16 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
         }
       } else {
         if (lineBreakPos > 0) {
-          char *header{ strtok_r(rest, ":", &rest) };
-          char *value{ nullptr };
+          auto header = strtok_r(rest, ":", &rest);
+          char *value{nullptr};
 
           //
           // [2] Host header:
           //
 
-          // #TODO ... or not
-          if (strcasecmp_P(header, (PGM_P)F("Host")) == 0) {}
+          if (strcasecmp_P(header, (PGM_P)F("Host")) == 0) {
+            // #TODO ... or not
+          }
 
           //
           // [3] Upgrade header:
@@ -191,8 +188,7 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
               _rejectRequest(client, WebSocketError::BAD_REQUEST);
               return false;
             }
-
-            flags |= kValidUpgradeHeader;              
+            flags |= kValidUpgradeHeader;
           }
 
           //
@@ -210,21 +206,34 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
 
           else if (strcasecmp_P(header, (PGM_P)F("Sec-WebSocket-Key")) == 0) {
             value = strtok_r(rest, " ", &rest);
-            if (value != nullptr) strcpy(secKey, value);
+            if (value) strcpy(secKey, value);
           }
 
           //
           // [6] Sec-WebSocket-Version header:
           //
 
-          else if (strcasecmp_P(header, (PGM_P)F("Sec-WebSocket-Version")) == 0) {
+          else if (strcasecmp_P(header, (PGM_P)F("Sec-WebSocket-Version")) ==
+                   0) {
             value = strtok_r(rest, " ", &rest);
             if (!value || !_isValidVersion(atoi(value))) {
               _rejectRequest(client, WebSocketError::BAD_REQUEST);
               return false;
             }
-
             flags |= kValidVersion;
+          }
+
+          //
+          // Sec-WebSocket-Protocol (optional):
+          //
+
+          else if (strcasecmp_P(header, (PGM_P)F("Sec-WebSocket-Protocol")) ==
+                   0) {
+            for (byte i = 0; rest != nullptr; ++i) {
+              if (*protocols) strcat(protocols, ",");
+              const auto pch = strtok_r(rest, ",", &rest);
+              strcat(protocols, pch + 1); // Skip leading whitespace
+            }
           }
 
           //
@@ -247,13 +256,19 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
         //
 
         else {
-          WebSocketError errorCode{ _validateHandshake(flags, secKey) };
+          const auto errorCode = _validateHandshake(flags, secKey);
           if (errorCode != WebSocketError::NO_ERROR) {
             _rejectRequest(client, errorCode);
             return false;
           }
 
-          _acceptRequest(client, secKey);
+          selectedProtocol[0] = '\0';
+          if (*protocols) {
+            strcpy(selectedProtocol, _protocolHandler
+                                       ? _protocolHandler(protocols)
+                                       : strtok_r(protocols, ",", &rest));
+          }
+          _acceptRequest(client, secKey, selectedProtocol);
           return true;
         }
       }
@@ -267,11 +282,10 @@ bool WebSocketServer::_handleRequest(NetClient &client) {
   _rejectRequest(client, WebSocketError::BAD_REQUEST);
   return false;
 }
-
 bool WebSocketServer::_isValidGET(char *line) {
-  char *rest{ line };
+  char *rest{line};
   for (byte i = 0; rest != nullptr; ++i) {
-    char *pch{ strtok_r(rest, " ", &rest) };
+    const auto pch = strtok_r(rest, " ", &rest);
     switch (i) {
     case 0: {
       if (strcmp_P(pch, (PGM_P)F("GET")) != 0) {
@@ -295,14 +309,12 @@ bool WebSocketServer::_isValidGET(char *line) {
 
   return true;
 }
-
 bool WebSocketServer::_isValidUpgrade(const char *value) {
   return strcasecmp_P(value, (PGM_P)F("websocket")) == 0;
 }
-
 bool WebSocketServer::_isValidConnection(char *value) {
-  char *rest{ value };
-  char *item{ nullptr };
+  char *rest{value};
+  char *item{nullptr};
 
   // Firefox sends: "Connection: keep-alive, Upgrade"
   // simple "includes" check:
@@ -314,7 +326,6 @@ bool WebSocketServer::_isValidConnection(char *value) {
 
   return false;
 }
-
 bool WebSocketServer::_isValidVersion(uint8_t version) {
   switch (version) {
   case 8:
@@ -325,7 +336,6 @@ bool WebSocketServer::_isValidVersion(uint8_t version) {
     return false;
   }
 }
-
 WebSocketError WebSocketServer::_validateHandshake(
   uint8_t flags, const char *secKey) {
   if ((flags & (kValidConnectionHeader | kValidUpgradeHeader)) !=
@@ -338,9 +348,8 @@ WebSocketError WebSocketServer::_validateHandshake(
 
   return WebSocketError::NO_ERROR;
 }
-
 void WebSocketServer::_rejectRequest(
-  NetClient &client, const WebSocketError &code) {
+  NetClient &client, const WebSocketError code) {
   switch (code) {
   case WebSocketError::CONNECTION_REFUSED: {
     client.println(F("HTTP/1.1 111 Connection refused"));
@@ -376,30 +385,35 @@ void WebSocketServer::_rejectRequest(
 // [4] Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=
 // [5]
 //
-void WebSocketServer::_acceptRequest(NetClient &client, const char *secKey) {
-  char acceptKey[29]{};
-  encodeSecKey(acceptKey, secKey);
-
-  // 22 characters for header + 28 for accept key + 1 for NULL
-  char secWebSocketAccept[51]{};
-  strcpy_P(secWebSocketAccept, (PGM_P)F("Sec-WebSocket-Accept: "));
-  strcat(secWebSocketAccept, acceptKey);
-
+void WebSocketServer::_acceptRequest(
+  NetClient &client, const char *secKey, const char *protocol) {
   client.println(F("HTTP/1.1 101 Switching Protocols"));
-  //client.println(F("Server: Arduino"));
-  //client.println(F("X-Powered-By: mWebSockets"));
+  // client.println(F("Server: Arduino"));
+  client.println(F("X-Powered-By: mWebSockets"));
   client.println(F("Upgrade: websocket"));
   client.println(F("Connection: Upgrade"));
-  client.println(secWebSocketAccept);
+
+  // 22 characters for header + 28 for accept key + 1 for NULL
+  char buffer[51]{};
+  strcpy_P(buffer, (PGM_P)F("Sec-WebSocket-Accept: ")); // 22
+  encodeSecKey(secKey, buffer + 22);
+  client.println(buffer);
+
+  if (protocol) {
+    // NOTE: Up to 26 characters for protocol value
+    snprintf_P(
+      buffer, sizeof(buffer), (PGM_P)F("Sec-WebSocket-Protocol: %s"), protocol);
+    client.println(buffer);
+  }
+
   client.println();
 }
 
 void WebSocketServer::_cleanDeadConnections() {
-  const auto end = &m_sockets[kMaxConnections];
-  for (auto it = &m_sockets[0]; it != end; ++it) {
-    if (*it && !(*it)->isAlive()) {
-      delete *it;
-      *it = nullptr;
+  for (auto &it : m_sockets) {
+    if (it && !it->isAlive()) {
+      delete it;
+      it = nullptr;
     }
   }
 }

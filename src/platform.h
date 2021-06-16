@@ -9,11 +9,11 @@
 //
 
 /** @cond */
-#define PLATFORM_ARCHITECTURE_AVR			1
-#define PLATFORM_ARCHITECTURE_ESP8266	2
-#define PLATFORM_ARCHITECTURE_ESP32		3
-#define PLATFORM_ARCHITECTURE_SAMD21	4
-#define PLATFORM_ARCHITECTURE_STM32		5
+#define PLATFORM_ARCHITECTURE_AVR 1
+#define PLATFORM_ARCHITECTURE_ESP8266 2
+#define PLATFORM_ARCHITECTURE_ESP32 3
+#define PLATFORM_ARCHITECTURE_SAMD21 4
+#define PLATFORM_ARCHITECTURE_STM32 5
 /** @endcond */
 
 #if defined(__AVR__)
@@ -35,9 +35,9 @@
 //
 
 /** @cond */
-#define ETHERNET_CONTROLLER_W5X00			1
-#define ETHERNET_CONTROLLER_ENC28J60	2
-#define NETWORK_CONTROLLER_WIFI				3
+#define ETHERNET_CONTROLLER_W5X00 1
+#define ETHERNET_CONTROLLER_ENC28J60 2
+#define NETWORK_CONTROLLER_WIFI 3
 /** @endcond */
 
 #include "config.h"
@@ -45,11 +45,11 @@
 #if NETWORK_CONTROLLER == ETHERNET_CONTROLLER_W5X00
 #  include <Ethernet.h>
 /** Specifies maximum number of clients connected to server. */
-constexpr uint8_t kMaxConnections{ MAX_SOCK_NUM };
+constexpr uint8_t kMaxConnections{MAX_SOCK_NUM};
 #elif NETWORK_CONTROLLER == ETHERNET_CONTROLLER_ENC28J60
 #  include <IPAddress.h>
 #  include <UIPEthernet.h>
-constexpr uint8_t kMaxConnections{ 4 };
+constexpr uint8_t kMaxConnections{4};
 #elif NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
 #  if PLATFORM_ARCH == PLATFORM_ARCHITECTURE_ESP8266
 #    include <ESP8266WiFi.h>
@@ -58,7 +58,7 @@ constexpr uint8_t kMaxConnections{ 4 };
 #  endif
 #  include <WiFiClient.h>
 #  include <WiFiServer.h>
-constexpr uint8_t kMaxConnections{ 8 };
+constexpr uint8_t kMaxConnections{8};
 #else
 #  error "Network controller is required!"
 #endif

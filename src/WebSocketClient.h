@@ -8,37 +8,40 @@ namespace net {
 
 /**
  * @class WebSocketClient
- * @see https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_client_applications
  */
-class WebSocketClient : public WebSocket {
+class WebSocketClient final : public WebSocket {
 public:
-  /** @param ws */
-  using onOpenCallback = void (*)(WebSocket &ws);
-  /** @param code */
-  using onErrorCallback = void (*)(const WebSocketError &code);
+  using onOpenCallback = void (*)(WebSocket &);
+  using onErrorCallback = void (*)(const WebSocketError);
 
 public:
+  WebSocketClient() = default;
+  ~WebSocketClient() = default;
+
   /**
    * @brief Attempts to connect to a server.
    * @remark Do not use "ws://"
+   */
+  bool open(const char *host, uint16_t port = 3000, const char *path = "/",
+    const char *supportedProtocols = nullptr);
+  void terminate();
+
+  /** @note Call this in the main loop. */
+  void listen();
+
+  /**
+   * @brief Sets callback that will be called on a successfull connection.
    * @code{.cpp}
-   * client.onOpen([](WebSocket &ws) { 
+   * client.onOpen([](WebSocket &ws) {
    *   // connected ... send hello message or whatever
    * });
    * @endcode
    */
-  bool open(const char *host, uint16_t port = 3000, const char *path = "/");
-  void terminate();
-
-  /** @note Call this in main loop. */
-  void listen();
-
-  /** @brief Sets callback that will be called on successfull connection. */
-  void onOpen(const onOpenCallback &onOpen);
+  void onOpen(const onOpenCallback &);
   /**
    * @brief Sets error handler.
    * @code{.cpp}
-   * client.onError([](const WebSocketError &code) {
+   * client.onError([](const WebSocketError code) {
    *   switch (code) {
    *   case BAD_REQUEST:
    *   break;
@@ -47,23 +50,23 @@ public:
    * });
    * @endcode
    */
-  void onError(const onErrorCallback &onError);
+  void onError(const onErrorCallback &);
 
 private:
   /** @cond */
-  void _sendRequest(const char *host, uint16_t port, const char *path);
+  void _sendRequest(const char *host, uint16_t port, const char *path,
+    const char *secKey, const char *supportedProtocols);
   bool _waitForResponse(uint16_t maxAttempts, uint8_t time = 1);
-  bool _readResponse();
+  bool _readResponse(const char *secKey);
   bool _validateHandshake(uint8_t flags);
   /** @endcond */
 private:
-  char *m_secKey{ nullptr };
-
-  onOpenCallback _onOpen{ nullptr };
-  onErrorCallback _onError{ nullptr };
+  onOpenCallback _onOpen{nullptr};
+  onErrorCallback _onError{nullptr};
 };
 
-/** @example ./simple-client/simple-client.ino
+/**
+ * @example ./simple-client/simple-client.ino
  * Example usage of WebSocketClient class
  */
 

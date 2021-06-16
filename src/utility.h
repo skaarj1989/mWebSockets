@@ -28,6 +28,6 @@ void printf(const __FlashStringHelper *fmt, ...);
 
 namespace net {
 
-IPAddress fetchRemoteIp(const NetClient &client);
+IPAddress fetchRemoteIp(const NetClient &);
 
 } // namespace net

@@ -8,10 +8,10 @@ using namespace net;
 #endif
 
 #if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
-constexpr char kSSID[]{ "SKYNET" };
-constexpr char kPassword[]{ "***" };
+constexpr char kSSID[]{"SKYNET"};
+constexpr char kPassword[]{"***"};
 #else
-byte mac[]{ 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+byte mac[]{0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
 IPAddress ip(192, 168, 46, 180);
 #endif
 
@@ -47,7 +47,7 @@ void setup() {
   // Ethernet.init(53);
 #  endif
 
-  Ethernet.begin(mac, ip);
+  Ethernet.begin(mac); //, ip);
 
   _SERIAL.print(F("Server running at "));
   _SERIAL.print(Ethernet.localIP());
@@ -56,7 +56,13 @@ void setup() {
 #endif
 
   wss.onConnection([](WebSocket &ws) {
-    ws.onMessage([](WebSocket &ws, const WebSocket::DataType &dataType,
+    const auto protocol = ws.getProtocol();
+    if (protocol) {
+      _SERIAL.print(F("Client protocol: "));
+      _SERIAL.println(protocol);
+    }
+
+    ws.onMessage([](WebSocket &ws, const WebSocket::DataType dataType,
                    const char *message, uint16_t length) {
       switch (dataType) {
       case WebSocket::DataType::TEXT:
@@ -71,20 +77,17 @@ void setup() {
       ws.send(dataType, message, length);
     });
 
-    ws.onClose(
-      [](WebSocket &ws, const WebSocket::CloseCode &code, const char *reason,
-        uint16_t length) { _SERIAL.println(F("Disconnected")); });
+    ws.onClose([](WebSocket &, const WebSocket::CloseCode, const char *,
+                 uint16_t) { _SERIAL.println(F("Disconnected")); });
 
     _SERIAL.print(F("New client: "));
     _SERIAL.println(ws.getRemoteIP());
 
-    const char message[]{ "Hello from Arduino server!" };
+    const char message[]{"Hello from Arduino server!"};
     ws.send(WebSocket::DataType::TEXT, message, strlen(message));
   });
 
   wss.begin();
 }
-
-uint32_t previousTime = 0;
 
 void loop() { wss.listen(); }

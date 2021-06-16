@@ -8,16 +8,15 @@ using namespace net;
 #endif
 
 #if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
-const char SSID[]{ "SKYNET" };
-const char password[]{ "***" };
+const char SSID[]{"SKYNET"};
+const char password[]{"***"};
 #else
-byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+byte mac[]{0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
 // IPAddress ip(192, 168, 46, 179);
 #endif
 
-#define BUFFER_SIZE 64
-char message[BUFFER_SIZE]{};
-bool newData = false;
+constexpr auto kBufferSize = 64;
+char message[kBufferSize]{};
 
 WebSocketClient client;
 
@@ -57,17 +56,15 @@ void setup() {
 #endif
 
   client.onOpen([](WebSocket &ws) {
-    _SERIAL.println(F("Type message in following format: <text>"));
-    _SERIAL.println(F("----------------------------------------"));
+    _SERIAL.println(F("Type a message in the following format: <text>"));
+    _SERIAL.println(F("----------------------------------------------"));
   });
 
   client.onMessage(
-    [](WebSocket &ws, const WebSocket::DataType &dataType, const char *message,
-      uint16_t length) { _SERIAL.println(message); });
-
-  client.onClose(
-    [](WebSocket &ws, const WebSocket::CloseCode &code, const char *reason,
-      uint16_t length) { _SERIAL.println(F("Disconnected")); });
+    [](WebSocket &ws, const WebSocket::DataType, const char *message,
+      uint16_t) { _SERIAL.println(message); });
+  client.onClose([](WebSocket &, const WebSocket::CloseCode, const char *,
+                   uint16_t) { _SERIAL.println(F("Disconnected")); });
 
   if (!client.open("192.168.46.31", 3000)) {
     _SERIAL.println(F("Connection failed!"));
@@ -76,22 +73,21 @@ void setup() {
   }
 }
 
-uint32_t previousTime = 0;
+uint32_t previousTime{0};
 
 void loop() {
-  static bool recvInProgress = false;
-  static byte idx = 0;
+  static auto recvInProgress = false;
+  static byte idx{0};
 
-  char c;
-
+  static auto newData = false;
   while (_SERIAL.available() > 0 && newData == false) {
-    c = _SERIAL.read();
+    const auto c = _SERIAL.read();
 
     if (recvInProgress) {
       if (c != '>') {
         message[idx++] = c;
 
-        if (idx >= BUFFER_SIZE) idx = BUFFER_SIZE - 1;
+        if (idx >= kBufferSize) idx = kBufferSize - 1;
       } else {
         message[idx] = '\0';
         recvInProgress = false;
@@ -102,7 +98,7 @@ void loop() {
       recvInProgress = true;
   }
 
-  if (newData == true) {
+  if (newData) {
     client.send(WebSocket::DataType::TEXT, message, strlen(message));
     newData = false;
   }

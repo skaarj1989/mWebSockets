@@ -8,9 +8,10 @@ void printf(const __FlashStringHelper *fmt, ...) {
 
 #if (PLATFORM_ARCH == PLATFORM_ARCHITECTURE_AVR) ||                            \
   (PLATFORM_ARCH == PLATFORM_ARCHITECTURE_ESP8266)
-  vsnprintf_P(buffer, sizeof(buffer), (const char *)fmt, args);
+  vsnprintf_P(
+    buffer, sizeof(buffer), reinterpret_cast<const char *>(fmt), args);
 #else
-  vsnprintf(buffer, sizeof(buffer), (const char *)fmt, args);
+  vsnprintf(buffer, sizeof(buffer), reinterpret_cast<const char *>(fmt), args);
 #endif
 
   va_end(args);

@@ -7,16 +7,11 @@
 namespace net {
 
 /**
- * @brief Generates Sec-WebSocket-Key value.
- * @param[out] output Array of 25 elements (with one for NULL).
- */
-void generateSecKey(char output[]);
-/**
  * @brief Generates Sec-WebSocket-Accept value.
- * @param[out] output Array of 29 elements (including NULL).
  * @param[in] key Client 'Sec-Websocket-Key' to encode
+ * @param[out] output Array of 29 elements (including NULL).
  */
-bool encodeSecKey(char output[], const char *key);
+bool encodeSecKey(const char *key, char output[]);
 
 /**
  * Error codes.
@@ -46,7 +41,6 @@ enum class WebSocketError {
 
 /**
  * @class WebSocket
- * @see https://tools.ietf.org/html/rfc6455
  */
 class WebSocket {
   friend class WebSocketServer;
@@ -60,13 +54,13 @@ public:
   enum class ReadyState : int8_t { CONNECTING = 0, OPEN, CLOSING, CLOSED };
   /** Frame data types. */
   enum class DataType : int8_t { TEXT, BINARY };
-  
+
   /** Frame opcodes. */
   enum Opcode {
     CONTINUATION_FRAME = 0x00,
 
     //
-    // Data Frames (non-control):
+    // Data frames (non-control):
     //
 
     TEXT_FRAME = 0x01,
@@ -102,59 +96,64 @@ public:
   };
 
   /**
-   * Close event code.
+   * Close event codes.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent
    */
   enum CloseCode {
     // 0-999 : Reserved and not used.
 
-    NORMAL_CLOSURE =
-      1000, /**< Normal closure; the connection successfully completed whatever
-               purpose for which it was created. */
-
-    GOING_AWAY,     /**< The endpoint is going away, either because of a server
-                       failure or because the browser is navigating away from the
-                       page that opened the connection. */
-    PROTOCOL_ERROR, /**< The endpoint is terminating the connection due to a
-                       protocol error. */
-    UNSUPPORTED_DATA, /**< The connection is being terminated because the
-                         endpoint received data of a type it cannot accept (for
-                         example, a text-only endpoint received binary data). */
+    /// Normal closure; the connection successfully completed whatever purpose
+    /// for which it was created.
+    NORMAL_CLOSURE = 1000,
+    /// The endpoint is going away, either because of a server  failure or
+    /// because the browser is navigating away from the page that opened the
+    /// connection.
+    GOING_AWAY,
+    /// The endpoint is terminating the connection due to aprotocol error.
+    PROTOCOL_ERROR,
+    /// The connection is being terminated because the endpoint received data of
+    /// a type it cannot accept (for example, a text-only endpoint received
+    /// binary data).
+    UNSUPPORTED_DATA,
 
     // 1004 : Reserved. A meaning might be defined in the future.
 
-    NO_STATUS_RECVD = 1005, /**< Reserved. Indicates that no status code was
-                               provided even though one was expected. */
-    ABNORMAL_CLOSURE, /**< Reserved. Used to indicate that a connection was
-                         closed abnormally (that is, with no close frame being
-                         sent) when a status code is expected. */
-    INVALID_FRAME_PAYLOAD_DATA, /**< The endpoint is terminating the connection
-                                   because a message was received that contained
-                                   inconsistent data (e.g., non-UTF-8 data
-                                   within a text message). */
-    POLICY_VIOLATION, /**< The endpoint is terminating the connection because it
-                         received a message that violates its policy. This is a
-                         generic status code, used when codes 1003 and 1009 are
-                         not suitable. */
-    MESSAGE_TOO_BIG,  /**< The endpoint is terminating the connection because a
-                         data frame was received that is too large. */
-    MISSING_EXTENSION, /**< The client is terminating the connection because it
-                          expected the server to negotiate one or more
-                          extension, but the server didn't. */
-    INTERNAL_ERROR,    /**< The server is terminating the connection because it
-                          encountered an unexpected condition that prevented it
-                          from fulfilling the request. */
-    SERVICE_RESTART, /**< The server is terminating the connection because it is
-                        restarting. */
-    TRY_AGAIN_LATER, /**< The server is terminating the connection due to a
-                        temporary condition, e.g. it is overloaded and is
-                        casting off some of its clients. */
-    BAD_GATEWAY,  /**< The server was acting as a gateway or proxy and received
-                     an invalid response from the upstream server. This is
-                     similar to 502 HTTP Status Code. */
-    TLS_HANDSHAKE /**< Reserved. Indicates that the connection was closed due to
-                     a failure to perform a TLS handshake (e.g., the server
-                     certificate can't be verified). */
+    /// Reserved. Indicates that no status code was provided even though one was
+    /// expected.
+    NO_STATUS_RECVD = 1005,
+    /// Reserved. Used to indicate that a connection was closed abnormally (that
+    /// is, with no close frame being sent) when a status code is expected.
+    ABNORMAL_CLOSURE,
+    /// The endpoint is terminating the connection because a message was
+    /// received that contained inconsistent data (e.g., non-UTF-8 data within a
+    /// text message).
+    INVALID_FRAME_PAYLOAD_DATA,
+    /// The endpoint is terminating the connection because it received a message
+    /// that violates its policy. This is a generic status code, used when codes
+    /// 1003 and 1009 are not suitable.
+    POLICY_VIOLATION,
+    /// The endpoint is terminating the connection because a data frame was
+    /// received that is too large.
+    MESSAGE_TOO_BIG,
+    /// The client is terminating the connection because it expected the server
+    /// to negotiate one or more extension, but the server didn't.
+    MISSING_EXTENSION,
+    /// The server is terminating the connection because it encountered an
+    /// unexpected condition that prevented it from fulfilling the request.
+    INTERNAL_ERROR,
+    /// The server is terminating the connection because it is restarting.
+    SERVICE_RESTART,
+    /// The server is terminating the connection due to a temporary condition,
+    /// e.g. it is overloaded and is casting off some of its clients.
+    TRY_AGAIN_LATER,
+    /// The server was acting as a gateway or proxy and received an invalid
+    /// response from the upstream server. This is similar to 502 HTTP Status
+    /// Code.
+    BAD_GATEWAY,
+    /// Reserved. Indicates that the connection was closed due to a failure to
+    /// perform a TLS handshake (e.g., the server certificate can't be
+    /// verified).
+    TLS_HANDSHAKE
 
     // 1016-1999 : Reserved for future use by the WebSocket standard.
     // 3000-3999 : Available for use by libraries and frameworks. May not be
@@ -163,92 +162,96 @@ public:
     // 4000-4999 : Available for use by applications.
   };
 
+  enum CloseMode { IMMEDIATE, DEFERRED };
+
   /**
    * @param ws Closing endpoint.
    * @param code Close event code.
-   * @param reason Contains message for close event, c-string, non NULL-terminated. May be empty.
-   * @param length Number of characters in reason c-string.
+   * @param reason Contains a message for a close event, c-string, non
+   * NULL-terminated. Might be empty.
+   * @param length The number of characters in the reason c-string.
    */
-  using onCloseCallback = void (*)(WebSocket &ws,
-    const WebSocket::CloseCode &code, const char *reason, uint16_t length);
+  using onCloseCallback = void (*)(
+    WebSocket &ws, const CloseCode code, const char *reason, uint16_t length);
 
   /**
    * @param ws Source of a message.
-   * @param dataType Type of message.
-   * @param message Contains data, non NULL-terminated.
+   * @param dataType Type of a message.
+   * @param message Non NULL-terminated.
    * @param length Number of data bytes.
    */
-  using onMessageCallback = void (*)(WebSocket &ws,
-    const WebSocket::DataType &dataType, const char *message, uint16_t length);
+  using onMessageCallback = void (*)(WebSocket &ws, const DataType dataType,
+    const char *message, uint16_t length);
 
 public:
   WebSocket(const WebSocket &) = delete;
-  WebSocket &operator=(const WebSocket &) = delete;
-
   virtual ~WebSocket();
 
+  WebSocket &operator=(const WebSocket &) = delete;
+
   /**
-   * @brief Sends close event.
-   * @param code
-   * @param instant Determines if close should be done immediately.
-   * @param reason Additional message (not required), doesn't have to be NULL-terminated. Max length = 123 characters.
-   * @param length Number of characters in reason.
+   * @brief Sends a close event.
+   * @param instant Determines if it should be closed immediately.
+   * @param reason An additional message (not required), doesn't have to be
+   * NULL-terminated. Max length = 123 characters.
+   * @param length The number of characters in the reason c-string.
    */
-  void close(const CloseCode &code, bool instant, const char *reason = nullptr,
+  void close(const CloseCode, bool instant, const char *reason = nullptr,
     uint16_t length = 0);
-  /** @brief Instantly closes connection. */
+  /** @brief Immediately closes the connection. */
   void terminate();
 
   /** @return Endpoint connection status. */
-  const ReadyState &getReadyState() const;
+  ReadyState getReadyState() const;
   /** @brief Verifies endpoint connection. */
   bool isAlive() const;
 
   /**
    * @return Endpoint IP address.
-   * @remark For some microcontrollers it may be empty.
+   * @remark For some microcontrollers it might be empty.
    */
   IPAddress getRemoteIP() const;
+  const char *getProtocol() const;
 
   /**
-   * @brief Sends message frame.
+   * @brief Sends a message frame.
    * @param message Doesn't have to be NULL-terminated.
    */
-  void send(
-    const WebSocket::DataType dataType, const char *message, uint16_t length);
+  void send(const DataType, const char *message, uint16_t length);
   /**
-   * @brief Sends ping message.
-   * @param payload Additional message, doesn't have to be NULL-terminated. Max length = 125.
-   * @param length Number of characters in payload.
+   * @brief Sends a ping message.
+   * @param payload An additional message, doesn't have to be NULL-terminated.
+   * Max length = 125.
+   * @param length The number of characters in payload.
    */
   void ping(const char *payload = nullptr, uint16_t length = 0);
 
   /**
-   * @brief Sets close event handler.
+   * @brief Sets the close event handler.
    * @code{.cpp}
-   * ws.onClose([](WebSocket &ws, const WebSocket::CloseCode &code,
+   * ws.onClose([](WebSocket &ws, const WebSocket::CloseCode code,
    *             const char *reason, uint16_t length) {
    *   // handle close event ...
    * });
    * @endcode
    */
-  void onClose(const onCloseCallback &callback);
+  void onClose(const onCloseCallback &);
   /**
-   * @brief Sets message handler function.
+   * @brief Sets the message handler function.
    * @code{.cpp}
-   * ws.onMessage([](WebSocket &ws, const WebSocket::DataType &dataType,
+   * ws.onMessage([](WebSocket &ws, const WebSocket::DataType dataType,
    *               const char *message, uint16_t length) {
    *   // handle data frame ...
    * });
    * @endcode
    */
-  void onMessage(const onMessageCallback &callback);
+  void onMessage(const onMessageCallback &);
 
 protected:
   /** @remark Reserved for WebSocketClient. */
-  WebSocket();
+  WebSocket() = default;
   /** @remark Reserved for WebSocketServer. */
-  WebSocket(const NetClient &client);
+  WebSocket(const NetClient &, const char *protocol);
 
   /** @cond */
   int32_t _read();
@@ -258,38 +261,38 @@ protected:
     uint8_t opcode, bool fin, bool mask, const char *data, uint16_t length);
 
   void _readFrame();
-  bool _readHeader(header_t &header);
-  bool _readData(const header_t &header, char *payload, size_t offset = 0);
+  bool _readHeader(header_t &);
+  bool _readData(const header_t &, char *payload, size_t offset = 0);
 
   void _clearDataBuffer();
 
-  void _handleContinuationFrame(const header_t &header);
-  void _handleDataFrame(const header_t &header);
-  void _handleCloseFrame(const header_t &header, const char *payload);
+  void _handleContinuationFrame(const header_t &);
+  void _handleDataFrame(const header_t &);
+  void _handleCloseFrame(const header_t &, const char *payload);
   /** @endcond */
 protected:
   mutable NetClient m_client;
-  ReadyState m_readyState;
+  ReadyState m_readyState{ReadyState::CLOSED};
+  char *m_protocol{nullptr};
 
-  /** @note Client endpoint must always mask frames. */
-  bool m_maskEnabled;
+  /** @note A client endpoint must always mask frames. */
+  bool m_maskEnabled{true};
 
-  char
-    m_dataBuffer[kBufferMaxSize]{}; /* #TODO Change to dynamic memory allocation
-                                     (would save memory in server). */
-  uint16_t m_currentOffset{ 0 };
-  int8_t m_tbcOpcode{ -1 }; /**< Indicates opcode (text/binary) that should be
-                               continued by continuation frame. */
+  char m_dataBuffer[kBufferMaxSize]{};
+  uint16_t m_currentOffset{0};
+  /// Indicates opcode (text/binary) that should be continued by continuation
+  /// frame.
+  int8_t m_tbcOpcode{-1};
 
-  onCloseCallback _onClose{ nullptr };
-  onMessageCallback _onMessage{ nullptr };
+  onCloseCallback _onClose{nullptr};
+  onMessageCallback _onMessage{nullptr};
 };
 
 /** @cond */
-constexpr uint8_t kValidUpgradeHeader = 0x01;
-constexpr uint8_t kValidConnectionHeader = 0x02;
-constexpr uint8_t kValidSecKey = 0x04;
-constexpr uint8_t kValidVersion = 0x08;
+constexpr uint8_t kValidUpgradeHeader{0x01};
+constexpr uint8_t kValidConnectionHeader{0x02};
+constexpr uint8_t kValidSecKey{0x04};
+constexpr uint8_t kValidVersion{0x08};
 /** @endcond */
 
 } // namespace net
