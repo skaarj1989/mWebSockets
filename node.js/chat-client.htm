@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <title>WebSocket Chat client</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css"
+      integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B"
+      crossorigin="anonymous"
+    />
+
+    <style>
+      textarea {
+        resize: none;
+        background-color: #fff !important;
+      }
+    </style>
+
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+      integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js"
+      integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row justify-content-center mt-4">
+        <div class="col-lg-6 col-md-10 col-12">
+          <h1 class="text-center">WebSocket Chat client</h1>
+        </div>
+      </div>
+      <div class="row justify-content-center mt-4">
+        <div class="col-lg-6 col-md-10 col-12">
+          <textarea
+            class="form-control"
+            id="text-area"
+            rows="16"
+            disabled
+          ></textarea>
+        </div>
+      </div>
+      <div class="row justify-content-center mt-1">
+        <div class="col-lg-6 col-md-10 col-12 w-100">
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <button
+                type="button"
+                class="btn btn-outline-primary mr-1"
+                id="button-send"
+              >
+                Send
+              </button>
+            </div>
+            <input
+              type="text"
+              class="form-control"
+              id="input-message"
+              placeholder="Message ..."
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const chat = {
+        initialize: function (host) {
+          this.$textArea = $("#text-area");
+          this.$buttonSend = $("#button-send");
+          this.$inputMessage = $("#input-message");
+
+          this.$buttonSend.on("click", () => {
+            const message = this.$inputMessage.val();
+            if (message) {
+              chat.sendMessage(message);
+              this.$inputMessage.val("");
+            }
+          });
+
+          this.$inputMessage.on("keypress", (evt) => {
+            if (evt.which == 13) this.$buttonSend.trigger("click");
+          });
+
+          // ---
+
+          this.ws = new WebSocket(host);
+
+          this.ws.onopen = () => chat.addMessage("Connected");
+          this.ws.onmessage = (message) => chat.addMessage(message.data);
+          this.ws.onclose = () => chat.addMessage("Disconnected");
+
+          this.ws.onerror = (evt) => console.log("error", evt);
+        },
+
+        addMessage: function (message) {
+          const $el = this.$textArea;
+
+          $el.val(`${$el.val()}${message}\n`);
+          $el.scrollTop($el[0].scrollHeight - $el.height());
+        },
+
+        sendMessage: function (message) {
+          this.ws.send(message);
+        },
+      };
+
+      $(document).ready(() => chat.initialize("ws://192.168.46.31:3000/"));
+    </script>
+  </body>
+</html>

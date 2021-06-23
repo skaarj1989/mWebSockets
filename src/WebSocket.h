@@ -162,8 +162,6 @@ public:
     // 4000-4999 : Available for use by applications.
   };
 
-  enum CloseMode { IMMEDIATE, DEFERRED };
-
   /**
    * @param ws Closing endpoint.
    * @param code Close event code.
@@ -280,7 +278,7 @@ protected:
 
   char m_dataBuffer[kBufferMaxSize]{};
   uint16_t m_currentOffset{0};
-  /// Indicates opcode (text/binary) that should be continued by continuation
+  /// Indicates an opcode (text/binary) that should be continued by continuation
   /// frame.
   int8_t m_tbcOpcode{-1};
 

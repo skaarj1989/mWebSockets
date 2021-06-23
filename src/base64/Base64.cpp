@@ -2,7 +2,8 @@
 #include "../platform.h"
 
 #if (PLATFORM_ARCH == PLATFORM_ARCHITECTURE_AVR) ||                            \
-  (PLATFORM_ARCH == PLATFORM_ARCHITECTURE_SAMD21)
+  (PLATFORM_ARCH == PLATFORM_ARCHITECTURE_SAMD21) ||                           \
+  (PLATFORM_ARCH == PLATFORM_ARCHITECTURE_SAM)
 #  include <avr/pgmspace.h>
 #else
 #  include <pgmspace.h>

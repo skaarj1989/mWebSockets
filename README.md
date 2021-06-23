@@ -33,17 +33,24 @@ Simple to use implementation of WebSockets for microcontrollers.
 
 ## Table of contents
 
-- [Requirements](#requirements)
-- [Installation](#installation)
-  - [config.h](#configh)
-  - [Physical connection](#physical-connection)
-- [Usage examples](#usage-examples)
-  - [Server](#server)
-  - [Client](#client)
-  - [Chat](#chat)
-- [Approx memory usage](#approx-memory-usage)
-- [Known issues](#known-issues)
-- [License](#license)
+- [μWebSockets](#μwebsockets)
+  - [Table of contents](#table-of-contents)
+  - [Requirements](#requirements)
+  - [Installation](#installation)
+    - [config.h](#configh)
+    - [Physical connection](#physical-connection)
+  - [Usage examples](#usage-examples)
+    - [Server](#server)
+      - [Verify clients](#verify-clients)
+      - [Subprotocol negotiation](#subprotocol-negotiation)
+    - [Client](#client)
+    - [Chat](#chat)
+  - [Approx memory usage](#approx-memory-usage)
+    - [Ethernet.h (W5100 and W5500)](#etherneth-w5100-and-w5500)
+    - [EthernetENC.h (ENC28j60)](#ethernetench-enc28j60)
+    - [WiFi](#wifi)
+  - [Known issues](#known-issues)
+  - [License](#license)
 
 ## Requirements
 
@@ -62,7 +69,7 @@ Simple to use implementation of WebSockets for microcontrollers.
   - WizNet W5500 module
   - ENC28j60
 - Libraries:
-  - UIPEthernet [#1](https://github.com/ntruchsess/arduino_uip) or [#2](https://github.com/UIPEthernet/UIPEthernet) (the choice is yours) if you decide to use ENC28j60
+  - [EthernetENC](https://github.com/jandrassy/EthernetENC) if you decide to use ENC28j60
 
 ## Installation
 
@@ -103,7 +110,7 @@ constexpr uint16_t kBufferMaxSize{ 256 };
 
 ### Physical connection
 
-If you have **WeMos D1** in size of **Arduino Uno** simply attaching shield does not work, you have to wire **ICSP** on **Ethernet Shield** to proper pins.
+If you have a **WeMos D1** in the size of **Arduino Uno** simply attaching a shield does not work. You have to wire the **ICSP** on an **Ethernet Shield** to proper pins.
 
 | Ethernet Shield <br> (W5100/W5500) | Arduino <br> Pro Mini |  WeMos D1  |
 | :--------------------------------: | :-------------------: | :--------: |
@@ -158,24 +165,38 @@ void loop() {
 #### Verify clients
 
 ```cpp
-void setup() {
-  // ...
+// verifyClient callback is called for every header during handshake
+// (except for those required by protocol, like "Connection", "Upgrade" etc.)
+server.begin([](const IPAddress &ip, const char *header, const char *value) {
+  // verify ip ...
 
-  // verifyClient callback is called for every header during handshake
-  // (except for those required by protocol, like "Connection", "Upgrade" etc.)
-  server.begin([](const IPAddress &ip, const char *header, const char *value) {
-    // verify ip ...
+  // verify "Origin" header:
+  if (strcmp_P(header, (PGM_P)F("Origin")) == 0)
+    if (strcmp_P(value, (PGM_P)F("file://")) == 0) return false;
 
-    // verify "Origin" header:
-    if (strcmp_P(header, (PGM_P)F("Origin")) == 0)
-      if (strcmp_P(value, (PGM_P)F("file://")) == 0) return false;
-
-    return true;
-  });
-}
+  return true;
+});
 ```
 
-##### Node.js server examples [here](https://github.com/skaarj1989/mWebSockets/tree/dev/node.js)
+#### Subprotocol negotiation
+
+```cpp
+// If you won't pass callback for `protocolHandler` then server will use the
+// first requested subprotocol if any
+wss.begin(nullptr, [](const char *protocols) {
+  // iterate csv protocols and return the one that is supported by your server
+  // or nullptr to ignore
+});
+
+// You can check client protocol in other callbacks
+wss.onConnection([](WebSocket &ws) {
+  const auto protocol = ws.getProtocol();
+  // ...
+  }
+});
+```
+
+> Node.js server examples [here](https://github.com/skaarj1989/mWebSockets/tree/master/node.js)
 
 ### Client
 
@@ -212,33 +233,31 @@ void loop() {
 
 ### Chat
 
-Following screenshots shows Rasperry Pi server, browser client and Arduino client in action:
-
-#### Node.js server on Raspberry Pi (/node.js/chat.js)
+> Node.js server on Raspberry Pi (/node.js/chat.js)
 
 <p align="center">
-   <img src=https://github.com/skaarj1989/ArduinoWebSocketClient/blob/gh-pages/images/rpi-nodejs.png?raw=true">
+   <img src=https://github.com/skaarj1989/mWebSockets/blob/gh-pages/images/rpi-nodejs.png?raw=true">
 </p>
 
-#### Browser client (/node.js/chat-client.htm)
+> Browser client (/node.js/chat-client.htm)
 
 <p align="center">
-   <img src=https://github.com/skaarj1989/ArduinoWebSocketClient/blob/gh-pages/images/browser-client.PNG?raw=true">
+   <img src=https://github.com/skaarj1989/mWebSockets/blob/gh-pages/images/browser-client.PNG?raw=true">
 </p>
 
-#### Arduino Uno client (/examples/chat/chat.ino)
+> Arduino Uno client (/examples/chat/chat.ino)
 
 <p align="center">
-   <img src=https://github.com/skaarj1989/ArduinoWebSocketClient/blob/gh-pages/images/arduino-serial-monitor.png?raw=true">
+   <img src=https://github.com/skaarj1989/mWebSockets/blob/gh-pages/images/arduino-serial-monitor.png?raw=true">
 </p>
 
-#### More examples [here](examples)
+> More examples [here](examples)
 
 ## Approx memory usage
 
-### \*simple-client.ino example (without debug output, 128 bytes data buffer)
+> `simple-client.ino` example (without debug output, 128 bytes data buffer)
 
-#### Ethernet.h (W5100 and W5500)
+### Ethernet.h (W5100 and W5500)
 
 |      Board       |   Program space    |  Dynamic memory  |
 | :--------------: | :----------------: | :--------------: |
@@ -247,17 +266,16 @@ Following screenshots shows Rasperry Pi server, browser client and Arduino clien
 | Arduino Pro Mini | 24 648 bytes (80%) | 829 bytes (40%)  |
 |   Arduino Zero   | 30 596 bytes (11%) | 3 056 bytes (9%) |
 
-#### UIPEthernet.h (ENC28j60)
+### EthernetENC.h (ENC28j60)
 
-:warning: **This library is incompatibile with Arduino Zero!** :warning:
+|      Board       |    Program space    |  Dynamic memory   |
+| :--------------: | :-----------------: | :---------------: |
+|   Arduino Uno    | 31 062 bytes (96%)  | 1 406 bytes (68%) |
+| Arduino Mega2560 | 32 074 bytes (12%)  | 1 406 bytes (17%) |
+| Arduino Pro Mini | 31 062 bytes (101%) | 1 406 bytes (68%) |
+|   Arduino Zero   | 36 796 bytes (14%)  | 3 684 bytes (11%) |
 
-|      Board       |   Program space    |  Dynamic memory   |
-| :--------------: | :----------------: | :---------------: |
-|   Arduino Uno    | 30 686 bytes (95%) | 1 515 bytes (73%) |
-| Arduino Mega2560 | 30 696 bytes (12%) | 1 515 bytes (18%) |
-| Arduino Pro Mini | 30 686 bytes (99%) | 1 515 bytes (73%) |
-
-#### WiFi
+### WiFi
 
 |      Board      |    Program space    |   Dynamic memory   |
 | :-------------: | :-----------------: | :----------------: |
@@ -267,11 +285,11 @@ Following screenshots shows Rasperry Pi server, browser client and Arduino clien
 
 ## Known issues
 
-1. ENC28j60 is slow, eats much more memory than W5100/W5500 and hangs on `available()` function
+...
 
 ## License
 
 - This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 - [arduino-base64](https://github.com/adamvr/arduino-base64) licensed under licensed under MIT License
-- [arduinolibs](https://github.com/rweather/arduinolibs) licensed under MIT
-- [utf8_check](https://www.cl.cam.ac.uk/~mgk25/ucs/utf8_check.c) licensed under MIT
+- [arduinolibs](https://github.com/rweather/arduinolibs) licensed under the MIT
+- [utf8_check](https://www.cl.cam.ac.uk/~mgk25/ucs/utf8_check.c) licensed under the MIT

@@ -42,9 +42,10 @@ void setup() {
 #else
   _SERIAL.println(F("Initializing ... "));
 
-#  if NETWORK_CONTROLLER == ETHERNET_CONTROLLER_W5X00
-  // Ethernet.init(53);
-#  endif
+  // Ethernet.init(10);
+  Ethernet.init(53); // Mega2560
+  // Ethernet.init(5); // ESPDUINO-32
+  // Ethernet.init(PA4); // STM32
 
   Ethernet.begin(mac); //, ip);
 
@@ -82,7 +83,7 @@ void setup() {
   client.onClose([](WebSocket &, const WebSocket::CloseCode, const char *,
                    uint16_t) { _SERIAL.println(F("Disconnected\n")); });
 
-  if (!client.open("192.168.46.31", 3000, "/", "foo")) {
+  if (!client.open("192.168.46.31", 3000, "/")) {
     _SERIAL.println(F("Connection failed!"));
     while (true)
       ;

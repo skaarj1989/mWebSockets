@@ -16,7 +16,7 @@ IPAddress ip(192, 168, 46, 180);
 #endif
 
 constexpr uint16_t port = 3000;
-WebSocketServer wss(port);
+WebSocketServer wss{port};
 
 void setup() {
   _SERIAL.begin(115200);
@@ -43,9 +43,10 @@ void setup() {
 #else
   _SERIAL.println(F("Initializing ... "));
 
-#  if NETWORK_CONTROLLER == ETHERNET_CONTROLLER_W5X00
-  // Ethernet.init(53);
-#  endif
+  // Ethernet.init(10);
+  Ethernet.init(53); // Mega2560
+  // Ethernet.init(5); // ESPDUINO-32
+  // Ethernet.init(PA4); // STM32
 
   Ethernet.begin(mac); //, ip);
 

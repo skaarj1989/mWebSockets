@@ -10,7 +10,7 @@ namespace net {
 /**
  * @class WebSocketServer
  */
-class WebSocketServer {
+class WebSocketServer final {
 public:
   /**
    * @param header c-string, NULL-terminated.
@@ -37,10 +37,13 @@ public:
    * @brief Startup server.
    * @code{.cpp}
    * WebSocketServer server;
-   * server.begin([](const IPAddress &ip, const char *header, const char *value)
-   * {
-   *   // verify client ip address and/or request headers ...
-   * });
+   * server.begin(
+   *   [](const IPAddress &ip, const char *header, const char *value) {
+   *     // verify client ip address and/or request headers ...
+   *   },
+   *   [](const char *clientProtocols) {
+   *     // return negotiated subprotocol or nullptr to ignore
+   *   });
    * @endcode
    * @param callback Function called for every header during hadshake (except
    * for those required by protocol, like **Connection**, **Upgrade** etc.)
@@ -61,6 +64,7 @@ public:
   uint8_t countClients() const;
 
   /**
+   * @brief
    * @code{.cpp}
    * WebSocketServer server;
    * server.onConnection([](WebSocket &ws) {
