@@ -10,7 +10,7 @@
 ## Client
 
 1. Adjust settings in `config/fuzzingserver.json`
-    - Most likely you'll have to change the `url` only
+   - Most likely you'll have to change the `url` only
 2. Run `fuzzingserver.bat`
 3. Upload `test/fuzzingclient.ino` to a board
 4. Check the resulting report in `reports/clients/index.html`
