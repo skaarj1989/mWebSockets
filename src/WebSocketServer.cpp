@@ -399,7 +399,7 @@ void WebSocketServer::_acceptRequest(
   encodeSecKey(secKey, buffer + 22);
   client.println(buffer);
 
-  if (protocol) {
+  if (protocol[0] != '\0') {
     // NOTE: Up to 26 characters for protocol value
     snprintf_P(
       buffer, sizeof(buffer), (PGM_P)F("Sec-WebSocket-Protocol: %s"), protocol);
