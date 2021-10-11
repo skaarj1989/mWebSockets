@@ -15,6 +15,7 @@
 #define PLATFORM_ARCHITECTURE_SAM 4
 #define PLATFORM_ARCHITECTURE_SAMD21 5
 #define PLATFORM_ARCHITECTURE_STM32 6
+#define PLATFORM_ARCHITECTURE_PORTENTA 7
 /** @endcond */
 
 #if defined(__AVR__)
@@ -29,6 +30,8 @@
 #  define PLATFORM_ARCH PLATFORM_ARCHITECTURE_SAMD21
 #elif defined(ARDUINO_ARCH_STM32)
 #  define PLATFORM_ARCH PLATFORM_ARCHITECTURE_STM32
+#elif defined(ARDUINO_ARCH_MBED_PORTENTA)
+#  define PLATFORM_ARCH PLATFORM_ARCHITECTURE_PORTENTA
 #else
 #  error "Unsupported platform"
 #endif
@@ -46,6 +49,10 @@
 #include "config.h"
 
 #if NETWORK_CONTROLLER == ETHERNET_CONTROLLER_W5X00
+#  if PLATFORM_ARCH == PLATFORM_ARCHITECTURE_PORTENTA
+#    include <PortentaEthernet.h>
+#    define MAX_SOCK_NUM 4
+#  endif
 #  include <Ethernet.h>
 /** Specifies maximum number of clients connected to server. */
 constexpr uint8_t kMaxConnections{MAX_SOCK_NUM};
