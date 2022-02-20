@@ -1,9 +1,9 @@
 #include "Base64.h"
-#include "../platform.h"
+#include "../platform.hpp"
 
 #if (PLATFORM_ARCH == PLATFORM_ARCHITECTURE_AVR) ||                            \
-  (PLATFORM_ARCH == PLATFORM_ARCHITECTURE_SAMD21) ||                           \
-  (PLATFORM_ARCH == PLATFORM_ARCHITECTURE_SAM)
+    (PLATFORM_ARCH == PLATFORM_ARCHITECTURE_SAMD21) ||                         \
+    (PLATFORM_ARCH == PLATFORM_ARCHITECTURE_SAM)
 #  include <avr/pgmspace.h>
 #else
 #  include <pgmspace.h>

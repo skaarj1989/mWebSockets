@@ -1,0 +1,34 @@
+#pragma once
+
+/** @file */
+
+//
+// Board architectures:
+//
+
+/** @cond */
+#define PLATFORM_ARCHITECTURE_AVR 1
+#define PLATFORM_ARCHITECTURE_ESP8266 2
+#define PLATFORM_ARCHITECTURE_ESP32 3
+#define PLATFORM_ARCHITECTURE_SAM 4
+#define PLATFORM_ARCHITECTURE_SAMD21 5
+#define PLATFORM_ARCHITECTURE_STM32 6
+/** @endcond */
+
+#if defined(__AVR__)
+#  define PLATFORM_ARCH PLATFORM_ARCHITECTURE_AVR
+#elif defined(ESP8266)
+#  define PLATFORM_ARCH PLATFORM_ARCHITECTURE_ESP8266
+#elif defined(ESP32)
+#  define PLATFORM_ARCH PLATFORM_ARCHITECTURE_ESP32
+#elif defined(ARDUINO_ARCH_SAM)
+#  define PLATFORM_ARCH PLATFORM_ARCHITECTURE_SAM
+#elif defined(ARDUINO_ARCH_SAMD)
+#  define PLATFORM_ARCH PLATFORM_ARCHITECTURE_SAMD21
+#elif defined(ARDUINO_ARCH_STM32)
+#  define PLATFORM_ARCH PLATFORM_ARCHITECTURE_STM32
+#else
+#  error Unsupported platform!
+#endif
+
+/** @def PLATFORM_ARCH */

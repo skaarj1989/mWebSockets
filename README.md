@@ -29,7 +29,7 @@ Simple to use implementation of WebSockets for microcontrollers.
 - Firefox
 - Opera
 
-> The **Autobahn**|Testsuite reports for [server](https://skaarj1989.github.io/mWebSockets/autobahn-testsuite/servers/index.html) and [client](https://skaarj1989.github.io/mWebSockets/autobahn-testsuite/clients/index.html) > <br><sup>Some tests will never pass just because of memory lack in ATmega family.</sup>
+> The **Autobahn**|Testsuite reports for [server](https://skaarj1989.github.io/mWebSockets/autobahn-testsuite/servers/index.html) and [client](https://skaarj1989.github.io/mWebSockets/autobahn-testsuite/clients/index.html) <br><sup>Some tests will never pass just because of memory lack in ATmega family.</sup>
 
 ## Table of contents
 
@@ -37,8 +37,9 @@ Simple to use implementation of WebSockets for microcontrollers.
   - [Table of contents](#table-of-contents)
   - [Requirements](#requirements)
   - [Installation](#installation)
-    - [config.h](#configh)
+    - [Config.h](#configh)
     - [Physical connection](#physical-connection)
+  - [Prerequisite](#prerequisite)
   - [Usage examples](#usage-examples)
     - [Server](#server)
       - [Verify clients](#verify-clients)
@@ -75,25 +76,9 @@ Simple to use implementation of WebSockets for microcontrollers.
 
 Use [Arduino Download Manager](https://www.ardu-badge.com/mWebSockets) or follow [this](https://www.arduino.cc/en/Guide/Libraries) guide.
 
-### config.h
+### Config.h
 
-Change the following definition if you use a different network controller:
-
-```cpp
-...
-
-#define NETWORK_CONTROLLER ETHERNET_CONTROLLER_W5X00
-```
-
-```cpp
-ETHERNET_CONTROLLER_W5X00
-ETHERNET_CONTROLLER_ENC28J60
-NETWORK_CONTROLLER_WIFI
-```
-
-> `ETHERNET_CONTROLLER_W5X00` stands for the official Arduino Ethernet library.
-
-Uncomment these if you want additional information on the serial monitor:
+Uncomment following defines if you want additional information on the serial monitor:
 
 ```cpp
 //#define _DEBUG
@@ -126,30 +111,56 @@ If you have a **WeMos D1** in the size of **Arduino Uno** simply attaching a shi
 |          SCS          |           PIN 10            |        PIN 53         |
 |         SCLK          |           PIN 13            |        PIN 52         |
 
+## Prerequisite
+
+You need to provide your own implementation of `fetchRemoteIp`:
+
+```cpp
+// This is necessary because:
+// 1. Not every implementation of {Etherent/Wifi}Client implements remoteIP() function
+// 2. Arduino does not have <type_traits> which could allow use of SFINAE
+
+IPAddress fetchRemoteIp(const EthernetClient &client) {
+  return client.remoteIP();
+}
+```
+
 ## Usage examples
+
+```cpp
+// For WiFi
+#include <WiFi.h> // or ESP8266WiFi.h
+
+using MyWebSocket = WebSocket<WiFiClient>;
+using MyWebSocketClient = WebSocketClient<WiFiClient>;
+using MyWebSocketServer = WebSocketServer<WiFiServer, WiFiClient, /*maxConnections = */4>;
+```
 
 ### Server
 
 ```cpp
-#include <WebSocketServer.h>
+#include <Ethernet.h>
+#include <WebSocketServer.hpp>
 using namespace net;
 
-WebSocketServer server{3000};
+using MyWebSocket = WebSocket<EthernetClient>;
+using MyWebSocketServer = WebSocketServer<EthernetServer, EthernetClient, 4>;
+MyWebSocketServer server{3000};
 
 void setup() {
   // Ethernet/WiFi initialization goes here ...
   // ...
 
-  server.onConnection([](WebSocket &ws) {
+  server.onConnection([](MyWebSocket &ws) {
     const char message[]{ "Hello from Arduino server!" };
     ws.send(message, strlen(message));
 
-    ws.onClose([](WebSocket &ws, const WebSocket::CloseCode code,
-                 const char *reason, uint16_t length) {
+    ws.onClose([](MyWebSocket &ws, const WebSocketCloseCode code,
+                  const char *reason, uint16_t length) {
       // ...
     });
-    ws.onMessage([](WebSocket &ws, const WebSocket::DataType dataType,
-                   const char *message, uint16_t length) {
+    ws.onMessage([](MyWebSocket &ws, const WebSocketDataType dataType,
+                    const char *message, uint16_t length) {
       // ...
     });
   });
@@ -189,7 +200,7 @@ wss.begin(nullptr, [](const char *protocols) {
 });
 
 // You can check client protocol in other callbacks
-wss.onConnection([](WebSocket &ws) {
+wss.onConnection([](MyWebSocket &ws) {
   const auto protocol = ws.getProtocol();
   // ...
   }
@@ -201,25 +212,28 @@ wss.onConnection([](WebSocket &ws) {
 ### Client
 
 ```cpp
-#include <WebSocketClient.h>
+#include <Ethernet.h>
+#include <WebSocketClient.hpp>
 using namespace net;
 
-WebSocketClient client;
+using MyWebSocket = WebSocket<EthernetClient>;
+using MyWebSocketClient = WebSocketClient<EthernetClient>;
+MyWebSocketClient client;
 
 void setup() {
   // Ethernet/WiFi initialization goes here ...
   // ...
 
-  client.onOpen([](WebSocket &ws) {
+  client.onOpen([](MyWebSocket &ws) {
     const char message[]{ "Hello from Arduino client!" };
     ws.send(message, strlen(message));
   });
-  client.onClose([](WebSocket &ws, const WebSocket::CloseCode code,
-                   const char *reason, uint16_t length) {
+  client.onClose([](MyWebSocket &ws, const WebSocketCloseCode code,
+                    const char *reason, uint16_t length) {
     // ...
   });
-  client.onMessage([](WebSocket &ws, const WebSocket::DataType dataType,
-                     const char *message, uint16_t length) {
+  client.onMessage([](MyWebSocket &ws, const WebSocketDataType dataType,
+                      const char *message, uint16_t length) {
     // ...
   });
 
@@ -259,12 +273,12 @@ void loop() {
 
 ### Ethernet.h (W5100 and W5500)
 
-|      Board       |   Program space    |  Dynamic memory  |
-| :--------------: | :----------------: | :--------------: |
-|   Arduino Uno    | 24 648 bytes (76%) | 829 bytes (40%)  |
-| Arduino Mega2560 | 25 640 bytes (10%) | 857 bytes (10%)  |
-| Arduino Pro Mini | 24 648 bytes (80%) | 829 bytes (40%)  |
-|   Arduino Zero   | 30 596 bytes (11%) | 3 056 bytes (9%) |
+|      Board       |   Program space    |  Dynamic memory   |
+| :--------------: | :----------------: | :---------------: |
+|   Arduino Uno    | 24 732 bytes (76%) |  799 bytes (39%)  |
+| Arduino Mega2560 | 25 690 bytes (10%) |  827 bytes (10%)  |
+| Arduino Pro Mini | 24 732 bytes (80%) |  799 bytes (39%)  |
+|   Arduino Zero   | 30 512 bytes (11%) | 3 848 bytes (11%) |
 
 ### EthernetENC.h (ENC28j60)
 
@@ -277,11 +291,11 @@ void loop() {
 
 ### WiFi
 
-|      Board      |    Program space    |   Dynamic memory   |
-| :-------------: | :-----------------: | :----------------: |
-| Generic ESP8266 | 286 328 bytes (29%) | 27 356 bytes (33%) |
-|  WeMos D1 mini  | 286 328 bytes (27%) | 27 356 bytes (33%) |
-|     NodeMCU     | 286 328 bytes (27%) | 27 356 bytes (33%) |
+|           Board           |    Program space    |   Dynamic memory   |
+| :-----------------------: | :-----------------: | :----------------: |
+| Generic ESP8266 \ NodeMCU | 288 493 bytes (30%) | 28 492 bytes (34%) |
+|       WeMos D1 mini       | 293 137 bytes (28%) | 28 500 bytes (34%) |
+|          NodeMCU          | 288 493 bytes (27%) | 28 492 bytes (34%) |
 
 ## Known issues
 
