@@ -1,5 +1,7 @@
 #pragma once
 
+#include <IPAddress.h>
+
 #define ETHERNET_CONTROLLER_W5X00 1
 #define ETHERNET_CONTROLLER_ENC28J60 2
 #define NETWORK_CONTROLLER_WIFI 3

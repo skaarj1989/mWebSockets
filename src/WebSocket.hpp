@@ -4,30 +4,21 @@
 
 #include "Config.hpp"
 #include "Utility.hpp"
+#include <Arduino.h>
+#include <IPAddress.h>
 
 namespace net {
-
-/**
- * @brief Generates Sec-WebSocket-Accept value.
- * @param[in] key Client 'Sec-Websocket-Key' to encode
- * @param[out] output Array of 29 elements (including NULL).
- */
-void encodeSecKey(const char *key, char output[]);
 
 /** Frame opcodes. */
 enum WebSocketOpcode {
   CONTINUATION_FRAME = 0x00,
 
-  //
-  // Data frames (non-control):
-  //
+  // -- Data frames (non-control):
 
   TEXT_FRAME = 0x01,
   BINARY_FRAME = 0x02,
 
-  //
-  // Reserved non-control frames:
-  //
+  // -- Reserved non-control frames:
 
   // 0x03
   // 0x04
@@ -35,17 +26,13 @@ enum WebSocketOpcode {
   // 0x06
   // 0x07
 
-  //
-  // Control frames:
-  //
+  // -- Control frames:
 
   CONNECTION_CLOSE_FRAME = 0x08,
   PING_FRAME = 0x09,
   PONG_FRAME = 0x0A
 
-  //
-  // Reserved control opcodes:
-  //
+  // -- Reserved control opcodes:
 
   // 0x0B
   // 0x0C
@@ -131,17 +118,13 @@ enum class WebSocketError {
   CONNECTION_ERROR,
   CONNECTION_REFUSED,
 
-  //
-  // Client errors:
-  //
+  // -- Client errors:
 
   BAD_REQUEST = 400,
   REQUEST_TIMEOUT = 408,
   UPGRADE_REQUIRED = 426,
 
-  //
-  // Server errors:
-  //
+  // -- Server errors:
 
   INTERNAL_SERVER_ERROR = 500,
   NOT_IMPLEMENTED = 501,
@@ -163,9 +146,7 @@ enum class WebSocketReadyState : uint8_t {
 struct WebSocketHeader_t;
 /** @endcond */
 
-/**
- * @class WebSocket
- */
+/** @class WebSocket */
 template <class NetClient> class WebSocket {
   template <class, class, uint8_t> friend class WebSocketServer;
 
@@ -178,7 +159,7 @@ public:
    * @param length The number of characters in the reason c-string.
    */
   using onCloseCallback = void (*)(
-      WebSocket &ws, const WebSocketCloseCode code, const char *reason,
+      WebSocket &ws, WebSocketCloseCode code, const char *reason,
       uint16_t length);
 
   /**
@@ -188,7 +169,7 @@ public:
    * @param length Number of data bytes.
    */
   using onMessageCallback = void (*)(
-      WebSocket &ws, const WebSocketDataType dataType, const char *message,
+      WebSocket &ws, WebSocketDataType dataType, const char *message,
       uint16_t length);
 
 public:
@@ -205,7 +186,7 @@ public:
    * @param length The number of characters in the reason c-string.
    */
   void close(
-      const WebSocketCloseCode, bool instant, const char *reason = nullptr,
+      WebSocketCloseCode, bool instant, const char *reason = nullptr,
       uint16_t length = 0);
   /** @brief Immediately closes the connection. */
   void terminate();
@@ -226,7 +207,7 @@ public:
    * @brief Sends a message frame.
    * @param message Doesn't have to be NULL-terminated.
    */
-  void send(const WebSocketDataType, const char *message, uint16_t length);
+  void send(WebSocketDataType, const char *message, uint16_t length);
   /**
    * @brief Sends a ping message.
    * @param payload An additional message, doesn't have to be NULL-terminated.
@@ -238,7 +219,7 @@ public:
   /**
    * @brief Sets the close event handler.
    * @code{.cpp}
-   * ws.onClose([](WebSocket &ws, const WebSocketCloseCode code,
+   * ws.onClose([](WebSocket &ws, WebSocketCloseCode code,
    *               const char *reason, uint16_t length) {
    *   // handle close event ...
    * });
@@ -248,7 +229,7 @@ public:
   /**
    * @brief Sets the message handler function.
    * @code{.cpp}
-   * ws.onMessage([](WebSocket &ws, const WebSocketDataType dataType,
+   * ws.onMessage([](WebSocket &ws, WebSocketDataType dataType,
    *                 const char *message, uint16_t length) {
    *   // handle data frame ...
    * });
@@ -289,13 +270,27 @@ protected:
 
   char m_dataBuffer[kBufferMaxSize]{};
   uint16_t m_currentOffset{0};
-  /// Indicates an opcode (text/binary) that should be continued by continuation
-  /// frame.
+  /// An opcode (text/binary) that should be continued by continuation frame.
   int8_t m_tbcOpcode{-1};
 
   onCloseCallback _onClose{nullptr};
   onMessageCallback _onMessage{nullptr};
 };
+
+/**
+ * @brief Generates Sec-WebSocket-Key value.
+ * @param[out] output Array of 25 elements (with one for NULL).
+ */
+void generateSecKey(char output[]);
+/**
+ * @brief Generates Sec-WebSocket-Accept value.
+ * @param[in] key Client 'Sec-Websocket-Key' to encode
+ * @param[out] output Array of 29 elements (including NULL).
+ */
+void encodeSecKey(const char *key, char output[]);
+
+/** @param[out] output Array of 4 elements (without NULL). */
+void generateMask(char output[]);
 
 } // namespace net
 

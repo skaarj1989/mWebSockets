@@ -1,5 +1,3 @@
-#include "CryptoLegacy/SHA1.h"
-#include "base64/Base64.h"
 #include "Validation.hpp"
 
 // https://tools.ietf.org/html/rfc6455
@@ -32,42 +30,6 @@ constexpr bool isCloseCodeValid(uint16_t code) {
       (code >= 3000 && code <= 4999));
 }
 
-inline void encodeSecKey(const char *key, char output[]) {
-  constexpr auto kSecKeyLength = 24;
-  constexpr char kMagicString[]{"258EAFA5-E914-47DA-95CA-C5AB0DC85B11"};
-  constexpr auto kMagicStringLength = sizeof(kMagicString) - 1;
-
-  constexpr auto kBufferLength = kSecKeyLength + kMagicStringLength;
-  char buffer[kBufferLength + 1]{};
-  memcpy(&buffer[0], key, kSecKeyLength);
-  memcpy(&buffer[kSecKeyLength], kMagicString, kMagicStringLength);
-
-  SHA1 sha1;
-  sha1.update(buffer, kBufferLength);
-  sha1.finalize(buffer, 20);
-  base64_encode(output, buffer, 20);
-}
-
-/** @param[out] output Array of 4 elements (without NULL). */
-inline void generateMask(char output[]) {
-  randomSeed(analogRead(0));
-  for (byte i{0}; i < 4; ++i)
-    output[i] = static_cast<char>(random(0xFF));
-}
-
-//
-// Helper struct:
-//
-
-struct WebSocketHeader_t {
-  bool fin;
-  bool rsv1, rsv2, rsv3;
-  uint8_t opcode;
-  bool mask;
-  char maskingKey[4]{};
-  uint32_t length;
-};
-
 // 	0                   1                   2                   3
 // 	0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
 // 	+-+-+-+-+-------+-+-------------+-------------------------------+
@@ -87,6 +49,15 @@ struct WebSocketHeader_t {
 // 	|                     Payload Data continued ...                |
 // 	+---------------------------------------------------------------+
 
+struct WebSocketHeader_t {
+  bool fin;
+  bool rsv1, rsv2, rsv3;
+  uint8_t opcode;
+  bool mask;
+  char maskingKey[4]{};
+  uint32_t length;
+};
+
 //
 // WebSocket class (public):
 //
@@ -95,7 +66,7 @@ template <class NetClient> WebSocket<NetClient>::~WebSocket() { terminate(); }
 
 template <class NetClient>
 void WebSocket<NetClient>::close(
-    const WebSocketCloseCode code, bool instant, const char *reason,
+    WebSocketCloseCode code, bool instant, const char *reason,
     uint16_t length) {
   if (m_readyState != WebSocketReadyState::OPEN) return;
   if (length > 123) {
@@ -141,7 +112,7 @@ const char *WebSocket<NetClient>::getProtocol() const {
 
 template <class NetClient>
 void WebSocket<NetClient>::send(
-    const WebSocketDataType dataType, const char *message, uint16_t length) {
+    WebSocketDataType dataType, const char *message, uint16_t length) {
   if (m_readyState != WebSocketReadyState::OPEN) {
     // #TODO Trigger error ...
     return;
@@ -189,12 +160,10 @@ template <class NetClient> int32_t WebSocket<NetClient>::_read() {
   while (!m_client.available() && millis() < timeout) {
     delay(1);
   }
-
   if (millis() > timeout) {
     close(PROTOCOL_ERROR, true);
     return -1;
   }
-
   return m_client.read();
 }
 template <class NetClient>
@@ -271,7 +240,7 @@ template <class NetClient> void WebSocket<NetClient>::_readFrame() {
   WebSocketHeader_t header;
   if (!_readHeader(header)) return;
 
-  bool usingTempBuffer = isControlFrame(header.opcode);
+  const auto usingTempBuffer = isControlFrame(header.opcode);
   char *payload{nullptr};
   size_t offset{0};
 
@@ -439,7 +408,7 @@ void WebSocket<NetClient>::_handleContinuationFrame(
                               : WebSocketDataType::BINARY;
     if (dataType == WebSocketDataType::TEXT) {
       if (!isValidUTF8(
-              reinterpret_cast<const byte *>(m_dataBuffer), totalLength))
+              reinterpret_cast<const uint8_t *>(m_dataBuffer), totalLength))
         return close(INVALID_FRAME_PAYLOAD_DATA, true);
     }
 
@@ -462,7 +431,7 @@ void WebSocket<NetClient>::_handleDataFrame(const WebSocketHeader_t &header) {
 
     if (dataType == WebSocketDataType::TEXT) {
       if (!isValidUTF8(
-              reinterpret_cast<const byte *>(m_dataBuffer), header.length))
+              reinterpret_cast<const uint8_t *>(m_dataBuffer), header.length))
         return close(INVALID_FRAME_PAYLOAD_DATA, true);
     }
 
@@ -483,14 +452,14 @@ void WebSocket<NetClient>::_handleCloseFrame(
   uint16_t reasonLength{0};
 
   if (header.length > 0) {
-    for (byte i{0}; i < 2; ++i)
+    for (uint8_t i{0}; i < 2; ++i)
       code = (code << 8) + (payload[i] & 0xFF);
 
     if (!isCloseCodeValid(code)) return close(PROTOCOL_ERROR, true);
 
     reasonLength = header.length - 2;
     reason = &payload[2];
-    if (!isValidUTF8(reinterpret_cast<const byte *>(reason), reasonLength))
+    if (!isValidUTF8(reinterpret_cast<const uint8_t *>(reason), reasonLength))
       return close(PROTOCOL_ERROR, true);
   }
 

@@ -6,13 +6,11 @@
 
 namespace net {
 
-/**
- * @class WebSocketClient
- */
+/** @class WebSocketClient */
 template <class NetClient> class WebSocketClient : public WebSocket<NetClient> {
 public:
   using onOpenCallback = void (*)(WebSocket<NetClient> &);
-  using onErrorCallback = void (*)(const WebSocketError);
+  using onErrorCallback = void (*)(WebSocketError);
 
 public:
   WebSocketClient() = default;
@@ -25,7 +23,6 @@ public:
   bool open(
       const char *host, uint16_t port = 3000, const char *path = "/",
       const char *supportedProtocols = nullptr);
-  void terminate();
 
   /** @note Call this in the main loop. */
   void listen();
@@ -42,10 +39,11 @@ public:
   /**
    * @brief Sets error handler.
    * @code{.cpp}
-   * client.onError([](const WebSocketError code) {
+   * client.onError([](WebSocketError code) {
    *   switch (code) {
    *   case BAD_REQUEST:
-   *   break;
+   *     break;
+   *   
    *   // ...
    *   }
    * });
@@ -61,6 +59,8 @@ private:
   bool _waitForResponse(uint16_t maxAttempts, uint8_t time = 1);
   bool _readResponse(const char *secKey);
   bool _validateHandshake(uint8_t flags);
+
+  void _triggerError(WebSocketError);
   /** @endcond */
 private:
   onOpenCallback _onOpen{nullptr};

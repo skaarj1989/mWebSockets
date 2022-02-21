@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Platform.hpp"
-#include <WString.h>
+#include <WString.h> // __FlashStringHelper
 
 #ifndef SAFE_DELTE
 #  define SAFE_DELETE(ptr)                                                     \

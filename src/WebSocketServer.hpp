@@ -9,7 +9,7 @@ namespace net {
 /** @class WebSocketServer */
 template <class NetServer, class NetClient, uint8_t _MaxConnections = 4>
 class WebSocketServer {
-  static_assert(_MaxConnections <= 8);
+  static_assert(_MaxConnections <= 8, "I don't think so ...");
 
 public:
   /**
@@ -55,8 +55,7 @@ public:
   void shutdown();
 
   /** @brief Sends message to all connected clients. */
-  void broadcast(
-      const WebSocketDataType dataType, const char *message, uint16_t length);
+  void broadcast(WebSocketDataType, const char *message, uint16_t length);
 
   /** @note Call this in main loop. */
   void listen();
@@ -70,11 +69,11 @@ public:
    * WebSocketServer server;
    * server.onConnection([](WebSocket &ws) {
    *   // New client, setup it's callbacks:
-   *   ws.onClose([](WebSocket &ws, const WebSocketCloseCode code,
+   *   ws.onClose([](WebSocket &ws, WebSocketCloseCode,
    *                 const char *reason, uint16_t length) {
    *     // handle close event ...
    *   });
-   *   ws.onMessage([](WebSocket &ws, const WebSocketDataType dataType,
+   *   ws.onMessage([](WebSocket &ws, WebSocketDataType,
    *               const char *message, uint16_t length) {
    *     // handle data frame ...
    *   });
@@ -91,17 +90,14 @@ private:
 
   /// @param[out] protocol
   bool _handleRequest(NetClient &, char selectedProtocol[]);
-  bool _isValidGET(char *line);
-  bool _isValidUpgrade(const char *line);
-  bool _isValidConnection(char *value);
-  bool _isValidVersion(uint8_t version);
-  WebSocketError _validateHandshake(uint8_t flags, const char *secKey);
-  void _rejectRequest(NetClient &, const WebSocketError code);
+  void _rejectRequest(NetClient &, WebSocketError);
   void _acceptRequest(NetClient &, const char *secKey, const char *protocol);
 
   void _cleanDeadConnections();
   /** @endcond */
 private:
+  // Issue with EthernetServer on ESP32:
+  // https://github.com/arduino-libraries/Ethernet/issues/88#issuecomment-455498941
   NetServer m_server;
   WebSocket<NetClient> *m_sockets[_MaxConnections]{};
 
@@ -109,6 +105,11 @@ private:
   protocolHandlerCallback _protocolHandler{nullptr};
   onConnectionCallback _onConnection{nullptr};
 };
+
+bool isValidGET(char *line);
+bool isValidUpgrade(const char *line);
+bool isValidConnection(char *value);
+WebSocketError validateHandshake(uint8_t flags, const char *secKey);
 
 /**
  * @example ./simple-server/simple-server.ino

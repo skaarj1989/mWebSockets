@@ -2,6 +2,14 @@
 
 namespace net {
 
+constexpr bool isValidVersion(uint8_t version) {
+  return version == 8 || version == 13;
+}
+
+//
+// WebSocketServer class (public):
+//
+
 template <class NetServer, class NetClient, uint8_t _>
 WebSocketServer<NetServer, NetClient, _>::WebSocketServer(uint16_t port)
   : m_server{port} {}
@@ -20,10 +28,11 @@ void WebSocketServer<NetServer, NetClient, _>::begin(
 }
 template <class NetServer, class NetClient, uint8_t _>
 void WebSocketServer<NetServer, NetClient, _>::shutdown() {
-  for (auto ws : m_sockets) {
+  for (auto *ws : m_sockets) {
     if (ws) {
       ws->close(WebSocketCloseCode::GOING_AWAY, true);
-      SAFE_DELETE(ws);
+      delete ws;
+      ws = nullptr;
     }
   }
 
@@ -34,8 +43,8 @@ void WebSocketServer<NetServer, NetClient, _>::shutdown() {
 
 template <class NetServer, class NetClient, uint8_t _>
 void WebSocketServer<NetServer, NetClient, _>::broadcast(
-    const WebSocketDataType dataType, const char *message, uint16_t length) {
-  for (auto ws : m_sockets)
+    WebSocketDataType dataType, const char *message, uint16_t length) {
+  for (auto *ws : m_sockets)
     if (ws && ws->getReadyState() == WebSocketReadyState::OPEN)
       ws->send(dataType, message, length);
 }
@@ -46,7 +55,7 @@ void WebSocketServer<NetServer, NetClient, _>::listen() {
 
   NetClient client{m_server.available()};
   if (client) {
-    WebSocket<NetClient> *ws{_getWebSocket(client)};
+    auto *ws = _getWebSocket(client);
     if (!ws) {
       for (auto &it : m_sockets) {
         if (!it) {
@@ -59,23 +68,20 @@ void WebSocketServer<NetServer, NetClient, _>::listen() {
           break;
         }
       }
-
       // Server is full ...
       if (!ws) _rejectRequest(client, WebSocketError::SERVICE_UNAVAILABLE);
     }
   }
 
-  for (auto it : m_sockets) {
-    if (it && it->m_client.connected() && it->m_client.available()) {
+  for (auto it : m_sockets)
+    if (it && it->m_client.connected() && it->m_client.available())
       it->_readFrame();
-    }
-  }
 }
 
 template <class NetServer, class NetClient, uint8_t _>
 uint8_t WebSocketServer<NetServer, NetClient, _>::countClients() const {
   uint8_t count{0};
-  for (auto ws : m_sockets)
+  for (auto *ws : m_sockets)
     if (ws && ws->isAlive()) ++count;
 
   return count;
@@ -90,28 +96,25 @@ void WebSocketServer<NetServer, NetClient, _>::onConnection(
 template <class NetServer, class NetClient, uint8_t _>
 WebSocket<NetClient> *WebSocketServer<NetServer, NetClient, _>::_getWebSocket(
     NetClient &client) const {
-  for (auto ws : m_sockets)
+  for (auto *ws : m_sockets)
     if (ws && ws->m_client == client) return ws;
 
   return nullptr;
 }
 
-//
-// Read client request:
-//
-// [1] GET /chat HTTP/1.1
-// [2] Host: example.com:8000
-// [3] Upgrade: websocket
-// [4] Connection: Upgrade
-// [5] Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
-// [6] Sec-WebSocket-Version: 13
-// [7]
-//
 template <class NetServer, class NetClient, uint8_t _>
 bool WebSocketServer<NetServer, NetClient, _>::_handleRequest(
     NetClient &client, char selectedProtocol[]) {
   while (!client.available())
     delay(1);
+
+  char secKey[32]{}; // Holds client Sec-WebSocket-Key
+  uint8_t flags{0};
+  char protocols[32]{};
+
+  int32_t bite{-1};
+  uint8_t currentLine{0};
+  uint8_t counter{0};
 
   // Large enought to hold the longest header field
   //  Chrome: 'User-Agent' = ~126 characters
@@ -120,13 +123,13 @@ bool WebSocketServer<NetServer, NetClient, _>::_handleRequest(
   //  Opera: 'User-Agent' = ~145 characters
   char buffer[160]{};
 
-  char secKey[32]{}; // Holds client Sec-WebSocket-Key
-  uint8_t flags{0};
-  char protocols[32]{};
-
-  int32_t bite{-1};
-  byte currentLine{0};
-  byte counter{0};
+  // [1] GET /chat HTTP/1.1
+  // [2] Host: example.com:8000
+  // [3] Upgrade: websocket
+  // [4] Connection: Upgrade
+  // [5] Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
+  // [6] Sec-WebSocket-Version: 13
+  // [7]
 
   while ((bite = client.read()) != -1) {
     buffer[counter++] = bite;
@@ -145,7 +148,7 @@ bool WebSocketServer<NetServer, NetClient, _>::_handleRequest(
       //
 
       if (currentLine == 0) {
-        if (!_isValidGET(rest)) {
+        if (!isValidGET(rest)) {
           _rejectRequest(client, WebSocketError::BAD_REQUEST);
           return false;
         }
@@ -168,7 +171,7 @@ bool WebSocketServer<NetServer, NetClient, _>::_handleRequest(
 
           else if (strcasecmp_P(header, (PGM_P)F("Upgrade")) == 0) {
             value = strtok_r(rest, " ", &rest);
-            if (!value || !_isValidUpgrade(value)) {
+            if (!value || !isValidUpgrade(value)) {
               _rejectRequest(client, WebSocketError::BAD_REQUEST);
               return false;
             }
@@ -180,7 +183,7 @@ bool WebSocketServer<NetServer, NetClient, _>::_handleRequest(
           //
 
           else if (strcasecmp_P(header, (PGM_P)F("Connection")) == 0) {
-            if (rest && _isValidConnection(rest))
+            if (rest && isValidConnection(rest))
               flags |= kValidConnectionHeader;
           }
 
@@ -200,7 +203,7 @@ bool WebSocketServer<NetServer, NetClient, _>::_handleRequest(
           else if (
               strcasecmp_P(header, (PGM_P)F("Sec-WebSocket-Version")) == 0) {
             value = strtok_r(rest, " ", &rest);
-            if (!value || !_isValidVersion(atoi(value))) {
+            if (!value || !isValidVersion(atoi(value))) {
               _rejectRequest(client, WebSocketError::BAD_REQUEST);
               return false;
             }
@@ -213,7 +216,7 @@ bool WebSocketServer<NetServer, NetClient, _>::_handleRequest(
 
           else if (
               strcasecmp_P(header, (PGM_P)F("Sec-WebSocket-Protocol")) == 0) {
-            for (byte i{0}; rest != nullptr; ++i) {
+            for (uint8_t i{0}; rest != nullptr; ++i) {
               if (*protocols) strcat(protocols, ",");
               const auto pch = strtok_r(rest, ",", &rest);
               strcat(protocols, pch + 1); // Skip leading whitespace
@@ -240,7 +243,7 @@ bool WebSocketServer<NetServer, NetClient, _>::_handleRequest(
         //
 
         else {
-          const auto errorCode = _validateHandshake(flags, secKey);
+          const auto errorCode = validateHandshake(flags, secKey);
           if (errorCode != WebSocketError::NO_ERROR) {
             _rejectRequest(client, errorCode);
             return false;
@@ -267,77 +270,7 @@ bool WebSocketServer<NetServer, NetClient, _>::_handleRequest(
   _rejectRequest(client, WebSocketError::BAD_REQUEST);
   return false;
 }
-template <class NetServer, class NetClient, uint8_t _>
-bool WebSocketServer<NetServer, NetClient, _>::_isValidGET(char *line) {
-  char *rest{line};
-  for (byte i{0}; rest != nullptr; ++i) {
-    const auto pch = strtok_r(rest, " ", &rest);
-    switch (i) {
-    case 0:
-      if (strcmp_P(pch, (PGM_P)F("GET")) != 0) {
-        return false;
-      }
-      break;
-    case 1:
-      break; // path doesn't matter ...
-    case 2:
-      if (strcmp_P(pch, (PGM_P)F("HTTP/1.1")) != 0) {
-        return false;
-      }
-      break;
 
-    default:
-      return false;
-    }
-  }
-
-  return true;
-}
-template <class NetServer, class NetClient, uint8_t _>
-bool WebSocketServer<NetServer, NetClient, _>::_isValidUpgrade(
-    const char *value) {
-  return strcasecmp_P(value, (PGM_P)F("websocket")) == 0;
-}
-template <class NetServer, class NetClient, uint8_t _>
-bool WebSocketServer<NetServer, NetClient, _>::_isValidConnection(char *value) {
-  char *rest{value};
-  char *item{nullptr};
-
-  // Firefox sends: "Connection: keep-alive, Upgrade"
-  // simple "includes" check:
-  while ((item = strtok_r(rest, ",", &rest))) {
-    if (strstr_P(item, (PGM_P)F("Upgrade")) != nullptr) {
-      return true;
-    }
-  }
-
-  return false;
-}
-template <class NetServer, class NetClient, uint8_t _>
-bool WebSocketServer<NetServer, NetClient, _>::_isValidVersion(
-    uint8_t version) {
-  switch (version) {
-  case 8:
-  case 13:
-    return true;
-
-  default:
-    return false;
-  }
-}
-template <class NetServer, class NetClient, uint8_t _>
-WebSocketError WebSocketServer<NetServer, NetClient, _>::_validateHandshake(
-    uint8_t flags, const char *secKey) {
-  if ((flags & (kValidConnectionHeader | kValidUpgradeHeader)) !=
-      (kValidConnectionHeader | kValidUpgradeHeader)) {
-    return WebSocketError::UPGRADE_REQUIRED;
-  }
-
-  if (!(flags & kValidVersion) || strlen(secKey) == 0)
-    return WebSocketError::BAD_REQUEST;
-
-  return WebSocketError::NO_ERROR;
-}
 template <class NetServer, class NetClient, uint8_t _>
 void WebSocketServer<NetServer, NetClient, _>::_rejectRequest(
     NetClient &client, const WebSocketError code) {
@@ -361,19 +294,16 @@ void WebSocketServer<NetServer, NetClient, _>::_rejectRequest(
 
   client.stop();
 }
-
-//
-// Send response:
-//
-// [1] HTTP/1.1 101 Switching Protocols
-// [2] Upgrade: websocket
-// [3] Connection: Upgrade
-// [4] Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=
-// [5]
-//
 template <class NetServer, class NetClient, uint8_t _>
 void WebSocketServer<NetServer, NetClient, _>::_acceptRequest(
     NetClient &client, const char *secKey, const char *protocol) {
+
+  // [1] HTTP/1.1 101 Switching Protocols
+  // [2] Upgrade: websocket
+  // [3] Connection: Upgrade
+  // [4] Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=
+  // [5]
+
   client.println(F("HTTP/1.1 101 Switching Protocols"));
   // client.println(F("Server: Arduino"));
   client.println(F("X-Powered-By: mWebSockets"));
@@ -388,7 +318,7 @@ void WebSocketServer<NetServer, NetClient, _>::_acceptRequest(
 
   if (protocol[0] != '\0') {
     // NOTE: Up to 26 characters for protocol value
-    snprintf_P(
+    snprintf(
         buffer, sizeof(buffer), (PGM_P)F("Sec-WebSocket-Protocol: %s"),
         protocol);
     client.println(buffer);

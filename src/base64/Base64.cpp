@@ -1,5 +1,5 @@
 #include "Base64.h"
-#include "../platform.hpp"
+#include "../Platform.hpp"
 
 #if (PLATFORM_ARCH == PLATFORM_ARCHITECTURE_AVR) ||                            \
     (PLATFORM_ARCH == PLATFORM_ARCHITECTURE_SAMD21) ||                         \
