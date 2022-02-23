@@ -18,6 +18,6 @@
 //#define _DUMP_FRAME_DATA
 
 /** Maximum size of data buffer - frame payload (in bytes). */
-constexpr uint16_t kBufferMaxSize{512};
+constexpr uint16_t kBufferMaxSize{256};
 /** Maximum time to wait for endpoint response (in milliseconds). */
 constexpr uint16_t kTimeoutInterval{5000};

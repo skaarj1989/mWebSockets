@@ -39,7 +39,6 @@ Simple to use implementation of WebSockets for microcontrollers.
   - [Installation](#installation)
     - [Config.h](#configh)
     - [Physical connection](#physical-connection)
-  - [Prerequisite](#prerequisite)
   - [Usage examples](#usage-examples)
     - [Server](#server)
       - [Verify clients](#verify-clients)
@@ -110,20 +109,6 @@ If you have a **WeMos D1** in the size of **Arduino Uno** simply attaching a shi
 |         MOSI          |           PIN 11            |        PIN 51         |
 |          SCS          |           PIN 10            |        PIN 53         |
 |         SCLK          |           PIN 13            |        PIN 52         |
-
-## Prerequisite
-
-You need to provide your own implementation of `fetchRemoteIp`:
-
-```cpp
-// This is necessary because:
-// 1. Not every implementation of {Etherent/Wifi}Client implements remoteIP() function
-// 2. Arduino does not have <type_traits> which could allow use of SFINAE
-
-IPAddress fetchRemoteIp(const EthernetClient &client) {
-  return client.remoteIP();
-}
-```
 
 ## Usage examples
 

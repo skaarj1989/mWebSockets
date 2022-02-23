@@ -35,17 +35,6 @@ using NetClient = EthernetClient;
 using NetServer = EthernetServer;
 #endif
 
-template <typename NetClient> IPAddress fetchRemoteIp(const NetClient &client) {
-#if (PLATFORM_ARCH == PLATFORM_ARCHITECTURE_ESP8266) &&                        \
-    (NETWORK_CONTROLLER == ETHERNET_CONTROLLER_W5X00)
-  // EthernetClient class in ESP8266 doesn't implement remoteIP()
-  return {};
-#else
-  // EthernetClient class is not "const correct"
-  return const_cast<NetClient &>(client).remoteIP();
-#endif
-}
-
 inline void setupNetwork() {
 #if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
   //_SERIAL.setDebugOutput(true);

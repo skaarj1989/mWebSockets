@@ -2,10 +2,10 @@
 
 /** @file */
 
+#include <Arduino.h>
 #include "Config.hpp"
 #include "Utility.hpp"
-#include <Arduino.h>
-#include <IPAddress.h>
+#include "TypeTraits.hpp"
 
 namespace net {
 
@@ -291,6 +291,14 @@ void encodeSecKey(const char *key, char output[]);
 
 /** @param[out] output Array of 4 elements (without NULL). */
 void generateMask(char output[]);
+
+template <typename NetClient>
+inline IPAddress fetchRemoteIp(const NetClient &client) {
+  if constexpr (has_remoteIP<NetClient>::value)
+    return client.remoteIP();
+  else
+    return {};
+}
 
 } // namespace net
 
