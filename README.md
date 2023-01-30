@@ -142,7 +142,7 @@ void setup() {
 
   server.onConnection([](WebSocket &ws) {
     const char message[]{ "Hello from Arduino server!" };
-    ws.send(message, strlen(message));
+    ws.send(WebSocket::DataType::TEXT, message, strlen(message));
 
     ws.onClose([](WebSocket &ws, const WebSocket::CloseCode code,
                  const char *reason, uint16_t length) {
@@ -212,7 +212,7 @@ void setup() {
 
   client.onOpen([](WebSocket &ws) {
     const char message[]{ "Hello from Arduino client!" };
-    ws.send(message, strlen(message));
+    ws.send(WebSocket::DataType::TEXT, message, strlen(message));
   });
   client.onClose([](WebSocket &ws, const WebSocket::CloseCode code,
                    const char *reason, uint16_t length) {
