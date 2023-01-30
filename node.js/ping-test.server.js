@@ -36,7 +36,7 @@ setInterval(() => {
     console.log(`[${ws.remoteAddress}] alive`);
 
     ws.isAlive = false;
-    ws.ping();
+    ws.ping('test message');
   });
 }, 10000);
 

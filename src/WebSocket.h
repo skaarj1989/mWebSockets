@@ -181,6 +181,14 @@ public:
   using onMessageCallback = void (*)(WebSocket &ws, const DataType dataType,
     const char *message, uint16_t length);
 
+  /**
+   * @param ws Source of a message.
+   * @param message Non NULL-terminated.
+   * @param length Number of data bytes.
+   */
+  using onPingCallback = void (*)(
+    WebSocket &ws, const char *message, uint16_t length);
+
 public:
   WebSocket(const WebSocket &) = delete;
   virtual ~WebSocket();
@@ -245,6 +253,8 @@ public:
    */
   void onMessage(const onMessageCallback &);
 
+  void onPing(const onPingCallback &);
+
 protected:
   /** @remark Reserved for WebSocketClient. */
   WebSocket() = default;
@@ -284,6 +294,7 @@ protected:
 
   onCloseCallback _onClose{nullptr};
   onMessageCallback _onMessage{nullptr};
+  onPingCallback _onPing{nullptr};
 };
 
 /** @cond */

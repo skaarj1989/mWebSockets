@@ -201,6 +201,7 @@ void WebSocket::onClose(const onCloseCallback &callback) {
 void WebSocket::onMessage(const onMessageCallback &callback) {
   _onMessage = callback;
 }
+void WebSocket::onPing(const onPingCallback &callback) { _onPing = callback; }
 
 //
 // Protected:
@@ -334,6 +335,9 @@ void WebSocket::_readFrame() {
   }
   case Opcode::PING_FRAME: {
     _send(PONG_FRAME, true, m_maskEnabled, payload, header.length);
+    if (_onPing) {
+      _onPing(*this, payload, header.length);
+    }
     break;
   }
   case Opcode::PONG_FRAME: {
