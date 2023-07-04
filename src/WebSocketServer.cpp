@@ -36,39 +36,10 @@ void WebSocketServer::broadcast(
 void WebSocketServer::listen() {
   _cleanDeadConnections();
 
-#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
-  if (m_server.hasClient()) {
-    WiFiClient client;
-    WebSocket *ws{nullptr};
-
-    for (auto &it : m_sockets) {
-      if (!it) {
-        client = m_server.available();
-        char selectedProtocol[32]{};
-        if (_handleRequest(client, selectedProtocol)) {
-          ws = it = new WebSocket{
-            client, *selectedProtocol ? selectedProtocol : nullptr};
-          if (_onConnection) _onConnection(*ws);
-        }
-        break;
-      }
-    }
-
-    // Server is full ...
-    if (!ws) _rejectRequest(client, WebSocketError::SERVICE_UNAVAILABLE);
-  }
-
-  for (auto it : m_sockets) {
-    if (it && it->m_client.connected() && it->m_client.available()) {
-      it->_readFrame();
-    }
-  }
-#else
-  EthernetClient client{m_server.available()};
-  if (client && client.available()) {
-    WebSocket *ws{_getWebSocket(client)};
-
-    if (!ws) {
+  if (auto client = m_server.available(); client) {
+    if (auto ws = _getWebSocket(client); !ws) {
+      // A new client
+      bool clientRequestFailed = false;
       for (auto &it : m_sockets) {
         if (!it) {
           char selectedProtocol[32]{};
@@ -76,18 +47,23 @@ void WebSocketServer::listen() {
             ws = it = new WebSocket{
               client, *selectedProtocol ? selectedProtocol : nullptr};
             if (_onConnection) _onConnection(*ws);
+          } else {
+            clientRequestFailed = true;
           }
           break;
         }
       }
-
-      // Server is full ...
-      if (!ws) _rejectRequest(client, WebSocketError::SERVICE_UNAVAILABLE);
-    } else {
-      ws->_readFrame();
+      if (!clientRequestFailed && !ws) {
+        // Server is full
+        _rejectRequest(client, WebSocketError::SERVICE_UNAVAILABLE);
+      }
     }
   }
-#endif
+  for (auto it : m_sockets) {
+    if (it && it->m_client.connected() && it->m_client.available()) {
+      it->_readFrame();
+    }
+  }
 }
 
 uint8_t WebSocketServer::countClients() const {
@@ -331,10 +307,8 @@ bool WebSocketServer::_isValidVersion(uint8_t version) {
   case 8:
   case 13:
     return true;
-
-  default:
-    return false;
   }
+  return false;
 }
 WebSocketError WebSocketServer::_validateHandshake(
   uint8_t flags, const char *secKey) {

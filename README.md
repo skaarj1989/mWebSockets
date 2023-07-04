@@ -17,6 +17,7 @@ Simple to use implementation of WebSockets for microcontrollers.
 
 - ATmega328P
 - ATmega2560
+- Renesas RA4M1 (ARM Cortex-M4)
 - SAMD21 (ARM Cortex-M0+)
 - STM32 (ARM Cortex-M)
 - ESP8266
@@ -29,7 +30,7 @@ Simple to use implementation of WebSockets for microcontrollers.
 - Firefox
 - Opera
 
-> The **Autobahn**|Testsuite reports for [server](https://skaarj1989.github.io/mWebSockets/autobahn-testsuite/servers/index.html) and [client](https://skaarj1989.github.io/mWebSockets/autobahn-testsuite/clients/index.html) > <br><sup>Some tests will never pass just because of memory lack in ATmega family.</sup>
+> The **Autobahn**|Testsuite reports for [server](https://skaarj1989.github.io/mWebSockets/autobahn-testsuite/servers/index.html) and [client](https://skaarj1989.github.io/mWebSockets/autobahn-testsuite/clients/index.html) <br><sup>Some tests will never pass just because of memory lack in ATmega family.</sup>
 
 ## Table of contents
 
@@ -58,6 +59,7 @@ Simple to use implementation of WebSockets for microcontrollers.
   - Arduino Uno (ATmega328P)
   - Arduino Pro Mini (ATmega328P)
   - Arduino Mega2560
+  - Arduino Uno R4 Minima/WiFi (ARM Cortex-M4)
   - Arduino Zero / SAMD21 M0 (ARM Cortex-M0)
   - STM Nucleo-64 (ARM Cortex-M)
   - WeMos D1 mini (ESP8266)
@@ -259,12 +261,13 @@ void loop() {
 
 ### Ethernet.h (W5100 and W5500)
 
-|      Board       |   Program space    |  Dynamic memory  |
-| :--------------: | :----------------: | :--------------: |
-|   Arduino Uno    | 24 648 bytes (76%) | 829 bytes (40%)  |
-| Arduino Mega2560 | 25 640 bytes (10%) | 857 bytes (10%)  |
-| Arduino Pro Mini | 24 648 bytes (80%) | 829 bytes (40%)  |
-|   Arduino Zero   | 30 596 bytes (11%) | 3 056 bytes (9%) |
+|         Board         |   Program space    |  Dynamic memory   |
+| :-------------------: | :----------------: | :---------------: |
+|      Arduino Uno      | 24 648 bytes (76%) |  829 bytes (40%)  |
+|   Arduino Mega2560    | 25 640 bytes (10%) |  857 bytes (10%)  |
+|   Arduino Pro Mini    | 24 648 bytes (80%) |  829 bytes (40%)  |
+|     Arduino Zero      | 30 596 bytes (11%) | 3 056 bytes (9%)  |
+| Arduino Uno R4 Minima | 63 860 bytes (24%) | 3 620 bytes (11%) |
 
 ### EthernetENC.h (ENC28j60)
 
@@ -277,11 +280,12 @@ void loop() {
 
 ### WiFi
 
-|      Board      |    Program space    |   Dynamic memory   |
-| :-------------: | :-----------------: | :----------------: |
-| Generic ESP8266 | 286 328 bytes (29%) | 27 356 bytes (33%) |
-|  WeMos D1 mini  | 286 328 bytes (27%) | 27 356 bytes (33%) |
-|     NodeMCU     | 286 328 bytes (27%) | 27 356 bytes (33%) |
+|        Board        |    Program space    |   Dynamic memory   |
+| :-----------------: | :-----------------: | :----------------: |
+|   Generic ESP8266   | 286 328 bytes (29%) | 27 356 bytes (33%) |
+|    WeMos D1 mini    | 286 328 bytes (27%) | 27 356 bytes (33%) |
+|       NodeMCU       | 286 328 bytes (27%) | 27 356 bytes (33%) |
+| Arduino Uno R4 WiFi | 57 596 bytes (21%)  | 4 492 bytes (13%)  |
 
 ## Known issues
 

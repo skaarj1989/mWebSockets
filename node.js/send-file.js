@@ -1,7 +1,7 @@
 const WebSocket = require("ws");
 const FileSystem = require("fs");
 
-const wss = new WebSocket.Server({ host: "192.168.46.31", port: 3000 });
+const wss = new WebSocket.Server({ host: "192.168.46.4", port: 3000 });
 
 wss.on("connection", (ws, req) => {
   ws.remoteAddress = req.socket.remoteAddress.replace(/^.*:/, "");

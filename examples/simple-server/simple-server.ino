@@ -25,9 +25,12 @@ void setup() {
 
 #if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
   //_SERIAL.setDebugOutput(true);
-  _SERIAL.printf("\nConnecting to %s ", kSSID);
+  _SERIAL.print(F("\nConnecting to "));
+  _SERIAL.println(kSSID);
 
+#  if PLATFORM_ARCH == PLATFORM_ARCHITECTURE_ESP8266
   WiFi.mode(WIFI_STA);
+#  endif
   WiFi.begin(kSSID, kPassword);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
@@ -36,16 +39,17 @@ void setup() {
 
   _SERIAL.println(F(" connected"));
 
-  WiFi.printDiag(_SERIAL);
+  // WiFi.printDiag(_SERIAL);
 
   _SERIAL.print(F("Device IP: "));
   _SERIAL.println(WiFi.localIP());
 #else
   _SERIAL.println(F("Initializing ... "));
 
+  Ethernet.init();
   // Ethernet.init(10);
-  Ethernet.init(53); // Mega2560
-  // Ethernet.init(5); // ESPDUINO-32
+  // Ethernet.init(53);  // Mega2560
+  // Ethernet.init(5);   // ESPDUINO-32
   // Ethernet.init(PA4); // STM32
 
   Ethernet.begin(mac); //, ip);

@@ -3,7 +3,8 @@
 
 #if (PLATFORM_ARCH == PLATFORM_ARCHITECTURE_AVR) ||                            \
   (PLATFORM_ARCH == PLATFORM_ARCHITECTURE_SAMD21) ||                           \
-  (PLATFORM_ARCH == PLATFORM_ARCHITECTURE_SAM)
+  (PLATFORM_ARCH == PLATFORM_ARCHITECTURE_SAM) ||                              \
+  (PLATFORM_ARCH == PLATFORM_ARCHITECTURE_UNO_R4)
 #  include <avr/pgmspace.h>
 #else
 #  include <pgmspace.h>

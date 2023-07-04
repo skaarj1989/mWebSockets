@@ -8,6 +8,8 @@
 // Board architectures:
 //
 
+// https://arduino.github.io/arduino-cli/0.33/library-specification/#working-with-multiple-architectures
+
 /** @cond */
 #define PLATFORM_ARCHITECTURE_AVR 1
 #define PLATFORM_ARCHITECTURE_ESP8266 2
@@ -15,6 +17,7 @@
 #define PLATFORM_ARCHITECTURE_SAM 4
 #define PLATFORM_ARCHITECTURE_SAMD21 5
 #define PLATFORM_ARCHITECTURE_STM32 6
+#define PLATFORM_ARCHITECTURE_UNO_R4 7
 /** @endcond */
 
 #if defined(__AVR__)
@@ -29,6 +32,8 @@
 #  define PLATFORM_ARCH PLATFORM_ARCHITECTURE_SAMD21
 #elif defined(ARDUINO_ARCH_STM32)
 #  define PLATFORM_ARCH PLATFORM_ARCHITECTURE_STM32
+#elif defined(ARDUINO_ARCH_RENESAS)
+#  define PLATFORM_ARCH PLATFORM_ARCHITECTURE_UNO_R4
 #else
 #  error "Unsupported platform"
 #endif

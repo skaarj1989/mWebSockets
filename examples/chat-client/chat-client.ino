@@ -8,8 +8,8 @@ using namespace net;
 #endif
 
 #if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
-const char SSID[]{"SKYNET"};
-const char password[]{"***"};
+constexpr char kSSID[]{"SKYNET"};
+constexpr char kPassword[]{"***"};
 #else
 byte mac[]{0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
 // IPAddress ip(192, 168, 46, 179);
@@ -27,10 +27,13 @@ void setup() {
 
 #if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
   //_SERIAL.setDebugOutput(true);
-  _SERIAL.printf("\nConnecting to %s ", SSID);
+  _SERIAL.print(F("\nConnecting to "));
+  _SERIAL.println(kSSID);
 
+#  if PLATFORM_ARCH == PLATFORM_ARCHITECTURE_ESP8266
   WiFi.mode(WIFI_STA);
-  WiFi.begin(SSID, password);
+#  endif
+  WiFi.begin(kSSID, kPassword);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     _SERIAL.print(F("."));
@@ -38,16 +41,17 @@ void setup() {
 
   _SERIAL.println(F(" connected"));
 
-  WiFi.printDiag(_SERIAL);
+  // WiFi.printDiag(_SERIAL);
 
   _SERIAL.print(F("Device IP: "));
   _SERIAL.println(WiFi.localIP());
 #else
   _SERIAL.println(F("Initializing ... "));
 
+  Ethernet.init();
   // Ethernet.init(10);
-  Ethernet.init(53); // Mega2560
-  // Ethernet.init(5); // ESPDUINO-32
+  // Ethernet.init(53);  // Mega2560
+  // Ethernet.init(5);   // ESPDUINO-32
   // Ethernet.init(PA4); // STM32
 
   Ethernet.begin(mac); //, ip);
@@ -67,7 +71,7 @@ void setup() {
   client.onClose([](WebSocket &, const WebSocket::CloseCode, const char *,
                    uint16_t) { _SERIAL.println(F("Disconnected")); });
 
-  if (!client.open("192.168.46.31", 3000)) {
+  if (!client.open("192.168.46.4", 3000)) {
     _SERIAL.println(F("Connection failed!"));
     while (true)
       ;

@@ -1,7 +1,7 @@
 const WebSocket = require("ws");
 
 const wss = new WebSocket.Server({
-  host: "192.168.46.31",
+  host: "192.168.46.4",
   port: 3000,
 });
 
