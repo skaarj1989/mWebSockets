@@ -23,10 +23,10 @@
 //#define _DUMP_FRAME_DATA
 
 #ifndef NETWORK_CONTROLLER
-#  define NETWORK_CONTROLLER ETHERNET_CONTROLLER_W5X00
+#  define NETWORK_CONTROLLER NETWORK_CONTROLLER_GSM
 #endif
 
 /** Maximum size of data buffer - frame payload (in bytes). */
-constexpr uint16_t kBufferMaxSize{256};
+constexpr uint16_t kBufferMaxSize{128};
 /** Maximum time to wait for endpoint response (in milliseconds). */
 constexpr uint16_t kTimeoutInterval{5000};

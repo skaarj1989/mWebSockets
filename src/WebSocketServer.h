@@ -3,7 +3,7 @@
 /** @file */
 
 #include "WebSocket.h"
-#include "utility.h"
+#if NETWORK_CONTROLLER != NETWORK_CONTROLLER_GSM
 
 namespace net {
 
@@ -115,3 +115,5 @@ private:
  */
 
 } // namespace net
+
+#endif

@@ -1,4 +1,5 @@
 #include "WebSocketServer.h"
+#if NETWORK_CONTROLLER != NETWORK_CONTROLLER_GSM
 
 // https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers
 
@@ -98,12 +99,12 @@ WebSocket *WebSocketServer::_getWebSocket(NetClient &client) const {
 //
 bool WebSocketServer::_handleRequest(
   NetClient &client, char selectedProtocol[]) {
-#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
+#  if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
   while (!client.available()) {
     delay(10);
     __debugOutput(F("."));
   }
-#endif
+#  endif
 
   // Large enought to hold the longest header field
   //  Chrome: 'User-Agent' = ~126 characters
@@ -126,9 +127,9 @@ bool WebSocketServer::_handleRequest(
     if (bite == '\n') {
       const auto lineBreakPos = static_cast<uint8_t>(strcspn(buffer, "\r\n"));
       buffer[lineBreakPos] = '\0';
-#ifdef _DUMP_HANDSHAKE
+#  ifdef _DUMP_HANDSHAKE
       printf(F("[Line #%u] %s\n"), currentLine, buffer);
-#endif
+#  endif
 
       char *rest{buffer};
 
@@ -393,3 +394,5 @@ void WebSocketServer::_cleanDeadConnections() {
 }
 
 } // namespace net
+
+#endif

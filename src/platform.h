@@ -46,6 +46,7 @@
 #define ETHERNET_CONTROLLER_W5X00 1
 #define ETHERNET_CONTROLLER_ENC28J60 2
 #define NETWORK_CONTROLLER_WIFI 3
+#define NETWORK_CONTROLLER_GSM 4
 /** @endcond */
 
 #include "config.h"
@@ -66,6 +67,9 @@ constexpr uint8_t kMaxConnections{4};
 #  include <WiFiClient.h>
 #  include <WiFiServer.h>
 constexpr uint8_t kMaxConnections{8};
+#elif NETWORK_CONTROLLER == NETWORK_CONTROLLER_GSM
+#  define TINY_GSM_MODEM_SIM800
+#  include <TinyGsmClient.h>
 #else
 #  error "Network controller is required!"
 #endif
@@ -74,6 +78,8 @@ constexpr uint8_t kMaxConnections{8};
 #if NETWORK_CONTROLLER == NETWORK_CONTROLLER_WIFI
 using NetClient = WiFiClient;
 using NetServer = WiFiServer;
+#elif NETWORK_CONTROLLER == NETWORK_CONTROLLER_GSM
+using NetClient = TinyGsmClient;
 #else
 using NetClient = EthernetClient;
 using NetServer = EthernetServer;

@@ -27,7 +27,8 @@ namespace net {
 
 IPAddress fetchRemoteIp(const NetClient &client) {
 #if (PLATFORM_ARCH == PLATFORM_ARCHITECTURE_ESP8266) &&                        \
-  (NETWORK_CONTROLLER == ETHERNET_CONTROLLER_W5X00)
+    (NETWORK_CONTROLLER == ETHERNET_CONTROLLER_W5X00) ||                       \
+  NETWORK_CONTROLLER == NETWORK_CONTROLLER_GSM
   // EthernetClient class in ESP8266 doesn't implement remoteIP()
   return IPAddress();
 #else

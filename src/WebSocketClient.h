@@ -16,6 +16,9 @@ public:
 
 public:
   WebSocketClient() = default;
+#if NETWORK_CONTROLLER == NETWORK_CONTROLLER_GSM
+  WebSocketClient(const NetClient &client) { m_client = client; }
+#endif
   ~WebSocketClient() = default;
 
   /**
