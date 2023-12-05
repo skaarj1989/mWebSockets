@@ -293,7 +293,7 @@ void encodeSecKey(const char *key, char output[]);
 void generateMask(char output[]);
 
 template <typename NetClient>
-inline IPAddress fetchRemoteIp(const NetClient &client) {
+inline IPAddress fetchRemoteIp(NetClient &&client) {
   if constexpr (has_remoteIP<NetClient>::value)
     return client.remoteIP();
   else
