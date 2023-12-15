@@ -6,12 +6,11 @@
 
 namespace net {
 
-/** @class WebSocketServer */
-template <class NetServer, class NetClient, uint8_t _MaxConnections = 4>
-class WebSocketServer {
-  static_assert(_MaxConnections <= 8, "I don't think so ...");
-
+/** @class IWebSocketServer */
+class IWebSocketServer {
 public:
+  virtual ~IWebSocketServer() = default;
+
   /**
    * @param header c-string, NULL-terminated.
    * @param value c-string, NULL-terminated.
@@ -19,19 +18,7 @@ public:
   using verifyClientCallback =
       bool (*)(const IPAddress &, const char *header, const char *value);
   /** @param ws Accepted client. */
-  using onConnectionCallback = void (*)(WebSocket<NetClient> &ws);
   using protocolHandlerCallback = const char *(*)(const char *);
-
-public:
-  /**
-   * @brief Initializes server on given port.
-   * @note Don't forget to call begin()
-   */
-  explicit WebSocketServer(uint16_t port = 3000);
-  WebSocketServer(const WebSocketServer &) = delete;
-  ~WebSocketServer();
-
-  WebSocketServer &operator=(const WebSocketServer &) = delete;
 
   /**
    * @brief Startup server.
@@ -48,20 +35,24 @@ public:
    * @param callback Function called for every header during hadshake (except
    * for those required by protocol, like **Connection**, **Upgrade** etc.)
    */
-  void begin(
+  virtual void begin(
       const verifyClientCallback &verifyClient = nullptr,
-      const protocolHandlerCallback &protocolHandler = nullptr);
+      const protocolHandlerCallback &protocolHandler = nullptr) = 0;
+
   /** @brief Disconnects all clients. */
-  void shutdown();
+  virtual void shutdown() = 0;
 
   /** @brief Sends message to all connected clients. */
-  void broadcast(WebSocketDataType, const char *message, uint16_t length);
+  virtual void
+  broadcast(WebSocketDataType, const char *message, uint16_t length) = 0;
 
   /** @note Call this in main loop. */
-  void listen();
+  virtual void listen() = 0;
 
   /** @return Amount of connected clients. */
-  uint8_t countClients() const;
+  virtual uint8_t countClients() const = 0;
+
+  using onConnectionCallback = void (*)(IWebSocket &ws);
 
   /**
    * @brief
@@ -82,7 +73,38 @@ public:
    * @param callback Function that will be called for every successfully
    * connected client.
    */
-  void onConnection(const onConnectionCallback &callback);
+  virtual void onConnection(const onConnectionCallback &callback) = 0;
+};
+
+/** @class WebSocketServer */
+template <class NetServer, class NetClient, uint8_t _MaxConnections = 4>
+class WebSocketServer : public IWebSocketServer {
+  static_assert(_MaxConnections <= 8, "I don't think so ...");
+
+public:
+  /**
+   * @brief Initializes server on given port.
+   * @note Don't forget to call begin()
+   */
+  explicit WebSocketServer(uint16_t port = 3000);
+  WebSocketServer(const WebSocketServer &) = delete;
+  ~WebSocketServer() override;
+
+  WebSocketServer &operator=(const WebSocketServer &) = delete;
+
+  void begin(
+      const verifyClientCallback &verifyClient = nullptr,
+      const protocolHandlerCallback &protocolHandler = nullptr) override;
+  void shutdown() override;
+
+  void
+  broadcast(WebSocketDataType, const char *message, uint16_t length) override;
+
+  void listen() override;
+
+  uint8_t countClients() const override;
+
+  void onConnection(const onConnectionCallback &callback) override;
 
 private:
   /** @cond */

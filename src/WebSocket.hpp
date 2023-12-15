@@ -146,37 +146,10 @@ enum class WebSocketReadyState : uint8_t {
 struct WebSocketHeader_t;
 /** @endcond */
 
-/** @class WebSocket */
-template <class NetClient> class WebSocket {
-  template <class, class, uint8_t> friend class WebSocketServer;
-
+/** @class IWebSocket */
+class IWebSocket {
 public:
-  /**
-   * @param ws Closing endpoint.
-   * @param code Close event code.
-   * @param reason Contains a message for a close event, c-string, non
-   * NULL-terminated. Might be empty.
-   * @param length The number of characters in the reason c-string.
-   */
-  using onCloseCallback = void (*)(
-      WebSocket &ws, WebSocketCloseCode code, const char *reason,
-      uint16_t length);
-
-  /**
-   * @param ws Source of a message.
-   * @param dataType Type of a message.
-   * @param message Non NULL-terminated.
-   * @param length Number of data bytes.
-   */
-  using onMessageCallback = void (*)(
-      WebSocket &ws, WebSocketDataType dataType, const char *message,
-      uint16_t length);
-
-public:
-  WebSocket(const WebSocket &) = delete;
-  virtual ~WebSocket();
-
-  WebSocket &operator=(const WebSocket &) = delete;
+  virtual ~IWebSocket() = default;
 
   /**
    * @brief Sends a close event.
@@ -185,36 +158,48 @@ public:
    * NULL-terminated. Max length = 123 characters.
    * @param length The number of characters in the reason c-string.
    */
-  void close(
-      WebSocketCloseCode, bool instant, const char *reason = nullptr,
-      uint16_t length = 0);
+  virtual void close(
+      WebSocketCloseCode, bool instant, const char *reason,
+      uint16_t length) = 0;
   /** @brief Immediately closes the connection. */
-  void terminate();
+  virtual void terminate() = 0;
 
   /** @return Endpoint connection status. */
-  WebSocketReadyState getReadyState() const;
+  virtual WebSocketReadyState getReadyState() const = 0;
   /** @brief Verifies endpoint connection. */
-  bool isAlive() const;
+  virtual bool isAlive() const = 0;
 
   /**
    * @return Endpoint IP address.
    * @remark For some microcontrollers it might be empty.
    */
-  IPAddress getRemoteIP() const;
-  const char *getProtocol() const;
+  virtual IPAddress getRemoteIP() const = 0;
+  virtual const char *getProtocol() const = 0;
 
   /**
    * @brief Sends a message frame.
    * @param message Doesn't have to be NULL-terminated.
    */
-  void send(WebSocketDataType, const char *message, uint16_t length);
+  virtual void
+  send(WebSocketDataType, const char *message, uint16_t length) = 0;
   /**
    * @brief Sends a ping message.
    * @param payload An additional message, doesn't have to be NULL-terminated.
    * Max length = 125.
    * @param length The number of characters in payload.
    */
-  void ping(const char *payload = nullptr, uint16_t length = 0);
+  virtual void ping(const char *payload, uint16_t length) = 0;
+
+  /**
+   * @param ws Closing endpoint.
+   * @param code Close event code.
+   * @param reason Contains a message for a close event, c-string, non
+   * NULL-terminated. Might be empty.
+   * @param length The number of characters in the reason c-string.
+   */
+  using onCloseCallback = void (*)(
+      IWebSocket &ws, WebSocketCloseCode code, const char *reason,
+      uint16_t length);
 
   /**
    * @brief Sets the close event handler.
@@ -225,7 +210,18 @@ public:
    * });
    * @endcode
    */
-  void onClose(const onCloseCallback &);
+  virtual void onClose(const onCloseCallback &) = 0;
+
+  /**
+   * @param ws Source of a message.
+   * @param dataType Type of a message.
+   * @param message Non NULL-terminated.
+   * @param length Number of data bytes.
+   */
+  using onMessageCallback = void (*)(
+      IWebSocket &ws, WebSocketDataType dataType, const char *message,
+      uint16_t length);
+
   /**
    * @brief Sets the message handler function.
    * @code{.cpp}
@@ -235,6 +231,36 @@ public:
    * });
    * @endcode
    */
+  virtual void onMessage(const onMessageCallback &) = 0;
+};
+
+/** @class WebSocket */
+template <class NetClient> class WebSocket : public IWebSocket {
+  template <class, class, uint8_t> friend class WebSocketServer;
+
+public:
+public:
+  WebSocket(const WebSocket &) = delete;
+  ~WebSocket() override;
+
+  WebSocket &operator=(const WebSocket &) = delete;
+
+  void close(
+      WebSocketCloseCode, bool instant, const char *reason = nullptr,
+      uint16_t length = 0);
+  void terminate();
+
+  WebSocketReadyState getReadyState() const;
+  bool isAlive() const;
+
+  IPAddress getRemoteIP() const;
+  const char *getProtocol() const;
+
+  void send(WebSocketDataType, const char *message, uint16_t length);
+
+  void ping(const char *payload = nullptr, uint16_t length = 0);
+
+  void onClose(const onCloseCallback &);
   void onMessage(const onMessageCallback &);
 
 protected:
@@ -293,9 +319,9 @@ void encodeSecKey(const char *key, char output[]);
 void generateMask(char output[]);
 
 template <typename NetClient>
-inline IPAddress fetchRemoteIp(NetClient &&client) {
+inline IPAddress fetchRemoteIp(const NetClient &client) {
   if constexpr (has_remoteIP<NetClient>::value)
-    return client.remoteIP();
+    return const_cast<NetClient &>(client).remoteIP();
   else
     return {};
 }
