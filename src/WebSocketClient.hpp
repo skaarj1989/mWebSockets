@@ -9,7 +9,7 @@ namespace net {
 /** @class WebSocketClient */
 template <class NetClient> class WebSocketClient : public WebSocket<NetClient> {
 public:
-  using onOpenCallback = void (*)(WebSocket<NetClient> &);
+  using onOpenCallback = void (*)(IWebSocket &);
   using onErrorCallback = void (*)(WebSocketError);
 
 public:
