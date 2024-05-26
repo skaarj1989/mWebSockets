@@ -19,7 +19,7 @@ void generateSecKey(char output[]) {
   constexpr byte kLength{16};
   char temp[kLength + 1]{};
 
-  randomSeed(analogRead(0));
+  randomSeed(analogRead(A0));
   for (byte i = 0; i < kLength; ++i)
     temp[i] = static_cast<char>(random(0xFF));
 
