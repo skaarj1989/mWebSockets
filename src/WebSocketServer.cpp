@@ -36,8 +36,10 @@ void WebSocketServer::broadcast(
 void WebSocketServer::listen() {
   _cleanDeadConnections();
 
-  if (auto client = m_server.available(); client) {
-    if (auto ws = _getWebSocket(client); !ws) {
+  auto client = m_server.available();
+  if (client) {
+    auto ws = _getWebSocket(client);
+    if (!ws) {
       // A new client
       bool clientRequestFailed = false;
       for (auto &it : m_sockets) {
